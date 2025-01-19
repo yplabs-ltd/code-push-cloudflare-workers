@@ -1,7 +1,10 @@
+import { and, eq, sql } from "drizzle-orm";
+import { type DrizzleD1Database, drizzle } from "drizzle-orm/d1";
 import type { Context } from "hono";
-import type { Env } from "../types/env";
+import * as schema from "../db/schema";
 import { getStorageProvider } from "../storage/factory";
 import type { StorageProvider } from "../storage/storage";
+import type { Env } from "../types/env";
 
 const METRICS_PREFIX = "metrics:" as const;
 
@@ -26,22 +29,12 @@ export interface DeploymentMetrics {
 }
 
 export class MetricsManager {
-  private readonly ctx: Context<Env>;
-  private readonly kv: KVNamespace;
   private readonly storage: StorageProvider;
+  private readonly db: DrizzleD1Database<typeof schema>;
 
-  constructor(ctx: Context<Env>) {
-    this.ctx = ctx;
-    this.kv = ctx.env.CODE_PUSH_KV;
+  constructor(private readonly ctx: Context<Env>) {
     this.storage = getStorageProvider(ctx);
-  }
-
-  private async increment(key: string): Promise<void> {
-    const currentValue = await this.kv.get(key);
-    const newValue = (
-      (Number.parseInt(currentValue ?? "0", 10) || 0) + 1
-    ).toString();
-    await this.kv.put(key, newValue);
+    this.db = drizzle(ctx.env.DB, { schema });
   }
 
   private getMetricKey(
@@ -56,6 +49,31 @@ export class MetricsManager {
     return `${METRICS_PREFIX}client:${deploymentKey}:${clientId}`;
   }
 
+  private async increment(
+    deploymentKey: string,
+    label: string,
+    type: MetricType,
+  ): Promise<void> {
+    await this.db
+      .insert(schema.metrics)
+      .values({
+        deploymentId: deploymentKey,
+        label,
+        type,
+        count: 1,
+      })
+      .onConflictDoUpdate({
+        target: [
+          schema.metrics.deploymentId,
+          schema.metrics.label,
+          schema.metrics.type,
+        ],
+        set: {
+          count: sql`${schema.metrics.count} + 1`,
+        },
+      });
+  }
+
   async recordDeploymentStatus(
     deploymentKey: string,
     label: string,
@@ -67,20 +85,33 @@ export class MetricsManager {
         ? MetricType.DEPLOYMENT_SUCCEEDED
         : MetricType.DEPLOYMENT_FAILED;
 
-    await this.increment(this.getMetricKey(deploymentKey, label, type));
+    await this.increment(deploymentKey, label, type);
 
     if (status === "DeploymentSucceeded") {
       const clientKey = this.getClientKey(deploymentKey, clientId);
-      await this.kv.put(clientKey, label);
-      await this.increment(
-        this.getMetricKey(deploymentKey, label, MetricType.ACTIVE),
-      );
+      await this.db
+        .insert(schema.clientLabels)
+        .values({
+          deploymentId: deploymentKey,
+          clientId,
+          label,
+        })
+        .onConflictDoUpdate({
+          target: [
+            schema.clientLabels.clientId,
+            schema.clientLabels.deploymentId,
+          ],
+          set: {
+            label,
+          },
+        });
+      await this.increment(deploymentKey, label, MetricType.ACTIVE);
     }
   }
 
   async recordDeployment(
     deploymentKey: string,
-    appVersion: string,
+    label: string,
     clientId: string,
     previousDeploymentKey?: string,
     previousLabel?: string,
@@ -91,20 +122,32 @@ export class MetricsManager {
         previousLabel,
         MetricType.ACTIVE,
       );
-      const currentActive = Number.parseInt(
-        (await this.kv.get(prevActiveKey)) ?? "0",
-        10,
-      );
-      if (currentActive > 0) {
-        await this.kv.put(prevActiveKey, (currentActive - 1).toString());
-      }
+
+      await this.db.run(sql`
+        UPDATE metrics
+        SET count = count - 1
+        WHERE deploymentId = ${previousDeploymentKey} AND label = ${previousLabel} AND type = ${MetricType.ACTIVE} AND count > 0
+        `);
     }
 
     const clientKey = this.getClientKey(deploymentKey, clientId);
-    await this.kv.put(clientKey, appVersion);
-    await this.increment(
-      this.getMetricKey(deploymentKey, appVersion, MetricType.ACTIVE),
-    );
+    await this.db
+      .insert(schema.clientLabels)
+      .values({
+        deploymentId: deploymentKey,
+        clientId,
+        label,
+      })
+      .onConflictDoUpdate({
+        target: [
+          schema.clientLabels.clientId,
+          schema.clientLabels.deploymentId,
+        ],
+        set: {
+          label,
+        },
+      });
+    await this.increment(deploymentKey, label, MetricType.ACTIVE);
   }
 
   async recordDownload(
@@ -112,21 +155,19 @@ export class MetricsManager {
     label: string,
     clientId: string,
   ): Promise<void> {
-    await this.increment(
-      this.getMetricKey(deploymentKey, label, MetricType.DOWNLOADED),
-    );
+    await this.increment(deploymentKey, label, MetricType.DOWNLOADED);
   }
 
   async getMetrics(deploymentKey: string): Promise<DeploymentMetrics> {
-    const list = await this.kv.list({
-      prefix: `${METRICS_PREFIX}${deploymentKey}:`,
+    const results = await this.db.query.metrics.findMany({
+      where: eq(schema.metrics.deploymentId, deploymentKey),
     });
+
     const metrics: DeploymentMetrics = {};
 
-    for (const { name } of list.keys) {
-      const [, , label, type] = name.split(":");
-      if (!metrics[label]) {
-        metrics[label] = {
+    for (const result of results) {
+      if (!metrics[result.label]) {
+        metrics[result.label] = {
           active: 0,
           downloads: 0,
           installed: 0,
@@ -134,20 +175,18 @@ export class MetricsManager {
         };
       }
 
-      const value = Number.parseInt((await this.kv.get(name)) ?? "0", 10);
-
-      switch (type as MetricType) {
+      switch (result.type as MetricType) {
         case MetricType.ACTIVE:
-          metrics[label].active = value;
+          metrics[result.label].active = result.count;
           break;
         case MetricType.DOWNLOADED:
-          metrics[label].downloads = value;
+          metrics[result.label].downloads = result.count;
           break;
         case MetricType.DEPLOYMENT_SUCCEEDED:
-          metrics[label].installed = value;
+          metrics[result.label].installed = result.count;
           break;
         case MetricType.DEPLOYMENT_FAILED:
-          metrics[label].failed = value;
+          metrics[result.label].failed = result.count;
           break;
       }
     }
@@ -155,23 +194,12 @@ export class MetricsManager {
     return metrics;
   }
 
-  async clearMetrics(deploymentKey: string): Promise<void> {
-    const list = await this.kv.list({
-      prefix: `${METRICS_PREFIX}${deploymentKey}:`,
-    });
-
-    // Delete in batches of 100
-    const keys = list.keys.map((k) => k.name);
-    for (let i = 0; i < keys.length; i += 100) {
-      const batch = keys.slice(i, i + 100);
-      await Promise.all(batch.map((key) => this.kv.delete(key)));
-    }
-  }
-
-  async getActiveDevices(deploymentKey: string): Promise<number> {
-    const list = await this.kv.list({
-      prefix: `${METRICS_PREFIX}client:${deploymentKey}:`,
-    });
-    return list.keys.length;
+  async clearDeploymentMetrics(deploymentKey: string): Promise<void> {
+    await this.db
+      .delete(schema.metrics)
+      .where(eq(schema.metrics.deploymentId, deploymentKey));
+    await this.db
+      .delete(schema.clientLabels)
+      .where(eq(schema.clientLabels.deploymentId, deploymentKey));
   }
 }

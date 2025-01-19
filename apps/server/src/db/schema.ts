@@ -165,3 +165,38 @@ export const accessKeyRelations = relations(accessKey, ({ one }) => ({
     references: [account.id],
   }),
 }));
+
+export const metrics = sqliteTable(
+  "metric",
+  {
+    deploymentId: text("deployment_id").notNull(),
+    label: text("label").notNull(),
+    type: text("type", {
+      enum: [
+        "active",
+        "downloaded",
+        "deployment_succeeded",
+        "deployment_failed",
+      ],
+    }).notNull(),
+    count: integer("count").notNull(),
+  },
+  (t) => [
+    primaryKey({ columns: [t.deploymentId, t.label, t.type] }),
+    // unique().on(t.deploymentId, t.label, t.type),
+  ],
+);
+
+// Client labels table (for active users)
+export const clientLabels = sqliteTable(
+  "client_label",
+  {
+    deploymentId: text("deployment_id").notNull(),
+    clientId: text("client_id").notNull(),
+    label: text("label").notNull(),
+  },
+  (t) => [primaryKey({ columns: [t.clientId, t.deploymentId] })],
+  // (t) => ({
+  //   pk: primaryKey({ columns: [t.clientId, t.deploymentId] }),
+  // }),
+);

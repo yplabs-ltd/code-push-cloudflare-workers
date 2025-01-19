@@ -8,6 +8,13 @@
       "when": 1737180385012,
       "tag": "0000_secret_thanos",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1737268122892,
+      "tag": "0001_cuddly_ultimates",
+      "breakpoints": true
     }
   ]
 }
