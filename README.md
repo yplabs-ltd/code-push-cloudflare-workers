@@ -77,7 +77,7 @@ To be implemented.
 
 ### CLI
 
-While the official CodePush Standalone CLI can be used, a custom CLI is planned for far future releases.
+While [the official CodePush Standalone CLI](https://github.com/microsoft/code-push-server/blob/main/cli/README.md) can be used, a custom CLI is planned for far future releases.
 
 ## Getting Started
 
