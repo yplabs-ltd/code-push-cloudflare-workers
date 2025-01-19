@@ -73,7 +73,7 @@ Traditional deployments of the official CodePush Standalone on Azure require *an
 
 ### Web
 
-To be implemented.
+To be implemented. Not a high proirity at the moment because I'm focusing on the server side, and the CLI is ready to use.
 
 ### CLI
 
