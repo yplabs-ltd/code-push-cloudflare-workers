@@ -64,12 +64,17 @@ Traditional deployments of the official CodePush Standalone on Azure require *an
 - [x] Acquisition: Provides update checks and download reports. (Client SDK API)
   - [x] Update Check: Handles update checks, version matching, and diff delivery.
   - [x] Metrics: Records deployment and download metrics and reports.
-- [ ] Management: Handles app, deployment and release management. (Admin CLI API)
-  - [ ] App Management: Handles app creation, modification, deletion, and transfer.
-  - [ ] Deployment Management: Handles deployment creation, modification, and deletion.
-  - [ ] Release Management: Handles package publishing, promoting, and rollback.
-  - [ ] Collaborator Management: Handles collaborators addition, removal and listings.
-  - [ ] Metrics Management: Retrieves and displays deployment metrics
+- [x] Management: Handles app, deployment and release management. (Admin CLI API)
+  - [x] App Management: Handles app creation, modification, deletion, and transfer.
+  - [x] Deployment Management: Handles deployment creation, modification, and deletion.
+  - [x] Release Management: Handles package publishing, promoting, and rollback.
+  - [x] Collaborator Management: Handles collaborators addition, removal and listings.
+  - [x] Metrics Management: Retrieves and displays deployment metrics
+
+#### Real-world Testing
+
+- [ ] Test with real-world scenarios and edge cases.
+- [ ] Test with code-push-standalone CLI.
 
 ### Web
 
