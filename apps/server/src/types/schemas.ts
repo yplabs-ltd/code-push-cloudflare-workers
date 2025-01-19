@@ -112,7 +112,7 @@ export type Account = z.infer<typeof AccountSchema>;
 
 export const AccessKeySchema = z.object({
   id: z.string(),
-  name: z.string(),
+  name: z.string().optional(),
   friendlyName: z.string(),
   createdBy: z.string(),
   createdTime: z.number(),

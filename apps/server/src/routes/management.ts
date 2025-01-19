@@ -4,6 +4,7 @@ import { z } from "zod";
 import { authMiddleware } from "../middleware/auth";
 import { getStorageProvider } from "../storage/factory";
 import type { Env } from "../types/env";
+import { isStorageError } from "../types/error";
 import {
   type AccessKey,
   AccessKeySchema,
@@ -24,6 +25,7 @@ import {
   generateDeploymentKey,
   generateKey,
 } from "../utils/security";
+import { urlEncode } from "../utils/urlencode";
 
 const router = new OpenAPIHono<Env>();
 
@@ -80,7 +82,7 @@ const routes = {
           content: {
             "application/json": {
               schema: z.object({
-                friendlyName: z.string(),
+                friendlyName: z.string().min(1),
                 ttl: z.number().optional(),
                 createdBy: z.string().optional(),
               }),
@@ -136,7 +138,7 @@ const routes = {
             "application/json": {
               schema: z.object({
                 friendlyName: z.string().optional(),
-                ttl: z.number().optional(),
+                ttl: z.number().min(0).optional(),
               }),
             },
           },
@@ -199,7 +201,7 @@ const routes = {
           content: {
             "application/json": {
               schema: z.object({
-                name: z.string(),
+                name: z.string().min(1),
                 manuallyProvisionDeployments: z.boolean().optional(),
               }),
             },
@@ -655,17 +657,6 @@ function throwIfInvalidPermissions(
   }
 }
 
-function urlEncode(strings: TemplateStringsArray, ...values: string[]): string {
-  let result = "";
-  for (let i = 0; i < strings.length; i++) {
-    result += strings[i];
-    if (i < values.length) {
-      result += encodeURIComponent(values[i]);
-    }
-  }
-  return result;
-}
-
 // Account routes
 router.openapi(routes.account.get, async (c) => {
   const storage = getStorageProvider(c);
@@ -874,6 +865,7 @@ router.openapi(routes.apps.create, async (c) => {
         }),
       ),
     );
+    app.deployments = defaultDeployments.sort((a, b) => a.localeCompare(b));
   }
 
   c.header("Location", urlEncode`/apps/${app.name}`);
@@ -885,7 +877,7 @@ router.openapi(routes.apps.get, async (c) => {
   const accountId = c.var.auth.accountId;
   const { appName } = c.req.valid("param");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -901,7 +893,7 @@ router.openapi(routes.apps.update, async (c) => {
   const { appName } = c.req.valid("param");
   const updates = c.req.valid("json");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -934,7 +926,7 @@ router.openapi(routes.apps.remove, async (c) => {
   const accountId = c.var.auth.accountId;
   const { appName } = c.req.valid("param");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -952,7 +944,7 @@ router.openapi(routes.apps.transfer, async (c) => {
   const accountId = c.var.auth.accountId;
   const { appName, email } = c.req.valid("param");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -971,7 +963,7 @@ router.openapi(routes.deployments.list, async (c) => {
   const accountId = c.var.auth.accountId;
   const { appName } = c.req.valid("param");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -992,7 +984,7 @@ router.openapi(routes.deployments.create, async (c) => {
   const { appName } = c.req.valid("param");
   const body = c.req.valid("json");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -1027,12 +1019,13 @@ router.openapi(routes.deployments.create, async (c) => {
   );
   return c.json({ deployment }, 201);
 });
+
 router.openapi(routes.deployments.get, async (c) => {
   const storage = getStorageProvider(c);
   const accountId = c.var.auth.accountId;
   const { appName, deploymentName } = c.req.valid("param");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -1059,7 +1052,7 @@ router.openapi(routes.deployments.update, async (c) => {
   const { appName, deploymentName } = c.req.valid("param");
   const updates = c.req.valid("json");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -1095,7 +1088,7 @@ router.openapi(routes.deployments.remove, async (c) => {
   const accountId = c.var.auth.accountId;
   const { appName, deploymentName } = c.req.valid("param");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -1129,7 +1122,7 @@ router.openapi(routes.deployments.release, async (c) => {
     });
   }
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -1242,7 +1235,7 @@ router.openapi(routes.deployments.promote, async (c) => {
     c.req.valid("param");
   const { packageInfo } = c.req.valid("json");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -1313,7 +1306,7 @@ router.openapi(routes.deployments.rollback, async (c) => {
   const accountId = c.var.auth.accountId;
   const { appName, deploymentName, targetRelease } = c.req.valid("param");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -1411,7 +1404,7 @@ router.openapi(routes.collaborators.list, async (c) => {
   const accountId = c.var.auth.accountId;
   const { appName } = c.req.valid("param");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -1429,7 +1422,7 @@ router.openapi(routes.collaborators.add, async (c) => {
   const accountId = c.var.auth.accountId;
   const { appName, email } = c.req.valid("param");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -1442,7 +1435,7 @@ router.openapi(routes.collaborators.add, async (c) => {
     await storage.addCollaborator(accountId, app.id, email);
     return new Response(null, { status: 201 });
   } catch (error) {
-    if (error instanceof HTTPException) {
+    if (isStorageError(error) || error instanceof HTTPException) {
       throw error;
     }
     throw new HTTPException(409, {
@@ -1456,7 +1449,7 @@ router.openapi(routes.collaborators.remove, async (c) => {
   const accountId = c.var.auth.accountId;
   const { appName, email } = c.req.valid("param");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -1499,7 +1492,7 @@ router.openapi(routes.metrics.get, async (c) => {
   const accountId = c.var.auth.accountId;
   const { appName, deploymentName } = c.req.valid("param");
 
-  const app = await storage.getApp(accountId, appName);
+  const app = await storage.getApp(accountId, { appName });
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,

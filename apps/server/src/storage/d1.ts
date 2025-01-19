@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { type DrizzleD1Database, drizzle } from "drizzle-orm/d1";
 import type { Context } from "hono";
 import * as schema from "../db/schema";
@@ -87,7 +87,10 @@ export class D1StorageProvider implements StorageProvider {
 
   async getAccount(accountId: string): Promise<Account> {
     const account = await this.db.query.account.findFirst({
-      where: eq(schema.account.id, accountId),
+      where: and(
+        eq(schema.account.id, accountId),
+        isNull(schema.account.deletedAt),
+      ),
     });
 
     if (!account) {
@@ -106,7 +109,10 @@ export class D1StorageProvider implements StorageProvider {
 
   async getAccountByEmail(email: string): Promise<Account> {
     const account = await this.db.query.account.findFirst({
-      where: eq(schema.account.email, email.toLowerCase()),
+      where: and(
+        eq(schema.account.email, email.toLowerCase()),
+        isNull(schema.account.deletedAt),
+      ),
     });
 
     if (!account) {
@@ -125,7 +131,10 @@ export class D1StorageProvider implements StorageProvider {
 
   async updateAccount(email: string, updates: Partial<Account>): Promise<void> {
     const account = await this.db.query.account.findFirst({
-      where: eq(schema.account.email, email.toLowerCase()),
+      where: and(
+        eq(schema.account.email, email.toLowerCase()),
+        isNull(schema.account.deletedAt),
+      ),
     });
 
     if (!account) {
@@ -169,7 +178,7 @@ export class D1StorageProvider implements StorageProvider {
     const id = generateKey();
 
     // Verify account exists
-    await this.getAccount(accountId);
+    const account = await this.getAccount(accountId);
 
     // Create app
     await this.db.insert(schema.app).values({
@@ -190,7 +199,7 @@ export class D1StorageProvider implements StorageProvider {
       name: app.name,
       createdTime: app.createdTime,
       collaborators: {
-        [accountId]: {
+        [account.email]: {
           accountId,
           permission: "Owner",
         },
@@ -216,35 +225,53 @@ export class D1StorageProvider implements StorageProvider {
       },
     });
 
-    return apps.map((collab) => ({
-      id: collab.app.id,
-      name: collab.app.name,
-      createdTime: collab.app.createdTime,
-      collaborators: collab.app.collaborators.reduce<CollaboratorMap>(
-        (acc, c) => {
-          acc[c.account.email] = {
-            accountId: c.accountId,
-            permission: c.permission,
-            isCurrentAccount: c.accountId === accountId,
-          } satisfies Collaborator;
-          return acc;
-        },
-        {},
-      ),
-      deployments: collab.app.deployments.map((d) => d.name),
-    }));
+    return apps
+      .map((collab) => ({
+        id: collab.app.id,
+        name: collab.app.name,
+        createdTime: collab.app.createdTime,
+        collaborators: collab.app.collaborators.reduce<CollaboratorMap>(
+          (acc, c) => {
+            acc[c.account.email] = {
+              accountId: c.accountId,
+              permission: c.permission,
+              isCurrentAccount: c.accountId === accountId,
+            } satisfies Collaborator;
+            return acc;
+          },
+          {},
+        ),
+        deployments: collab.app.deployments.map((d) => d.name),
+      }))
+      .sort((a, b) => a.createdTime - b.createdTime);
   }
 
-  async getApp(accountId: string, appId: string): Promise<App> {
+  async getApp(
+    accountId: string,
+    condition:
+      | {
+          appId: string;
+        }
+      | {
+          appName: string;
+        },
+  ): Promise<App> {
     const app = await this.db.query.app.findFirst({
-      where: eq(schema.app.id, appId),
+      where: and(
+        "appId" in condition
+          ? eq(schema.app.id, condition.appId)
+          : eq(schema.app.name, condition.appName),
+        isNull(schema.app.deletedAt),
+      ),
       with: {
         collaborators: {
           with: {
             account: true,
           },
         },
-        deployments: true,
+        deployments: {
+          where: isNull(schema.deployment.deletedAt),
+        },
       },
     });
 
@@ -276,7 +303,9 @@ export class D1StorageProvider implements StorageProvider {
   }
 
   async updateApp(accountId: string, app: App): Promise<void> {
-    const existing = await this.getApp(accountId, app.id);
+    const existing = await this.getApp(accountId, {
+      appId: app.id,
+    });
 
     // Verify ownership
     const isOwner = Object.values(existing.collaborators).some(
@@ -297,7 +326,7 @@ export class D1StorageProvider implements StorageProvider {
   }
 
   async removeApp(accountId: string, appId: string): Promise<void> {
-    const app = await this.getApp(accountId, appId);
+    const app = await this.getApp(accountId, { appId });
 
     // Verify ownership
     const isOwner = Object.values(app.collaborators).some(
@@ -311,34 +340,14 @@ export class D1StorageProvider implements StorageProvider {
       );
     }
 
-    // Delete all related records in transaction
-    await this.db.transaction(async (tx) => {
-      // Delete package diffs
-      await tx
-        .delete(schema.packageDiff)
-        .where(eq(schema.packageDiff.packageId, schema.packages.id));
-
-      // Delete packages
-      await tx
-        .delete(schema.packages)
-        .where(eq(schema.packages.deploymentId, schema.deployment.id));
-
-      // Delete deployments
-      await tx
-        .delete(schema.deployment)
-        .where(eq(schema.deployment.appId, appId));
-
-      // Delete collaborators
-      await tx
-        .delete(schema.collaborator)
-        .where(eq(schema.collaborator.appId, appId));
-
-      // Delete app
-      await tx.delete(schema.app).where(eq(schema.app.id, appId));
-    });
+    // Mark app as deleted
+    await this.db
+      .update(schema.app)
+      .set({ deletedAt: Date.now() })
+      .where(eq(schema.app.id, appId));
 
     // Delete all blobs for this app
-    await this.blob.deletePath(`apps/${appId}`);
+    // await this.blob.deletePath(`apps/${appId}`);
   }
 
   async transferApp(
@@ -346,7 +355,7 @@ export class D1StorageProvider implements StorageProvider {
     appId: string,
     email: string,
   ): Promise<void> {
-    const app = await this.getApp(accountId, appId);
+    const app = await this.getApp(accountId, { appId });
     const targetAccount = await this.getAccountByEmail(email);
 
     // Verify ownership
@@ -362,44 +371,42 @@ export class D1StorageProvider implements StorageProvider {
     }
 
     // Update permissions in transaction
-    await this.db.transaction(async (tx) => {
-      // Demote current owner to collaborator
-      await tx
+    // Demote current owner to collaborator
+    await this.db
+      .update(schema.collaborator)
+      .set({ permission: "Collaborator" })
+      .where(
+        and(
+          eq(schema.collaborator.appId, appId),
+          eq(schema.collaborator.accountId, accountId),
+        ),
+      );
+
+    // Make target account owner
+    const existingCollaborator = await this.db.query.collaborator.findFirst({
+      where: and(
+        eq(schema.collaborator.appId, appId),
+        eq(schema.collaborator.accountId, targetAccount.id),
+      ),
+    });
+
+    if (existingCollaborator) {
+      await this.db
         .update(schema.collaborator)
-        .set({ permission: "Collaborator" })
+        .set({ permission: "Owner" })
         .where(
           and(
             eq(schema.collaborator.appId, appId),
-            eq(schema.collaborator.accountId, accountId),
+            eq(schema.collaborator.accountId, targetAccount.id),
           ),
         );
-
-      // Make target account owner
-      const existingCollaborator = await tx.query.collaborator.findFirst({
-        where: and(
-          eq(schema.collaborator.appId, appId),
-          eq(schema.collaborator.accountId, targetAccount.id),
-        ),
+    } else {
+      await this.db.insert(schema.collaborator).values({
+        appId,
+        accountId: targetAccount.id,
+        permission: "Owner",
       });
-
-      if (existingCollaborator) {
-        await tx
-          .update(schema.collaborator)
-          .set({ permission: "Owner" })
-          .where(
-            and(
-              eq(schema.collaborator.appId, appId),
-              eq(schema.collaborator.accountId, targetAccount.id),
-            ),
-          );
-      } else {
-        await tx.insert(schema.collaborator).values({
-          appId,
-          accountId: targetAccount.id,
-          permission: "Owner",
-        });
-      }
-    });
+    }
   }
 
   // Collaborator operations
@@ -408,7 +415,7 @@ export class D1StorageProvider implements StorageProvider {
     appId: string,
     email: string,
   ): Promise<void> {
-    const app = await this.getApp(accountId, appId);
+    const app = await this.getApp(accountId, { appId });
     const collaborator = await this.getAccountByEmail(email);
 
     // Verify ownership
@@ -472,7 +479,7 @@ export class D1StorageProvider implements StorageProvider {
     appId: string,
     email: string,
   ): Promise<void> {
-    const app = await this.getApp(accountId, appId);
+    const app = await this.getApp(accountId, { appId });
     const collaborator = await this.getAccountByEmail(email);
 
     // Verify ownership or self-removal
@@ -504,7 +511,7 @@ export class D1StorageProvider implements StorageProvider {
     appId: string,
     deployment: Omit<Deployment, "id" | "package">,
   ): Promise<string> {
-    await this.getApp(accountId, appId);
+    await this.getApp(accountId, { appId });
     const id = generateKey();
 
     // Check for duplicate deployment name
@@ -539,7 +546,10 @@ export class D1StorageProvider implements StorageProvider {
     deploymentId: string,
   ): Promise<Deployment> {
     const deployment = await this.db.query.deployment.findFirst({
-      where: eq(schema.deployment.id, deploymentId),
+      where: and(
+        eq(schema.deployment.id, deploymentId),
+        isNull(schema.deployment.deletedAt),
+      ),
       with: {
         packages: {
           orderBy: (packages, { desc }) => [desc(packages.uploadTime)],
@@ -552,25 +562,31 @@ export class D1StorageProvider implements StorageProvider {
       throw createStorageError(ErrorCode.NotFound, "Deployment not found");
     }
 
-    const latestPackage = deployment.packages?.[0];
-
-    return {
+    const returningDeployment: Deployment = {
       id: deployment.id,
       name: deployment.name,
       key: deployment.key,
       createdTime: deployment.createdTime,
-      package: latestPackage
-        ? {
-            ...this.mapPackageFromDB(latestPackage),
-            blobUrl: await this.blob.getBlobUrl(latestPackage.blobPath),
-            // Use empty string as default for manifestBlobUrl
-            manifestBlobUrl: latestPackage.manifestBlobPath
-              ? await this.blob.getBlobUrl(latestPackage.manifestBlobPath)
-              : "",
-            diffPackageMap: await this.getPackageDiffs(latestPackage.id),
-          }
-        : undefined,
+      package: null,
     };
+
+    const latestPackage = deployment.packages?.[0];
+    if (latestPackage) {
+      const [blobUrl, manifestBlobUrl] = await Promise.all([
+        this.blob.getBlobUrl(latestPackage.blobPath),
+        latestPackage?.manifestBlobPath
+          ? this.blob.getBlobUrl(latestPackage.manifestBlobPath)
+          : null,
+      ]);
+      returningDeployment.package = {
+        ...this.mapPackageFromDB(latestPackage),
+        blobUrl,
+        manifestBlobUrl: manifestBlobUrl ?? "",
+        diffPackageMap: await this.getPackageDiffs(latestPackage.id),
+      } satisfies Package;
+    }
+
+    return returningDeployment;
   }
 
   async getDeployments(
@@ -587,30 +603,45 @@ export class D1StorageProvider implements StorageProvider {
       },
     });
 
-    return Promise.all(
-      deployments.map(async (d) => ({
-        id: d.id,
-        name: d.name,
-        key: d.key,
-        createdTime: d.createdTime,
-        package: d.packages[0]
-          ? {
-              ...this.mapPackageFromDB(d.packages[0]),
-              blobUrl: await this.blob.getBlobUrl(d.packages[0].blobPath),
-              // Use empty string as default
-              manifestBlobUrl: d.packages[0].manifestBlobPath
-                ? await this.blob.getBlobUrl(d.packages[0].manifestBlobPath)
-                : "",
-              diffPackageMap: await this.getPackageDiffs(d.packages[0].id),
-            }
-          : null,
-      })),
-    );
+    const results: Deployment[] = [];
+    for (const deployment of deployments) {
+      const returningDeployment: Deployment = {
+        id: deployment.id,
+        name: deployment.name,
+        key: deployment.key,
+        createdTime: deployment.createdTime,
+        package: null,
+      };
+
+      const latestPackage = deployment.packages[0];
+      if (latestPackage) {
+        const [blobUrl, manifestBlobUrl] = await Promise.all([
+          this.blob.getBlobUrl(latestPackage.blobPath),
+          latestPackage.manifestBlobPath
+            ? this.blob.getBlobUrl(latestPackage.manifestBlobPath)
+            : null,
+        ]);
+
+        returningDeployment.package = {
+          ...this.mapPackageFromDB(latestPackage),
+          blobUrl,
+          manifestBlobUrl: manifestBlobUrl ?? "",
+          diffPackageMap: await this.getPackageDiffs(latestPackage.id),
+        } satisfies Package;
+      }
+
+      results.push(returningDeployment);
+    }
+
+    return results;
   }
 
   async getDeploymentInfo(deploymentKey: string): Promise<DeploymentInfo> {
     const deployment = await this.db.query.deployment.findFirst({
-      where: eq(schema.deployment.key, deploymentKey),
+      where: and(
+        eq(schema.deployment.key, deploymentKey),
+        isNull(schema.deployment.deletedAt),
+      ),
       columns: {
         id: true,
         appId: true,
@@ -645,25 +676,14 @@ export class D1StorageProvider implements StorageProvider {
     appId: string,
     deploymentId: string,
   ): Promise<void> {
-    await this.db.transaction(async (tx) => {
-      // Delete package diffs
-      await tx
-        .delete(schema.packageDiff)
-        .where(eq(schema.packageDiff.packageId, schema.packages.id));
-
-      // Delete packages
-      await tx
-        .delete(schema.packages)
-        .where(eq(schema.packages.deploymentId, deploymentId));
-
-      // Delete deployment
-      await tx
-        .delete(schema.deployment)
-        .where(eq(schema.deployment.id, deploymentId));
-    });
+    // Mark deployment as deleted
+    await this.db
+      .update(schema.deployment)
+      .set({ deletedAt: Date.now() })
+      .where(eq(schema.deployment.id, deploymentId));
 
     // Delete all blobs for this deployment
-    await this.blob.deletePath(`apps/${appId}/deployments/${deploymentId}`);
+    // await this.blob.deletePath(`apps/${appId}/deployments/${deploymentId}`);
   }
 
   // Package methods
@@ -753,7 +773,10 @@ export class D1StorageProvider implements StorageProvider {
     deploymentId: string,
   ): Promise<Package[]> {
     const packages = await this.db.query.packages.findMany({
-      where: and(eq(schema.packages.deploymentId, deploymentId)),
+      where: and(
+        eq(schema.packages.deploymentId, deploymentId),
+        isNull(schema.packages.deletedAt),
+      ),
       orderBy: (packages, { asc }) => [asc(packages.uploadTime)],
     });
 
@@ -797,47 +820,46 @@ export class D1StorageProvider implements StorageProvider {
       );
     }
 
-    await this.db.transaction(async (tx) => {
-      // Delete existing packages
-      await tx
-        .delete(schema.packages)
-        .where(eq(schema.packages.deploymentId, deploymentId));
+    // Delete existing packages
+    await this.db
+      .update(schema.packages)
+      .set({ deletedAt: Date.now() })
+      .where(eq(schema.packages.deploymentId, deploymentId));
 
-      // Insert new history
-      for (const [index, pkg] of history.entries()) {
-        const id = generateKey();
-        const blobPath = this.getBlobPath(appId, deploymentId, `${id}.zip`);
-        const manifestBlobPath = pkg.manifestBlobUrl
-          ? this.getBlobPath(appId, deploymentId, `${id}-manifest.json`)
-          : null;
+    // Insert new history
+    for (const [index, pkg] of history.entries()) {
+      const id = generateKey();
+      const blobPath = this.getBlobPath(appId, deploymentId, `${id}.zip`);
+      const manifestBlobPath = pkg.manifestBlobUrl
+        ? this.getBlobPath(appId, deploymentId, `${id}-manifest.json`)
+        : null;
 
-        // Store the blobs
-        await this.blob.moveBlob(pkg.blobUrl, blobPath);
-        if (pkg.manifestBlobUrl && manifestBlobPath) {
-          await this.blob.moveBlob(pkg.manifestBlobUrl, manifestBlobPath);
-        }
-
-        await tx.insert(schema.packages).values({
-          id,
-          deploymentId,
-          label: `v${index + 1}`,
-          appVersion: pkg.appVersion,
-          description: pkg.description,
-          isDisabled: pkg.isDisabled,
-          isMandatory: pkg.isMandatory,
-          rollout: pkg.rollout,
-          size: pkg.size,
-          blobPath,
-          manifestBlobPath,
-          packageHash: pkg.packageHash,
-          releaseMethod: pkg.releaseMethod,
-          originalLabel: pkg.originalLabel,
-          originalDeployment: pkg.originalDeployment,
-          releasedBy: pkg.releasedBy,
-          uploadTime: pkg.uploadTime,
-        });
+      // Store the blobs
+      await this.blob.moveBlob(pkg.blobUrl, blobPath);
+      if (pkg.manifestBlobUrl && manifestBlobPath) {
+        await this.blob.moveBlob(pkg.manifestBlobUrl, manifestBlobPath);
       }
-    });
+
+      await this.db.insert(schema.packages).values({
+        id,
+        deploymentId,
+        label: `v${index + 1}`,
+        appVersion: pkg.appVersion,
+        description: pkg.description,
+        isDisabled: pkg.isDisabled,
+        isMandatory: pkg.isMandatory,
+        rollout: pkg.rollout,
+        size: pkg.size,
+        blobPath,
+        manifestBlobPath,
+        packageHash: pkg.packageHash,
+        releaseMethod: pkg.releaseMethod,
+        originalLabel: pkg.originalLabel,
+        originalDeployment: pkg.originalDeployment,
+        releasedBy: pkg.releasedBy,
+        uploadTime: pkg.uploadTime,
+      });
+    }
   }
 
   async clearPackageHistory(
@@ -845,20 +867,14 @@ export class D1StorageProvider implements StorageProvider {
     appId: string,
     deploymentId: string,
   ): Promise<void> {
-    await this.db.transaction(async (tx) => {
-      // Delete package diffs
-      await tx
-        .delete(schema.packageDiff)
-        .where(eq(schema.packageDiff.packageId, schema.packages.id));
-
-      // Delete packages
-      await tx
-        .delete(schema.packages)
-        .where(eq(schema.packages.deploymentId, deploymentId));
-    });
+    // Delete packages
+    await this.db
+      .update(schema.packages)
+      .set(schema.packages)
+      .where(eq(schema.packages.deploymentId, deploymentId));
 
     // Delete all package blobs
-    await this.blob.deletePath(`apps/${appId}/deployments/${deploymentId}`);
+    // await this.blob.deletePath(`apps/${appId}/deployments/${deploymentId}`);
   }
 
   // Blob operations
@@ -888,14 +904,14 @@ export class D1StorageProvider implements StorageProvider {
     await this.db.insert(schema.accessKey).values({
       id,
       accountId,
-      name: accessKey.name,
+      name: accessKey.name as string,
       friendlyName: accessKey.friendlyName,
       description: accessKey.description,
       createdBy: accessKey.createdBy,
       createdTime: accessKey.createdTime,
       expires: accessKey.expires,
       isSession: accessKey.isSession,
-    });
+    } satisfies typeof schema.accessKey.$inferInsert);
 
     return id;
   }
@@ -924,6 +940,7 @@ export class D1StorageProvider implements StorageProvider {
       where: and(
         eq(schema.accessKey.id, accessKeyId),
         eq(schema.accessKey.accountId, accountId),
+        isNull(schema.accessKey.deletedAt),
       ),
     });
 
@@ -937,7 +954,10 @@ export class D1StorageProvider implements StorageProvider {
   // For getAccessKeys
   async getAccessKeys(accountId: string): Promise<AccessKey[]> {
     const keys = await this.db.query.accessKey.findMany({
-      where: eq(schema.accessKey.accountId, accountId),
+      where: and(
+        eq(schema.accessKey.accountId, accountId),
+        isNull(schema.accessKey.deletedAt),
+      ),
     });
 
     return keys.map(this.mapAccessKeyFromDB);
@@ -945,11 +965,13 @@ export class D1StorageProvider implements StorageProvider {
 
   async removeAccessKey(accountId: string, accessKeyId: string): Promise<void> {
     const result = await this.db
-      .delete(schema.accessKey)
+      .update(schema.accessKey)
+      .set({ deletedAt: Date.now() })
       .where(
         and(
           eq(schema.accessKey.id, accessKeyId),
           eq(schema.accessKey.accountId, accountId),
+          isNull(schema.accessKey.deletedAt),
         ),
       );
 

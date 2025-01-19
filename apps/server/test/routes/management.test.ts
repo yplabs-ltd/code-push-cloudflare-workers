@@ -11,17 +11,18 @@ import {
   MetricsSchema,
 } from "../../src/types/schemas";
 import { generateKey } from "../../src/utils/security";
+import { urlEncode } from "../../src/utils/urlencode";
 import {
   DEFAULT_TEST_USER,
   type TestAuth,
+  type TestUser,
   createTestAuth,
 } from "../utils/auth";
 import { cleanupDatabase, getTestDb } from "../utils/db";
 import {
-  createTestAccessKey,
   createTestAccount,
   createTestApp,
-  createTestCollaborator,
+  createTestBlob,
   createTestDeployment,
   createTestPackage,
 } from "../utils/fixtures";
@@ -47,8 +48,8 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         // Create test keys
-        const key1 = await auth.createTestAccessKey();
-        const key2 = await auth.createTestAccessKey();
+        await auth.createTestAccessKey();
+        await auth.createTestAccessKey();
 
         const response = await SELF.fetch(
           "https://example.com/management/accessKeys",
@@ -225,6 +226,7 @@ describe("Management Routes", () => {
         expect(response.status).toBe(200);
 
         const data = await response.json();
+
         const validated = z
           .object({
             accessKey: AccessKeySchema,
@@ -238,7 +240,7 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          "/management/accessKeys/non-existent",
+          "https://example.com/management/accessKeys/non-existent",
           {
             headers,
           },
@@ -373,7 +375,7 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          "/management/accessKeys/non-existent",
+          "https://example.com/management/accessKeys/non-existent",
           {
             method: "DELETE",
             headers,
@@ -391,8 +393,14 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         // Create test apps
-        const app1 = createTestApp();
-        const app2 = createTestApp();
+        const app1 = createTestApp({
+          name: `test-app-1-${generateKey()}`,
+          createdTime: Date.now(),
+        });
+        const app2 = createTestApp({
+          name: `test-app-2-${generateKey()}`,
+          createdTime: app1.createdTime + 1000,
+        });
         await db.insert(schema.app).values([app1, app2]);
 
         // Add collaborations
@@ -662,9 +670,13 @@ describe("Management Routes", () => {
       it("returns 404 if user has no access", async () => {
         const headers = await auth.getAuthHeaders();
 
-        // Create app owned by different user
         const app = createTestApp();
-        const otherAccount = createTestAccount();
+        const testUser: TestUser = {
+          email: "test2@example.com",
+          name: "Test User",
+        };
+        const { account: otherAccount } =
+          await auth.createTestAccount(testUser);
         await db.insert(schema.app).values(app);
         await db.insert(schema.collaborator).values({
           appId: app.id,
@@ -809,20 +821,13 @@ describe("Management Routes", () => {
         expect(response.status).toBe(204);
 
         // Verify cascade deletion
-        const appExists = await db.query.app.findFirst({
+        const removedApp = await db.query.app.findFirst({
           where: eq(schema.app.id, app.id),
+          columns: {
+            deletedAt: true,
+          },
         });
-        expect(appExists).toBeNull();
-
-        const deploymentExists = await db.query.deployment.findFirst({
-          where: eq(schema.deployment.id, deployment.id),
-        });
-        expect(deploymentExists).toBeNull();
-
-        const packageExists = await db.query.packages.findFirst({
-          where: eq(schema.packages.id, package1.id),
-        });
-        expect(packageExists).toBeNull();
+        expect(removedApp?.deletedAt).toBeGreaterThan(0);
       });
 
       it("requires owner permission", async () => {
@@ -869,8 +874,13 @@ describe("Management Routes", () => {
 
         // Create test app and target account
         const app = createTestApp();
-        const targetAccount = createTestAccount();
-        await db.insert(schema.account).values(targetAccount);
+        const testUser: TestUser = {
+          email: "test2@example.com",
+          name: "Test User 2",
+        };
+        const { account: targetAccount } =
+          await auth.createTestAccount(testUser);
+
         await db.insert(schema.app).values(app);
         await db.insert(schema.collaborator).values({
           appId: app.id,
@@ -1031,7 +1041,7 @@ describe("Management Routes", () => {
           { headers },
         );
 
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
 
@@ -1151,7 +1161,7 @@ describe("Management Routes", () => {
         await db.insert(schema.deployment).values(deployment);
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments/${deployment.name}`,
+          urlEncode`https://example.com/management/apps/${app.name}/deployments/${deployment.name}`,
           { headers },
         );
 
@@ -1176,8 +1186,14 @@ describe("Management Routes", () => {
         const pkg = createTestPackage(deployment.id);
         await db.insert(schema.packages).values(pkg);
 
+        // create blobs
+        await Promise.all([
+          createTestBlob(pkg.blobPath, "blob1"),
+          createTestBlob(pkg.manifestBlobPath as string, "blob2"),
+        ]);
+
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments/${deployment.name}`,
+          urlEncode`https://example.com/management/apps/${app.name}/deployments/${deployment.name}`,
           { headers },
         );
 
@@ -1284,13 +1300,18 @@ describe("Management Routes", () => {
     });
 
     describe("DELETE /apps/:name/deployments/:deploymentName", () => {
-      it("deletes deployment and related resources", async () => {
+      it("deletes deployment", async () => {
         const headers = await auth.getAuthHeaders();
 
         const deployment = createTestDeployment(app.id);
         const pkg = createTestPackage(deployment.id);
         await db.insert(schema.deployment).values(deployment);
         await db.insert(schema.packages).values(pkg);
+
+        await Promise.all([
+          createTestBlob(pkg.blobPath, "blob1"),
+          createTestBlob(pkg.manifestBlobPath as string, "blob2"),
+        ]);
 
         const response = await SELF.fetch(
           `https://example.com/management/apps/${app.name}/deployments/${deployment.name}`,
@@ -1303,15 +1324,10 @@ describe("Management Routes", () => {
         expect(response.status).toBe(204);
 
         // Verify cascade deletion
-        const deploymentExists = await db.query.deployment.findFirst({
+        const removedDeployment = await db.query.deployment.findFirst({
           where: eq(schema.deployment.id, deployment.id),
         });
-        expect(deploymentExists).toBeNull();
-
-        const packageExists = await db.query.packages.findFirst({
-          where: eq(schema.packages.id, pkg.id),
-        });
-        expect(packageExists).toBeNull();
+        expect(removedDeployment?.deletedAt).toBeGreaterThan(0);
       });
 
       it("requires owner permission", async () => {
@@ -1413,7 +1429,7 @@ describe("Management Routes", () => {
           { headers },
         );
 
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
     });
 
@@ -1533,7 +1549,7 @@ describe("Management Routes", () => {
             eq(schema.collaborator.accountId, collaboratorAccount.id),
           ),
         });
-        expect(collaborator).toBeNull();
+        expect(collaborator).toBeFalsy();
       });
 
       it("allows collaborator to remove themselves", async () => {
@@ -1708,7 +1724,7 @@ describe("Management Routes", () => {
           { headers },
         );
 
-        expect(response.status).toBe(403);
+        expect(response.status).toBe(404);
       });
 
       it("returns 404 for non-existent deployment", async () => {

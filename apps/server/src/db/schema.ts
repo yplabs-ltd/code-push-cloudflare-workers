@@ -14,6 +14,7 @@ export const account = sqliteTable("account", {
   name: text("name").notNull(),
   githubId: text("github_id"),
   createdTime: integer("created_time").notNull(),
+  deletedAt: integer("deleted_at"),
 });
 
 // Account relations
@@ -27,6 +28,7 @@ export const app = sqliteTable("app", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
   createdTime: integer("created_time").notNull(),
+  deletedAt: integer("deleted_at"),
 });
 
 // App relations
@@ -49,9 +51,7 @@ export const collaborator = sqliteTable(
       enum: ["Owner", "Collaborator"],
     }).notNull(),
   },
-  (t) => ({
-    pk: primaryKey({ columns: [t.appId, t.accountId] }),
-  }),
+  (t) => [primaryKey({ columns: [t.appId, t.accountId] })],
 );
 
 // Collaborator relations
@@ -75,6 +75,7 @@ export const deployment = sqliteTable("deployment", {
   name: text("name").notNull(),
   key: text("key").notNull().unique(),
   createdTime: integer("created_time").notNull(),
+  deletedAt: integer("deleted_at"),
 });
 
 // Deployment relations
@@ -109,6 +110,7 @@ export const packages = sqliteTable("package", {
   originalDeployment: text("original_deployment"),
   releasedBy: text("released_by"),
   uploadTime: integer("upload_time").notNull(),
+  deletedAt: integer("deleted_at"),
 });
 
 // Package relations
@@ -156,6 +158,7 @@ export const accessKey = sqliteTable("access_key", {
   createdTime: integer("created_time").notNull(),
   expires: integer("expires").notNull(),
   isSession: integer("is_session", { mode: "boolean" }),
+  deletedAt: integer("deleted_at"),
 });
 
 // Access key relations

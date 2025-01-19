@@ -23,7 +23,16 @@ export interface StorageProvider {
     app: Omit<App, "id" | "collaborators" | "deployments">,
   ): Promise<App>;
   getApps(accountId: string): Promise<App[]>;
-  getApp(accountId: string, appId: string): Promise<App>;
+  getApp(
+    accountId: string,
+    condition:
+      | {
+          appId: string;
+        }
+      | {
+          appName: string;
+        },
+  ): Promise<App>;
   removeApp(accountId: string, appId: string): Promise<void>;
   updateApp(accountId: string, app: App): Promise<void>;
   transferApp(accountId: string, appId: string, email: string): Promise<void>;

@@ -11,7 +11,7 @@ import {
 import { sign } from "../../src/utils/jwt";
 import { generateKey } from "../../src/utils/security";
 
-interface TestUser {
+export interface TestUser {
   email: string;
   name: string;
 }
@@ -27,23 +27,24 @@ export class TestAuth {
     this.jwtSecret = jwtSecret;
   }
 
-  async setupTestAccount(user: TestUser): Promise<void> {
+  async createTestAccount(user: TestUser) {
     // Create test account
     const accountId = generateKey();
     const now = Date.now();
 
-    await this.db.insert(account).values({
+    const newAccount = {
       id: accountId,
       email: user.email,
       name: user.name,
       createdTime: now,
-    });
+    } satisfies typeof account.$inferInsert;
+    await this.db.insert(account).values(newAccount);
 
     // Create access key
     const keyName = generateKey();
     const keyId = generateKey();
 
-    const newAccessKey: AccessKey = {
+    const newAccessKey = {
       id: keyId,
       name: keyName,
       friendlyName: "Test Access Key",
@@ -51,22 +52,22 @@ export class TestAuth {
       createdTime: now,
       expires: now + 24 * 60 * 60 * 1000, // 24 hours
       isSession: true,
-    };
+      accountId,
+    } satisfies typeof accessKey.$inferInsert;
+    await this.db.insert(accessKey).values(newAccessKey);
 
-    await this.db.insert(accessKey).values({
-      ...newAccessKey,
-      accountId: accountId,
-    });
+    return {
+      account: newAccount,
+      accessKey: newAccessKey,
+    } as const;
+  }
 
-    this.account = {
-      id: accountId,
-      email: user.email,
-      name: user.name,
-      linkedProviders: [],
-      createdTime: now,
-    };
+  async setupTestAccount(user: TestUser) {
+    const { account, accessKey } = await this.createTestAccount(user);
+    this.account = account as Account;
+    this.accessKey = accessKey;
 
-    this.accessKey = newAccessKey;
+    return this.account;
   }
 
   async createTestAccessKey() {
@@ -78,7 +79,7 @@ export class TestAuth {
     const keyId = generateKey();
 
     const now = Date.now();
-    const newAccessKey: AccessKey = {
+    const newAccessKey = {
       id: keyId,
       name: keyName,
       friendlyName: "Test Access Key",
@@ -86,12 +87,9 @@ export class TestAuth {
       createdTime: now,
       expires: now + 24 * 60 * 60 * 1000, // 24 hours
       isSession: true,
-    };
-
-    await this.db.insert(accessKey).values({
-      ...newAccessKey,
       accountId: this.account.id,
-    });
+    } satisfies typeof accessKey.$inferInsert;
+    await this.db.insert(accessKey).values(newAccessKey);
 
     return newAccessKey;
   }
@@ -147,7 +145,12 @@ export class TestAuth {
       .where(eq(accessKey.accountId, this.account.id));
 
     // Delete account
-    await this.db.delete(account).where(eq(account.id, this.account.id));
+    await this.db
+      .update(account)
+      .set({
+        deletedAt: Date.now(),
+      })
+      .where(eq(account.id, this.account.id));
 
     this.account = undefined;
     this.accessKey = undefined;

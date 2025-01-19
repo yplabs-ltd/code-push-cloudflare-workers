@@ -35,13 +35,14 @@ export function createTestAccessKey(
   };
 }
 
-export function createTestApp(): App {
+export function createTestApp(overrides: Partial<App> = {}): App {
   return {
     id: generateKey(),
     name: `test-app-${generateKey()}`,
     collaborators: {},
     deployments: [],
     createdTime: Date.now(),
+    ...overrides,
   };
 }
 
