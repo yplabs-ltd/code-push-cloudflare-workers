@@ -1,6 +1,6 @@
 import type { Context } from "hono";
 import { HTTPException } from "hono/http-exception";
-import { ErrorCode, type StorageError } from "../types/storage";
+import { isStorageError } from "../types/error";
 
 export class AppError extends Error {
   constructor(
@@ -71,7 +71,6 @@ export function handleError(error: unknown, c: Context): Response {
   }
 
   if (isStorageError(error)) {
-    // const statusCode = storageErrorToStatusCode(error.code);
     return c.json({
       error: "STORAGE_ERROR",
       error_description: error.message,
@@ -85,32 +84,4 @@ export function handleError(error: unknown, c: Context): Response {
     },
     500,
   );
-}
-
-function isStorageError(error: unknown): error is StorageError {
-  return (
-    typeof error === "object" &&
-    error !== null &&
-    "code" in error &&
-    "source" in error &&
-    error.source === "storage"
-  );
-}
-function storageErrorToStatusCode(code: ErrorCode): number {
-  switch (code) {
-    case ErrorCode.NotFound:
-      return 404;
-    case ErrorCode.AlreadyExists:
-      return 409;
-    case ErrorCode.Invalid:
-      return 400;
-    case ErrorCode.Expired:
-      return 401;
-    case ErrorCode.TooLarge:
-      return 413;
-    case ErrorCode.ConnectionFailed:
-      return 503;
-    default:
-      return 500;
-  }
 }

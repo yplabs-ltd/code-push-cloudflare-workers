@@ -172,7 +172,7 @@ class PackageDifferImpl implements PackageDiffer {
 
     // Get deployment info to update history
     const deployment = await storage.getDeploymentInfo(
-      latestPackage.deploymentId, // Changed from deploymentKey to deploymentId
+      latestPackage.originalDeployment,
     );
 
     await storage.updatePackageHistory(

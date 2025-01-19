@@ -1,8 +1,10 @@
 import { env } from "cloudflare:test";
 import type * as schema from "../../src/db/schema";
 import type {
+  AccessKey,
   Account,
   App,
+  Collaborator,
   Deployment,
   Package,
 } from "../../src/types/schemas";
@@ -19,6 +21,20 @@ export function createTestAccount(): Account {
   };
 }
 
+export function createTestAccessKey(
+  accountId: string = generateKey(),
+): Omit<AccessKey, "id"> {
+  return {
+    name: generateKey(),
+    friendlyName: `Test Key ${generateKey()}`,
+    createdBy: "Test",
+    createdTime: Date.now(),
+    description: "Test access key",
+    expires: Date.now() + 3600000, // 1 hour
+    isSession: false,
+  };
+}
+
 export function createTestApp(): App {
   return {
     id: generateKey(),
@@ -26,6 +42,17 @@ export function createTestApp(): App {
     collaborators: {},
     deployments: [],
     createdTime: Date.now(),
+  };
+}
+
+export function createTestCollaborator(
+  accountId: string,
+  permission: "Owner" | "Collaborator" = "Collaborator",
+): typeof schema.collaborator.$inferInsert {
+  return {
+    appId: generateKey(),
+    accountId,
+    permission,
   };
 }
 
@@ -63,7 +90,10 @@ export function createTestPackage(
 }
 
 export async function createTestBlob(
-  ...args: Parameters<typeof env.STORAGE_BUCKET.put>
-) {
-  return env.STORAGE_BUCKET.put(...args);
+  key: string,
+  content: string | Uint8Array,
+  options: R2PutOptions = {},
+): Promise<{ key: string }> {
+  await env.STORAGE_BUCKET.put(key, content, options);
+  return { key };
 }

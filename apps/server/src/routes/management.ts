@@ -1,6 +1,7 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { HTTPException } from "hono/http-exception";
 import { z } from "zod";
+import { authMiddleware } from "../middleware/auth";
 import { getStorageProvider } from "../storage/factory";
 import type { Env } from "../types/env";
 import {
@@ -25,6 +26,8 @@ import {
 } from "../utils/security";
 
 const router = new OpenAPIHono<Env>();
+
+router.use("/*", authMiddleware());
 
 const DEFAULT_ACCESS_KEY_EXPIRY = 1000 * 60 * 60 * 24 * 60; // 60 days
 const ACCESS_KEY_MASKING_STRING = "(hidden)";

@@ -2,6 +2,7 @@ import { OpenAPIHono } from "@hono/zod-openapi";
 import { Hono } from "hono";
 import { prettyJSON } from "hono/pretty-json";
 import { secureHeaders } from "hono/secure-headers";
+import { authMiddleware } from "./middleware/auth";
 import { corsMiddleware } from "./middleware/cors";
 import { logging } from "./middleware/logging";
 import { acquisitionRouter } from "./routes/acquisition";
