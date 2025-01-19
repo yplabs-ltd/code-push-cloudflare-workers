@@ -19,6 +19,24 @@ The official CodePush Standalone server:
 
 This project provides **a seamless, drop-in replacement 🔌** using Cloudflare Workers, resolving these issues.
 
+## Cost Comparison (vs Azure Deployment)
+
+This project significantly reduces operational costs by utilizing Cloudflare's infrastructure. Here's a detailed breakdown of the estimated monthly costs:
+
+| Service                  | Azure (Original)         | Cloudflare Workers (This Project)  |
+|--------------------------|--------------------------|-----------------------------------|
+| **Compute**             |                          |                                   |
+| Azure App Service       | $13.14 (Basic B1)         | $0 (Free Tier Handles 3M Requests)  |
+| **Caching**             |                          |                                  |
+| Azure Cache for Redis   | $16.43 (Basic C0)         | $0 (Using Cloudflare D1 as a cache, this is fast enough)    |
+| **Storage**            |                          |                                   |
+| Azure Blob Storage      | ~$2.88 (min usage, incl Queue & Table) | $0 (10GB Free, 1M Class A/10M Class B with R2)  |
+| Azure Key Vault    |$0.03 (10,000 operations)| $0 (integrated on R2)  |
+| **Total Estimated**      | **~$32.48**               | **$0** (Free Tier)                |
+
+Traditional deployments of the official CodePush Standalone on Azure require *an estimated ~$32.48 per month*, while this project can handle up to 1 million monthly API requests entirely for *free* within Cloudflare's generous free tier and using it's R2 storage and D1 database.
+
+
 ## Key Benefits
 
 *   ✨ **Global, Serverless, Effortless:** Deliver updates globally with low latency, powered by Cloudflare's edge network, all without managing any servers.
