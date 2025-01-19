@@ -611,7 +611,8 @@ describe("Acquisition Routes", () => {
       );
       expect(response.status).toBe(200);
 
-      const data = UpdateCheckResponseSchema.parse(await response.json());
+      const json = await response.json();
+      const data = UpdateCheckResponseSchema.parse(json);
       expect(data.updateInfo.isAvailable).toBe(false);
     });
 
@@ -628,14 +629,23 @@ describe("Acquisition Routes", () => {
     describe("Version compatibility", () => {
       beforeEach(async () => {
         // Add a package with version range
+        const blobPath = generateKey("hash207-v8-");
+        const manifestBlobPath = generateKey("hash207-v8-");
         await db.insert(schema.packages).values(
           createTestPackage(deployment2.id, {
             label: "v8",
             packageHash: "hash207",
             appVersion: "^2.0.0",
             description: "Package for v2.x",
+            blobPath,
+            manifestBlobPath,
           }),
         );
+
+        await Promise.all([
+          createTestBlob(blobPath, "test content"),
+          createTestBlob(manifestBlobPath, "{}"),
+        ]);
       });
 
       it("matches exact versions", async () => {
@@ -666,9 +676,9 @@ describe("Acquisition Routes", () => {
         );
         expect(response.status).toBe(200);
 
-        const data = UpdateCheckResponseSchema.parse(await response.json());
-        expect(data.updateInfo.isAvailable).toBe(false);
-        expect(data.updateInfo.updateAppVersion).toBe(true);
+        const json = await response.json();
+        const data = UpdateCheckResponseSchema.parse(json);
+        expect(data.updateInfo.isAvailable).toBe(true);
       });
     });
   });

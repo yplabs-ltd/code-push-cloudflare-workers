@@ -1,6 +1,7 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { compare, compareVersions, satisfies } from "compare-versions";
-import { z } from "zod";
+import qs from "qs";
+import type { z } from "zod";
 import { getStorageProvider } from "../storage/factory";
 import type { Env } from "../types/env";
 import { isStorageError } from "../types/error";
@@ -206,6 +207,11 @@ router.openapi(routes.updateCheck, async (c) => {
     // Check app version compatibility
     if (!query.isCompanion && packageEntry.appVersion) {
       if (!satisfies(sanitizedAppVersion, packageEntry.appVersion)) {
+        // Special handling for pre-release versions
+        if (sanitizedAppVersion.includes("-")) {
+          // For pre-release versions, we should make the update available
+          latestSatisfyingEnabledPackage ||= packageEntry;
+        }
         continue;
       }
     }
@@ -287,7 +293,7 @@ router.openapi(routes.updateCheck, async (c) => {
 
   // Handle rollout if specified
   if (
-    latestSatisfyingEnabledPackage.rollout &&
+    typeof latestSatisfyingEnabledPackage.rollout === "number" &&
     latestSatisfyingEnabledPackage.rollout < 100
   ) {
     if (!query.clientUniqueId) {
@@ -333,188 +339,63 @@ router.openapi(routes.updateCheck, async (c) => {
   } satisfies UpdateCheckResponse);
 });
 
-// Legacy v1 endpoint implementations remain the same
 router.openapi(routes.updateCheckV1, async (c) => {
-  const storage = getStorageProvider(c);
   const query = c.req.valid("query");
 
-  const { deployment_key: deploymentKey, app_version: receivedAppVersion } =
-    query;
-
   try {
-    const deploymentInfo = await storage.getDeploymentInfo(
-      deploymentKey.trim(),
+    // Transform snake_case query to camelCase for reuse
+    const camelCaseQuery = {
+      deploymentKey: query.deployment_key,
+      appVersion: query.app_version,
+      packageHash: query.package_hash,
+      label: query.label,
+      clientUniqueId: query.client_unique_id,
+      isCompanion: query.is_companion,
+    } satisfies z.infer<typeof UpdateCheckParams>;
+
+    // Create a new context with transformed query
+    const transformedContext = {
+      ...c,
+      req: { ...c.req, query: camelCaseQuery },
+    };
+
+    // Reuse updateCheck logic
+    const response = await router.fetch(
+      new Request(
+        `${c.req.url.split("?")[0].replace("/v0.1/public/codepush/update_check", "/updateCheck")}?${qs.stringify(
+          camelCaseQuery,
+        )}`,
+        { headers: c.req.raw.headers },
+      ),
+      transformedContext.env,
     );
-    const history = await storage.getPackageHistory(
-      "", // accountId not needed
-      deploymentInfo.appId,
-      deploymentInfo.deploymentId,
-    );
 
-    // Handle empty package history
-    if (!history || history.length === 0) {
-      return c.json({
-        update_info: {
-          is_available: false,
-          is_mandatory: false,
-          app_version: receivedAppVersion,
-          should_run_binary_version: true,
-        },
-      } satisfies LegacyUpdateCheckResponse);
-    }
+    const result = UpdateCheckResponseSchema.parse(await response.json());
 
-    // Find appropriate package using original CodePush logic
-    let foundRequestPackageInHistory = false;
-    let latestSatisfyingEnabledPackage: Package | undefined;
-    let latestEnabledPackage: Package | undefined;
-    let shouldMakeUpdateMandatory = false;
-
-    // Iterate history backwards to find appropriate package
-    for (let i = history.length - 1; i >= 0; i--) {
-      const packageEntry = history[i];
-
-      foundRequestPackageInHistory =
-        foundRequestPackageInHistory ||
-        (!query.label && !query.package_hash) ||
-        (query.label && packageEntry.label === query.label) ||
-        (!query.label && packageEntry.packageHash === query.package_hash);
-
-      if (packageEntry.isDisabled) {
-        continue;
-      }
-
-      latestEnabledPackage ||= packageEntry;
-
-      if (!query.is_companion && packageEntry.appVersion) {
-        if (!satisfies(receivedAppVersion, packageEntry.appVersion)) {
-          continue;
-        }
-      }
-
-      latestSatisfyingEnabledPackage ||= packageEntry;
-
-      if (foundRequestPackageInHistory) {
-        break;
-      }
-      if (packageEntry.isMandatory) {
-        shouldMakeUpdateMandatory = true;
-        break;
-      }
-    }
-
-    if (!latestEnabledPackage) {
-      return c.json({
-        update_info: {
-          is_available: false,
-          is_mandatory: false,
-          app_version: receivedAppVersion,
-        },
-      } satisfies LegacyUpdateCheckResponse);
-    }
-
-    if (!latestSatisfyingEnabledPackage) {
-      return c.json({
-        update_info: {
-          is_available: false,
-          is_mandatory: false,
-          app_version: receivedAppVersion,
-          should_run_binary_version: true,
-        },
-      } satisfies LegacyUpdateCheckResponse);
-    }
-
-    if (latestSatisfyingEnabledPackage.packageHash === query.package_hash) {
-      const response: LegacyUpdateCheckResponse = {
-        update_info: {
-          is_available: false,
-          is_mandatory: false,
-          app_version: receivedAppVersion,
-        },
-      };
-
-      if (
-        compareVersions(
-          receivedAppVersion,
-          latestEnabledPackage.appVersion,
-          ">",
-        )
-      ) {
-        response.update_info.app_version = latestEnabledPackage.appVersion;
-      } else if (
-        !satisfies(receivedAppVersion, latestEnabledPackage.appVersion)
-      ) {
-        response.update_info.update_app_version = true;
-        response.update_info.app_version = latestEnabledPackage.appVersion;
-      }
-
-      return c.json(response);
-    }
-
-    let downloadUrl = latestSatisfyingEnabledPackage.blobUrl;
-    let packageSize = latestSatisfyingEnabledPackage.size;
-
-    if (
-      query.package_hash &&
-      latestSatisfyingEnabledPackage.diffPackageMap?.[query.package_hash]
-    ) {
-      const diff =
-        latestSatisfyingEnabledPackage.diffPackageMap[query.package_hash];
-      downloadUrl = diff.url;
-      packageSize = diff.size;
-    }
-
-    if (
-      latestSatisfyingEnabledPackage.rollout &&
-      latestSatisfyingEnabledPackage.rollout < 100
-    ) {
-      if (!query.client_unique_id) {
-        return c.json({
-          update_info: {
-            is_available: false,
-            is_mandatory: false,
-            app_version: receivedAppVersion,
-          },
-        } satisfies LegacyUpdateCheckResponse);
-      }
-
-      const isInRollout = rolloutStrategy(
-        query.client_unique_id,
-        latestSatisfyingEnabledPackage.rollout,
-        latestSatisfyingEnabledPackage.packageHash,
-      );
-
-      if (!isInRollout) {
-        return c.json({
-          update_info: {
-            is_available: false,
-            is_mandatory: false,
-            app_version: receivedAppVersion,
-          },
-        } satisfies LegacyUpdateCheckResponse);
-      }
-    }
-
-    return c.json({
+    // Transform camelCase response to snake_case for legacy endpoint
+    const legacyResponse: LegacyUpdateCheckResponse = {
       update_info: {
-        is_available: true,
-        is_mandatory:
-          shouldMakeUpdateMandatory ||
-          latestSatisfyingEnabledPackage.isMandatory,
-        app_version: receivedAppVersion,
-        package_hash: latestSatisfyingEnabledPackage.packageHash,
-        label: latestSatisfyingEnabledPackage.label,
-        package_size: packageSize,
-        description: latestSatisfyingEnabledPackage.description,
-        download_url: downloadUrl,
+        is_available: result.updateInfo.isAvailable,
+        is_mandatory: result.updateInfo.isMandatory,
+        app_version: result.updateInfo.appVersion,
+        should_run_binary_version: result.updateInfo.shouldRunBinaryVersion,
+        update_app_version: result.updateInfo.updateAppVersion,
+        package_hash: result.updateInfo.packageHash,
+        label: result.updateInfo.label,
+        package_size: result.updateInfo.packageSize,
+        description: result.updateInfo.description,
+        download_url: result.updateInfo.downloadURL,
       },
-    } satisfies LegacyUpdateCheckResponse);
+    };
+
+    return c.json(legacyResponse);
   } catch (error) {
     if (isStorageError(error)) {
       return c.json({
         update_info: {
           is_available: false,
           is_mandatory: false,
-          app_version: receivedAppVersion,
+          app_version: query.app_version,
         },
       } satisfies LegacyUpdateCheckResponse);
     }

@@ -76,3 +76,18 @@ export const DateRangeParams = z.object({
 export type PaginationParamsType = z.infer<typeof PaginationParams>;
 export type SortParamsType = z.infer<typeof SortParams>;
 export type DateRangeParamsType = z.infer<typeof DateRangeParams>;
+
+export const queryCompatibleBoolean = z.preprocess((value: unknown) => {
+  if (typeof value === "boolean") {
+    return value;
+  }
+
+  if (value === "true" || value === "1") {
+    return true;
+  }
+  if (value === "false" || value === "0") {
+    return false;
+  }
+
+  return value;
+}, z.boolean());

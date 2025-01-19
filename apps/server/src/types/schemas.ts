@@ -1,5 +1,6 @@
+import { z } from "@hono/zod-openapi";
 import { validate } from "compare-versions";
-import { z } from "zod";
+import { queryCompatibleBoolean } from "../utils/validation";
 import { isValidVersion, normalizeVersion } from "../utils/version";
 
 // Enums
@@ -170,27 +171,27 @@ export const ApiResponse = z.object({
 export type ApiResponse = z.infer<typeof ApiResponse>;
 
 export const UpdateCheckParams = z.object({
-  deploymentKey: z.string().min(10),
   appVersion: z.string().refine(isValidVersion, {
     message: "Invalid version format",
   }),
-  // .transform(normalizeVersion),
+  deploymentKey: z.string().min(10),
   packageHash: z.string().optional(),
   label: z.string().optional(),
   clientUniqueId: z.string().optional(),
-  isCompanion: z.boolean().optional().default(false),
+  isCompanion: queryCompatibleBoolean.optional().default(false),
 });
 export type UpdateCheckParams = z.infer<typeof UpdateCheckParams>;
 
 export const LegacyUpdateCheckParams = z.object({
-  app_version: z.string().regex(/^\d+\.\d+\.\d+$/),
+  app_version: z.string().refine(isValidVersion, {
+    message: "Invalid version format",
+  }),
   deployment_key: z.string().min(10),
   package_hash: z.string().optional(),
   label: z.string().optional(),
   client_unique_id: z.string().optional(),
-  is_companion: z.boolean().optional(),
+  is_companion: queryCompatibleBoolean.optional().default(false),
 });
-
 export type LegacyUpdateCheckParams = z.infer<typeof LegacyUpdateCheckParams>;
 
 export const DeploymentReportBody = z.object({
