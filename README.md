@@ -1,6 +1,6 @@
 # CodePush on Cloudflare Workers 🚀
 
-A community-driven port of Microsoft's CodePush Standalone, designed for cost-effective and scalable over-the-air updates using Cloudflare Workers.
+A community-driven port of Microsoft's [CodePush Standalone](https://github.com/microsoft/code-push-server), designed for cost-effective and scalable over-the-air updates using Cloudflare Workers.
 
 **Status: Alpha 🧪** - Core functionality is **100% compatible ✅** with the official CodePush, but further testing and improvements are ongoing.
 
