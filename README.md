@@ -40,7 +40,6 @@ Traditional deployments of the official CodePush Standalone on Azure require *an
 
 **Note:** Network bandwidth cost is not included in the comparison. By using Cloudflare's infrastructure, network bandwidth cost is almost free for most use cases.
 
-
 ## Key Benefits
 
 *   ✨ **Global, Serverless, Effortless:** Deliver updates globally with low latency, powered by Cloudflare's edge network, all without managing any servers.
@@ -55,6 +54,30 @@ Traditional deployments of the official CodePush Standalone on Azure require *an
 -   💾 **Cloudflare Storage**: Leverages D1 (SQLite) and R2 (S3) for data and package storage.
 -   🌐 **Edge Delivery**: Utilizes Cloudflare's edge network for fast updates.
 -   ⚡️ **Seamless Deployment:** Deploy your CodePush server to Cloudflare Workers with a streamlined and simplified process, reducing the setup time and effort
+
+## Implementation Status (Test Passes)
+
+### Server
+
+- [x] Auth: Handles user authentication and session management. (Admin API)
+  - [x] Github Auth: Supports authentication using GitHub OAuth.
+- [x] Acquisition: Provides update checks and download reports. (Client SDK API)
+  - [x] Update Check: Handles update checks, version matching, and diff delivery.
+  - [x] Metrics: Records deployment and download metrics and reports.
+- [ ] Management: Handles app, deployment and release management. (Admin CLI API)
+  - [ ] App Management: Handles app creation, modification, deletion, and transfer.
+  - [ ] Deployment Management: Handles deployment creation, modification, and deletion.
+  - [ ] Release Management: Handles package publishing, promoting, and rollback.
+  - [ ] Collaborator Management: Handles collaborators addition, removal and listings.
+  - [ ] Metrics Management: Retrieves and displays deployment metrics
+
+### Web
+
+To be implemented.
+
+### CLI
+
+While the official CodePush Standalone CLI can be used, a custom CLI is planned for far future releases.
 
 ## Getting Started
 
