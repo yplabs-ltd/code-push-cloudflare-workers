@@ -6,7 +6,7 @@ A community-driven port of Microsoft's [CodePush Standalone](https://github.com/
 
 **No Servers Needed!** You can now use CodePush Standalone without managing any infrastructure, **nor needing an understanding of it!**
 
-**Status: Alpha 🧪** - Core functionality is **100% compatible ✅** with the official CodePush, but further testing and improvements are ongoing.
+**Status: Alpha - Under Development 🧪** - Core functionality is **100% compatible ✅** with the official CodePush, but further testing and improvements are ongoing.
 
 **Important Note:** This project is not affiliated with, maintained, or endorsed by Microsoft or the CodePush team. It's a community initiative aimed at providing a more accessible and affordable alternative.
 
