@@ -23,6 +23,15 @@ export default defineWorkersProject(async () => {
             // setup file
             bindings: {
               TEST_MIGRATIONS: migrations,
+              GITHUB_CLIENT_ID: "xxx",
+              GITHUB_CLIENT_SECRET: "xxx",
+              JWT_SECRET: "test",
+              ACCOUNT_ID: "test",
+              R2_BUCKET_NAME: "test",
+              R2_ACCESS_KEY_ID: "test",
+              R2_SECRET_ACCESS_KEY: "test",
+              ENABLE_ACCOUNT_REGISTRATION: "true",
+              SERVER_URL: "http://localhost:5173",
             },
             r2Buckets: ["STORAGE_BUCKET"],
           },
