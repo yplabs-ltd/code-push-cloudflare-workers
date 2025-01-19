@@ -12,7 +12,7 @@ A community-driven port of Microsoft's [CodePush Standalone](https://github.com/
 
 ## Why I Built This
 
-This project addresses a crucial need for a reliable and cost-effective solution following Microsoft's planned shutdown of AppCenter CodePush in March 2025.
+This project addresses a crucial need for a reliable and cost-effective solution following Microsoft's planned shutdown of AppCenter CodePush in March 2025, without requiring migration to other solutions like EAS.
 
 The official CodePush Standalone server:
    - Is not readily deployable as a true *standalone* solution.
