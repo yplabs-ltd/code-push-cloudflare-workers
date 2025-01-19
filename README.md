@@ -8,7 +8,14 @@ A community-driven port of Microsoft's [CodePush Standalone](https://github.com/
 
 ## Why I Built This
 
-This project was born out of the need for a reliable and cost-effective alternative to Microsoft's AppCenter CodePush, which is scheduled to shut down in March 2025. Rather than undergoing a complete migration to other solutions like Expo OTA (requiring significant time and effort), this project provides **a seamless, drop-in replacement** using Cloudflare Workers.
+This project addresses a crucial need for a reliable and cost-effective solution following Microsoft's planned shutdown of AppCenter CodePush in March 2025.
+
+The official CodePush Standalone server:
+   - Is not readily deployable as a true *standalone* solution.
+   - Requires a complex setup with Azure infrastructure.
+   - Has a difficult-to-maintain codebase with a less-than-ideal TypeScript implementation.
+
+This project provides **a seamless, drop-in replacement 🔌** using Cloudflare Workers, resolving these issues.
 
 ## Key Benefits
 
