@@ -1,5 +1,7 @@
 # CodePush on Cloudflare Workers 🚀
 
+![main branch test status](https://github.com/ssut/code-push-cloudflare-workers/actions/workflows/test.yml/badge.svg?branch=main)
+
 A community-driven port of Microsoft's [CodePush Standalone](https://github.com/microsoft/code-push-server), designed for cost-effective and scalable over-the-air updates using Cloudflare Workers.
 
 **No Servers Needed!** You can now use CodePush Standalone without managing any infrastructure, **nor needing an understanding of it!**
