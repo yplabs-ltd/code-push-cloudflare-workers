@@ -1,244 +1,245 @@
-import JSZip from "jszip";
+import { compare } from "compare-versions";
+import { strToU8, unzipSync, zipSync } from "fflate";
+import type { BlobStorageProvider } from "../storage/blob";
 import type { StorageProvider } from "../storage/storage";
 import type { Package } from "../types/schemas";
-import { generateKey } from "./security";
+import * as hashUtils from "./hash-utils";
 
-interface FileEntry {
-  path: string;
-  hash: string;
-  content: Uint8Array;
-}
-
-interface DiffResult {
+interface DiffArchive {
   deletedFiles: string[];
-  newFiles: Map<string, string>;
+  newOrUpdatedFiles: Map<string, string>;
 }
 
-export interface PackageManifest {
-  readonly files: Map<string, string>;
-  readonly size: number;
-  computeHash(): Promise<string>;
-  serialize(): string;
-}
+export class PackageDiffer {
+  private static MANIFEST_FILE = "hotcodepush.json";
 
-export interface PackageDiffer {
-  generateManifest(): Promise<PackageManifest>;
-  computePackageHash(): Promise<string>;
-  generateDiffs(history: Package[], storage: StorageProvider): Promise<void>;
-}
+  constructor(
+    private readonly storage: StorageProvider,
+    private readonly appId: string,
+    private readonly deploymentId: string,
+    private newFileData: ArrayBuffer,
+    private maxDiffPackageCount = 5,
+  ) {}
 
-class PackageManifestImpl implements PackageManifest {
-  private readonly fileMap: Map<string, string>;
-  private readonly totalSize: number;
+  async generateManifest(): Promise<hashUtils.PackageManifest> {
+    try {
+      const decompressed = unzipSync(new Uint8Array(this.newFileData));
+      const fileMap = new Map<string, string>();
 
-  constructor(files: Map<string, string>, size: number) {
-    this.fileMap = new Map(files);
-    this.totalSize = size;
-  }
-
-  get files(): Map<string, string> {
-    return new Map(this.fileMap);
-  }
-
-  get size(): number {
-    return this.totalSize;
-  }
-
-  async computeHash(): Promise<string> {
-    const entries: string[] = [];
-    for (const [path, hash] of this.fileMap.entries()) {
-      if (path !== ".codepushrelease") {
-        entries.push(`${path}:${hash}`);
-      }
-    }
-    entries.sort();
-
-    const data = new TextEncoder().encode(JSON.stringify(entries));
-    const hashBuffer = await crypto.subtle.digest("SHA-256", data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map((b) => b.toString(16).padStart(2, "0")).join("");
-  }
-
-  serialize(): string {
-    const obj: Record<string, string> = {};
-    for (const [path, hash] of this.fileMap) {
-      obj[path] = hash;
-    }
-    return JSON.stringify(obj);
-  }
-}
-
-class PackageDifferImpl implements PackageDiffer {
-  private readonly zipBuffer: ArrayBuffer;
-  private entries: FileEntry[] = [];
-
-  constructor(buffer: ArrayBuffer) {
-    this.zipBuffer = buffer;
-  }
-
-  async generateManifest(): Promise<PackageManifest> {
-    await this.loadEntries();
-    const files = new Map<string, string>();
-    let totalSize = 0;
-
-    for (const entry of this.entries) {
-      files.set(entry.path, entry.hash);
-      totalSize += entry.content.length;
-    }
-
-    return new PackageManifestImpl(files, totalSize);
-  }
-
-  async computePackageHash(): Promise<string> {
-    const manifest = await this.generateManifest();
-    return manifest.computeHash();
-  }
-
-  async generateDiffs(
-    history: Package[],
-    storage: StorageProvider,
-  ): Promise<void> {
-    if (history.length === 0) {
-      return;
-    }
-
-    await this.loadEntries();
-    const newManifest = await this.generateManifest();
-    const latestPackage = history.at(-1);
-
-    if (!latestPackage || !latestPackage?.packageHash) {
-      console.log("No package hash found for package", latestPackage);
-      return;
-    }
-
-    console.log("Generating diffs for package", latestPackage.packageHash);
-
-    // Only diff against last 5 packages with same app version
-    const relevantHistory = history
-      .slice(-5)
-      .filter(
-        (pkg) =>
-          pkg.manifestBlobUrl && pkg.appVersion === latestPackage.appVersion,
-      );
-
-    for (const oldPackage of relevantHistory) {
-      const oldManifestRes = await fetch(oldPackage.manifestBlobUrl);
-      const oldManifestData = (await oldManifestRes.json()) as Record<
-        string,
-        string
-      >;
-      const oldFiles = new Map<string, string>(Object.entries(oldManifestData));
-
-      const { deletedFiles, newFiles } = this.calculateDiff(
-        oldFiles,
-        newManifest.files,
-      );
-
-      // Skip if no changes
-      if (deletedFiles.length === 0 && newFiles.size === 0) {
-        continue;
-      }
-
-      // Create diff package
-      const zip = new JSZip();
-      zip.file("hotcodepush.json", JSON.stringify({ deletedFiles }));
-
-      for (const [path] of newFiles.entries()) {
-        const entry = this.entries.find((e) => e.path === path);
-        if (entry) {
-          zip.file(path, entry.content);
+      for (const [filename, content] of Object.entries(decompressed)) {
+        const normalizedPath =
+          hashUtils.PackageManifest.normalizePath(filename);
+        if (!hashUtils.PackageManifest.isIgnored(normalizedPath)) {
+          const hash = await hashUtils.computeHash(content);
+          fileMap.set(normalizedPath, hash);
         }
       }
 
-      const diffBuffer = await zip.generateAsync({
-        type: "arraybuffer",
-        compression: "DEFLATE",
-      });
-
-      const diffBlobId = generateKey();
-      await storage.addBlob(diffBlobId, diffBuffer, diffBuffer.byteLength);
-      const diffUrl = await storage.getBlobUrl(diffBlobId);
-
-      // Update diff package map
-      if (!latestPackage.diffPackageMap) {
-        latestPackage.diffPackageMap = {};
-      }
-
-      latestPackage.diffPackageMap[oldPackage.packageHash] = {
-        size: diffBuffer.byteLength,
-        url: diffUrl,
-      };
-    }
-
-    // Get deployment info to update history
-    const deployment = await storage.getDeploymentInfo(
-      latestPackage.originalDeployment,
-    );
-
-    await storage.updatePackageHistory(
-      deployment.id, // Changed from accountId to id
-      deployment.appId,
-      deployment.deploymentId,
-      history,
-    );
-  }
-
-  private async loadEntries(): Promise<void> {
-    if (this.entries.length > 0) {
-      return;
-    }
-
-    const zip = await JSZip.loadAsync(this.zipBuffer);
-
-    for (const [path, file] of Object.entries(zip.files)) {
-      if (!file.dir) {
-        const content = await file.async("uint8array");
-        const hashBuffer = await crypto.subtle.digest("SHA-256", content);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hash = hashArray
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join("");
-
-        this.entries.push({
-          path,
-          hash,
-          content,
-        });
-      }
+      return new hashUtils.PackageManifest(fileMap);
+    } catch {
+      // Not a valid zip file, compute hash of entire content
+      const hash = await hashUtils.computeHash(
+        new Uint8Array(this.newFileData),
+      );
+      return new hashUtils.PackageManifest(new Map([["/", hash]]));
     }
   }
+  async generateDiffs(history: Package[]): Promise<Map<string, string>> {
+    if (!history?.length) {
+      return new Map();
+    }
 
-  private calculateDiff(
-    oldFiles: Map<string, string>,
-    newFiles: Map<string, string>,
-  ): DiffResult {
-    const deletedFiles: string[] = [];
-    const modifiedFiles = new Map<string, string>();
+    const newManifest = await this.generateManifest();
+    const diffResults = new Map<string, string>();
+
+    // Get candidates to generate diffs against
+    const packagesToProcess = this.getPackagesForDiff(history);
+    if (!packagesToProcess.length) {
+      return diffResults;
+    }
+
+    for (const oldPackage of packagesToProcess) {
+      if (oldPackage.packageHash === undefined) {
+        continue;
+      }
+
+      if (!oldPackage.manifestBlobUrl) {
+        // Skip packages without manifest - can't generate accurate diff
+        continue;
+      }
+
+      // Get old package manifest
+      const oldManifestResponse = await fetch(oldPackage.manifestBlobUrl);
+      if (!oldManifestResponse.ok) {
+        continue;
+      }
+
+      const oldManifestText = await oldManifestResponse.text();
+      const oldManifest =
+        hashUtils.PackageManifest.deserialize(oldManifestText);
+      if (!oldManifest) {
+        continue;
+      }
+
+      // Generate diff between manifests
+      const diff = this.generateDiffBetweenManifests(oldManifest, newManifest);
+
+      // If diff exists, create diff archive
+      if (diff.deletedFiles.length > 0 || diff.newOrUpdatedFiles.size > 0) {
+        // Follow the same pattern as D1StorageProvider:
+        // apps/${appId}/deployments/${deploymentId}/${filename}
+        const blobId = `apps/${this.appId}/deployments/${this.deploymentId}/diff_${oldPackage.packageHash}.zip`;
+
+        const diffArchive = await this.createDiffArchive(
+          diff,
+          oldPackage.packageHash,
+          blobId,
+        );
+        if (diffArchive) {
+          diffResults.set(oldPackage.packageHash, diffArchive);
+        }
+      }
+    }
+
+    return diffResults;
+  }
+
+  private getPackagesForDiff(history: Package[]): Package[] {
+    if (!history?.length) {
+      return [];
+    }
+
+    // Get current release's app version
+    const currentRelease = history[history.length - 1];
+    if (!currentRelease) {
+      return [];
+    }
+
+    const validPackages: Package[] = [];
+    let foundNewPackage = false;
+
+    // Process history in reverse chronological order
+    for (let i = history.length - 1; i >= 0; i--) {
+      const historicalPackage = history[i];
+
+      // Skip until we find current package
+      if (!foundNewPackage) {
+        foundNewPackage = true;
+        continue;
+      }
+
+      // Stop if we've collected enough packages
+      if (validPackages.length >= this.maxDiffPackageCount) {
+        break;
+      }
+
+      // Only diff against packages with matching appVersion
+      const versionsMatch = this.isMatchingVersion(
+        currentRelease.appVersion,
+        historicalPackage.appVersion,
+      );
+
+      if (versionsMatch && historicalPackage.packageHash) {
+        validPackages.push(historicalPackage);
+      }
+    }
+
+    return validPackages;
+  }
+
+  private isMatchingVersion(baseVersion: string, newVersion: string): boolean {
+    try {
+      // Check if versions match exactly or satisfy semver ranges
+      return (
+        baseVersion === newVersion ||
+        compare(baseVersion, newVersion, "=") ||
+        compare(newVersion, baseVersion, "=")
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  private generateDiffBetweenManifests(
+    oldManifest: hashUtils.PackageManifest,
+    newManifest: hashUtils.PackageManifest,
+  ): DiffArchive {
+    const diff: DiffArchive = {
+      deletedFiles: [],
+      newOrUpdatedFiles: new Map(),
+    };
+
+    const oldMap = oldManifest.toMap();
+    const newMap = newManifest.toMap();
+
+    // Find modified and new files
+    newMap.forEach((hash, name) => {
+      if (!oldMap.has(name) || oldMap.get(name) !== hash) {
+        diff.newOrUpdatedFiles.set(name, hash);
+      }
+    });
 
     // Find deleted files
-    for (const [path] of oldFiles) {
-      if (!newFiles.has(path)) {
-        deletedFiles.push(path);
+    oldMap.forEach((hash, name) => {
+      if (!newMap.has(name)) {
+        diff.deletedFiles.push(name);
       }
-    }
+    });
 
-    // Find new/modified files
-    for (const [path, hash] of newFiles) {
-      const oldHash = oldFiles.get(path);
-      if (!oldHash || oldHash !== hash) {
-        modifiedFiles.set(path, hash);
+    return diff;
+  }
+
+  private async createDiffArchive(
+    diff: DiffArchive,
+    oldPackageHash: string,
+    blobId: string,
+  ): Promise<string | undefined> {
+    try {
+      // Get new package contents
+      const decompressed = unzipSync(new Uint8Array(this.newFileData));
+
+      // Create diff archive
+      const diffArchive: Record<string, Uint8Array> = {};
+
+      // Add manifest file containing deleted files
+      const manifestContent = JSON.stringify({
+        deletedFiles: diff.deletedFiles,
+      });
+      diffArchive[PackageDiffer.MANIFEST_FILE] = strToU8(manifestContent);
+
+      // Add modified/new files
+      for (const [filename] of diff.newOrUpdatedFiles) {
+        const content = decompressed[filename];
+        if (content) {
+          diffArchive[filename] = content;
+        }
       }
-    }
 
-    return {
-      deletedFiles,
-      newFiles: modifiedFiles,
-    };
+      // Create zip containing diff
+      const zipped = zipSync(diffArchive);
+
+      // Store diff blob using provided ID
+      await this.storage.addBlob(blobId, zipped, zipped.length);
+      return blobId;
+    } catch (err) {
+      console.error("Failed to create diff archive:", err);
+      return undefined;
+    }
   }
 }
 
 export async function createPackageDiffer(
-  buffer: ArrayBuffer,
+  storage: StorageProvider,
+  appId: string,
+  deploymentId: string,
+  packageData: ArrayBuffer,
+  maxDiffPackageCount = 5,
 ): Promise<PackageDiffer> {
-  return new PackageDifferImpl(buffer);
+  return new PackageDiffer(
+    storage,
+    appId,
+    deploymentId,
+    packageData,
+    maxDiffPackageCount,
+  );
 }

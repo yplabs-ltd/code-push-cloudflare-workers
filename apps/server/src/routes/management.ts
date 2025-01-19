@@ -1160,7 +1160,12 @@ router.openapi(routes.deployments.release, async (c) => {
   }
 
   const packageData = await packageFile.arrayBuffer();
-  const differ = await createPackageDiffer(packageData);
+  const differ = await createPackageDiffer(
+    storage,
+    app.id,
+    deployment.id,
+    packageData,
+  );
   const manifestResult = await differ.generateManifest();
   const packageHash = await manifestResult.computeHash();
 
@@ -1220,7 +1225,7 @@ router.openapi(routes.deployments.release, async (c) => {
 
   // Generate diffs in background
   if (manifestResult) {
-    await differ.generateDiffs(history, storage);
+    await differ.generateDiffs(history);
   }
 
   c.header(

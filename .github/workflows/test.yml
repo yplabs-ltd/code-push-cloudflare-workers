@@ -32,6 +32,11 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Run checks
+        run: |
+          cd apps/server
+          pnpm typecheck
+          pnpm check
       - name: Run tests
         run: |
           cd apps/server

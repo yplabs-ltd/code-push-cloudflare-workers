@@ -10,7 +10,9 @@
     "list:production": "wrangler d1 migrations list DB --env production",
     "apply": "wrangler d1 migrations apply DB --local",
     "apply:preview": "wrangler d1 migrations apply DB --env preview",
-    "apply:production": "wrangler d1 migrations apply DB --env production"
+    "apply:production": "wrangler d1 migrations apply DB --env production",
+    "check": "biome ci --diagnostic-level=error ./src",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hono/zod-openapi": "^0.18.3",
@@ -20,6 +22,7 @@
     "compare-versions": "^6.1.1",
     "drizzle-kit": "^0.30.2",
     "drizzle-orm": "^0.38.4",
+    "fflate": "^0.8.2",
     "hono": "^4.6.16",
     "jszip": "^3.10.1",
     "qs": "^6.14.0",

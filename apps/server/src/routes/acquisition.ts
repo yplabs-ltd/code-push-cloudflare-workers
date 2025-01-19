@@ -1,5 +1,5 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
-import { compare, compareVersions, satisfies } from "compare-versions";
+import { compare, satisfies } from "compare-versions";
 import qs from "qs";
 import type { z } from "zod";
 import { getStorageProvider } from "../storage/factory";

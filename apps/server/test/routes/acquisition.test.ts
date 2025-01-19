@@ -3,16 +3,13 @@ import { eq } from "drizzle-orm";
 import qs from "qs";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import * as schema from "../../src/db/schema";
-import { getStorageProvider } from "../../src/storage/factory";
-import { StorageProvider } from "../../src/storage/storage";
 import {
   type App,
   type Deployment,
-  Package,
   UpdateCheckResponseSchema,
 } from "../../src/types/schemas";
 import { generateKey } from "../../src/utils/security";
-import { TestAuth } from "../utils/auth";
+import { type TestAuth, createTestAuth } from "../utils/auth";
 import { cleanupDatabase, getTestDb } from "../utils/db";
 import {
   createTestAccount,
@@ -23,8 +20,9 @@ import {
 } from "../utils/fixtures";
 
 describe("Acquisition Routes", () => {
-  const auth = new TestAuth();
-  const db = getTestDb();
+  let auth: TestAuth;
+  let db: ReturnType<typeof getTestDb>;
+  // const db = getTestDb();
   let app: App;
   let deployment: Deployment;
   let packages: (typeof schema.packages.$inferInsert)[];
@@ -32,6 +30,9 @@ describe("Acquisition Routes", () => {
   let packages2: (typeof schema.packages.$inferInsert)[];
 
   beforeEach(async () => {
+    auth = createTestAuth(env.DB, env.JWT_SECRET);
+    db = getTestDb();
+
     await cleanupDatabase();
 
     // Create test data

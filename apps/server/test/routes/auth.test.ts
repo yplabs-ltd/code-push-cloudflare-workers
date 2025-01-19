@@ -1,12 +1,14 @@
-import { SELF } from "cloudflare:test";
+import { SELF, env } from "cloudflare:test";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { TestAuth } from "../utils/auth";
+import { type TestAuth, createTestAuth } from "../utils/auth";
 import { cleanupDatabase } from "../utils/db";
 
 describe("Auth Routes", () => {
-  const auth = new TestAuth();
+  let auth: TestAuth;
 
   beforeEach(async () => {
+    auth = createTestAuth(env.DB, env.JWT_SECRET);
+
     await cleanupDatabase();
   });
 
