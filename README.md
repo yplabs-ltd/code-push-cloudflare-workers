@@ -36,6 +36,8 @@ This project significantly reduces operational costs by utilizing Cloudflare's i
 
 Traditional deployments of the official CodePush Standalone on Azure require *an estimated ~$32.48 per month*, while this project can handle up to 1 million monthly API requests entirely for *free* within Cloudflare's generous free tier and using it's R2 storage and D1 database.
 
+**Note:** Network bandwidth cost is not included in the comparison. By using Cloudflare's infrastructure, network bandwidth cost is almost free for most use cases.
+
 
 ## Key Benefits
 
