@@ -1,0 +1,29 @@
+name = "code-push-server"
+main = "src/index.ts"
+compatibility_date = "2024-12-30"
+compatibility_flags = ["nodejs_compat"]
+
+d1_databases = [
+  { binding = "DB", database_name = "code-push-server-local", database_id = "n/a", migrations_dir = "drizzle/migrations" },
+]
+
+[vars]
+SERVER_URL = "http://localhost:8787"
+ENABLE_ACCOUNT_REGISTRATION = "true"
+CORS_ORIGINS = "http://localhost:3000"
+ENABLE_PACKAGE_DIFFING = "true"
+
+[[r2_buckets]]
+binding = "STORAGE_BUCKET"
+bucket_name = "code-push-storage"
+preview_bucket_name = "code-push-storage-dev"
+
+[env.preview]
+d1_databases = [
+  { binding = "DB", database_name = "code-push-server-preview", database_id = "<id>", migrations_dir = "drizzle/migrations" },
+]
+
+[env.production]
+d1_databases = [
+  { binding = "DB", database_name = "code-push-server-prod", database_id = "<id>", migrations_dir = "drizzle/migrations" },
+]

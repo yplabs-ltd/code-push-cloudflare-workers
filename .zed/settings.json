@@ -1,0 +1,12 @@
+{
+  "code_actions_on_format": {
+    "source.fixAll.biome": true,
+    "source.organizeImports.biome": true,
+    "source.removeUnusedImports.ts": true
+  },
+  "formatter": {
+    "language_server": {
+      "name": "biome"
+    }
+  }
+}
