@@ -303,13 +303,17 @@ describe("Acquisition Routes", () => {
     });
 
     // App version specific tests
-    it.only("returns 200 and no update for greater app version", async () => {
+    it("returns 200 and no update for greater app version", async () => {
+      const packageHash = packages2
+        .filter((p) => p.appVersion === "2.0.0")
+        .sort((a, b) => b.label.localeCompare(a.label))[0].packageHash;
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=2.0.0&packageHash=${packages2[0].packageHash}`,
+        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=2.0.0&packageHash=${packageHash}`,
       );
       expect(response.status).toBe(200);
 
-      const data = UpdateCheckResponseSchema.parse(await response.json());
+      const json = await response.json();
+      const data = UpdateCheckResponseSchema.parse(json);
       expect(data.updateInfo.shouldRunBinaryVersion).toBe(true);
     });
 
@@ -319,7 +323,8 @@ describe("Acquisition Routes", () => {
       );
       expect(response.status).toBe(200);
 
-      const data = UpdateCheckResponseSchema.parse(await response.json());
+      const json = await response.json();
+      const data = UpdateCheckResponseSchema.parse(json);
       expect(data.updateInfo.isAvailable).toBe(true);
       expect(data.updateInfo.label).toBe("v4");
     });

@@ -229,6 +229,7 @@ router.openapi(routes.updateCheck, async (c) => {
         isAvailable: false,
         isMandatory: false,
         appVersion: receivedAppVersion,
+        shouldRunBinaryVersion: true,
       },
     } satisfies UpdateCheckResponse);
   }
@@ -252,6 +253,7 @@ router.openapi(routes.updateCheck, async (c) => {
         isAvailable: false,
         isMandatory: false,
         appVersion: receivedAppVersion,
+        shouldRunBinaryVersion: true,
       },
     };
 
