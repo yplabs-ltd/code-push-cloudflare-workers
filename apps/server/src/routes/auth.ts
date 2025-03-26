@@ -17,7 +17,7 @@ const LoginErrorResponse = z.object({
 const routes = {
   login: createRoute({
     method: "get",
-    path: "/github/login",
+    path: "/login",
     responses: {
       302: {
         description: "Redirect to GitHub OAuth",
@@ -69,7 +69,7 @@ router.openapi(routes.login, async (c) => {
   });
 
   return c.redirect(
-    `https://github.com/login/oauth/authorize?${params.toString()}`,
+    `https://github.com/login/oauth/authorize?${params.toString()}`
   );
 });
 
@@ -83,7 +83,7 @@ router.openapi(routes.callback, async (c) => {
           error: "invalid_request",
           error_description: "No code provided",
         },
-        400,
+        400
       );
     }
 
@@ -131,14 +131,13 @@ router.openapi(routes.callback, async (c) => {
       expires: Date.now() + 60 * 24 * 60 * 60 * 1000, // 60 days
       isSession: true,
     });
-
     // Create JWT token
     const token = await sign(
       {
         sub: accountId,
         email: githubUser.email,
       },
-      c.env.JWT_SECRET,
+      c.env.JWT_SECRET
     );
 
     // Set session cookie
@@ -156,8 +155,12 @@ router.openapi(routes.callback, async (c) => {
       return c.redirect(`/login?error=${error}`);
     }
 
-    const redirectTo = c.req.query("redirect_to") || "/dashboard";
-    return c.redirect(redirectTo);
+    const redirectTo = c.req.query("redirect_to");
+    return c.json({
+      accessKeyName,
+      token,
+      redirectTo,
+    });
   } catch (error) {
     console.error("Auth error:", error);
 
@@ -166,7 +169,7 @@ router.openapi(routes.callback, async (c) => {
         error: "auth_failed",
         error_description: "Authentication failed",
       },
-      400,
+      400
     );
   }
 });
