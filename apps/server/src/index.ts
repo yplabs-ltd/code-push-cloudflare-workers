@@ -31,6 +31,7 @@ app.onError(errorHandler);
 
 // Health check
 app.get("/health", (c) => c.json({ status: "ok" }));
+app.get("/authenticated", authMiddleware(), handlers.authenticatedHandler);
 
 app.doc("/docs", {
   openapi: "3.0.0",
