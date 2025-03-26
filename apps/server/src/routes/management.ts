@@ -29,7 +29,11 @@ import { urlEncode } from "../utils/urlencode";
 
 const router = new OpenAPIHono<Env>();
 
-router.use("/*", authMiddleware());
+router.use("/account/*", authMiddleware());
+router.use("/apps/*", authMiddleware());
+router.use("/accessKeys/*", authMiddleware());
+router.use("/collaborators/*", authMiddleware());
+router.use("/metrics/*", authMiddleware());
 
 const DEFAULT_ACCESS_KEY_EXPIRY = 1000 * 60 * 60 * 24 * 60; // 60 days
 const ACCESS_KEY_MASKING_STRING = "(hidden)";
@@ -195,7 +199,7 @@ const routes = {
 
     create: createRoute({
       method: "post",
-      path: "/apps",
+      path: "/apps/",
       request: {
         body: {
           content: {
@@ -315,7 +319,7 @@ const routes = {
   deployments: {
     list: createRoute({
       method: "get",
-      path: "/apps/:appName/deployments",
+      path: "/apps/:appName/deployments/",
       description: "List app deployments",
       request: {
         params: z.object({
@@ -338,7 +342,7 @@ const routes = {
 
     create: createRoute({
       method: "post",
-      path: "/apps/:appName/deployments",
+      path: "/apps/:appName/deployments/",
       description: "Create new deployment",
       request: {
         params: z.object({
@@ -412,7 +416,7 @@ const routes = {
 
     update: createRoute({
       method: "patch",
-      path: "/apps/:appName/deployments/:deploymentName",
+      path: "/apps/:appName/deployments/:deploymentName/",
       description: "Update deployment",
       request: {
         params: z.object({
@@ -446,7 +450,7 @@ const routes = {
     // Release management
     release: createRoute({
       method: "post",
-      path: "/apps/:appName/deployments/:deploymentName/release",
+      path: "/apps/:appName/deployments/:deploymentName/release/",
       description: "Release new package version",
       request: {
         params: z.object({
@@ -634,7 +638,7 @@ const routes = {
 
 function throwIfInvalidPermissions(
   app: App,
-  requiredPermission: "Owner" | "Collaborator",
+  requiredPermission: "Owner" | "Collaborator"
 ): void {
   const collaboratorsMap = app.collaborators;
   let isPermitted = false;
@@ -711,7 +715,7 @@ router.openapi(routes.accessKeys.create, async (c) => {
   const existingKeys = await storage.getAccessKeys(accountId);
   const isDuplicateName = existingKeys.some((key) => key.name === keyName);
   const isDuplicateFriendlyName = existingKeys.some(
-    (key) => key.friendlyName === body.friendlyName,
+    (key) => key.friendlyName === body.friendlyName
   );
 
   if (isDuplicateName) {
@@ -739,7 +743,7 @@ router.openapi(routes.accessKeys.get, async (c) => {
 
   const accessKeys = await storage.getAccessKeys(accountId);
   const accessKey = accessKeys.find(
-    (key) => key.name === accessKeyName || key.friendlyName === accessKeyName,
+    (key) => key.name === accessKeyName || key.friendlyName === accessKeyName
   );
 
   if (!accessKey) {
@@ -763,7 +767,7 @@ router.openapi(routes.accessKeys.update, async (c) => {
 
   const accessKeys = await storage.getAccessKeys(accountId);
   const accessKey = accessKeys.find(
-    (key) => key.name === accessKeyName || key.friendlyName === accessKeyName,
+    (key) => key.name === accessKeyName || key.friendlyName === accessKeyName
   );
 
   if (!accessKey) {
@@ -775,7 +779,7 @@ router.openapi(routes.accessKeys.update, async (c) => {
   if (updates.friendlyName) {
     const isDuplicate = accessKeys.some(
       (key) =>
-        key.id !== accessKey.id && key.friendlyName === updates.friendlyName,
+        key.id !== accessKey.id && key.friendlyName === updates.friendlyName
     );
 
     if (isDuplicate) {
@@ -807,7 +811,7 @@ router.openapi(routes.accessKeys.remove, async (c) => {
 
   const accessKeys = await storage.getAccessKeys(accountId);
   const accessKey = accessKeys.find(
-    (key) => key.name === accessKeyName || key.friendlyName === accessKeyName,
+    (key) => key.name === accessKeyName || key.friendlyName === accessKeyName
   );
 
   if (!accessKey) {
@@ -862,8 +866,8 @@ router.openapi(routes.apps.create, async (c) => {
           name,
           key: generateDeploymentKey(),
           createdTime: Date.now(),
-        }),
-      ),
+        })
+      )
     );
     app.deployments = defaultDeployments.sort((a, b) => a.localeCompare(b));
   }
@@ -1010,12 +1014,12 @@ router.openapi(routes.deployments.create, async (c) => {
   const deployment = await storage.getDeployment(
     accountId,
     app.id,
-    deploymentId,
+    deploymentId
   );
 
   c.header(
     "Location",
-    urlEncode`/apps/${appName}/deployments/${deployment.name}`,
+    urlEncode`/apps/${appName}/deployments/${deployment.name}`
   );
   return c.json({ deployment }, 201);
 });
@@ -1157,7 +1161,7 @@ router.openapi(routes.deployments.release, async (c) => {
     storage,
     app.id,
     deployment.id,
-    packageData,
+    packageData
   );
   const manifestResult = await differ.generateManifest();
   const packageHash = await manifestResult.computeHash();
@@ -1166,7 +1170,7 @@ router.openapi(routes.deployments.release, async (c) => {
   const history = await storage.getPackageHistory(
     accountId,
     app.id,
-    deployment.id,
+    deployment.id
   );
   const lastPackage = history[history.length - 1];
   if (lastPackage && lastPackage.packageHash === packageHash) {
@@ -1190,7 +1194,7 @@ router.openapi(routes.deployments.release, async (c) => {
     await storage.addBlob(
       manifestBlobId,
       manifestBuffer,
-      manifestBuffer.length,
+      manifestBuffer.length
     );
     manifestUrl = await storage.getBlobUrl(manifestBlobId);
   }
@@ -1213,7 +1217,7 @@ router.openapi(routes.deployments.release, async (c) => {
     accountId,
     app.id,
     deployment.id,
-    newPackage,
+    newPackage
   );
 
   // Generate diffs in background
@@ -1223,7 +1227,7 @@ router.openapi(routes.deployments.release, async (c) => {
 
   c.header(
     "Location",
-    urlEncode`/apps/${appName}/deployments/${deploymentName}`,
+    urlEncode`/apps/${appName}/deployments/${deploymentName}`
   );
   return c.json({ package: releasedPackage }, 201);
 });
@@ -1246,7 +1250,7 @@ router.openapi(routes.deployments.promote, async (c) => {
 
   const deployments = await storage.getDeployments(accountId, app.id);
   const sourceDeployment = deployments.find(
-    (d) => d.name === sourceDeploymentName,
+    (d) => d.name === sourceDeploymentName
   );
   const destDeployment = deployments.find((d) => d.name === destDeploymentName);
 
@@ -1291,12 +1295,12 @@ router.openapi(routes.deployments.promote, async (c) => {
     accountId,
     app.id,
     destDeployment.id,
-    newPackage,
+    newPackage
   );
 
   c.header(
     "Location",
-    urlEncode`/apps/${appName}/deployments/${destDeploymentName}`,
+    urlEncode`/apps/${appName}/deployments/${destDeploymentName}`
   );
   return c.json({ package: promotedPackage }, 201);
 });
@@ -1327,7 +1331,7 @@ router.openapi(routes.deployments.rollback, async (c) => {
   const history = await storage.getPackageHistory(
     accountId,
     app.id,
-    deployment.id,
+    deployment.id
   );
   if (!history.length) {
     throw new HTTPException(404, {
@@ -1388,12 +1392,12 @@ router.openapi(routes.deployments.rollback, async (c) => {
     accountId,
     app.id,
     deployment.id,
-    rollbackPackage,
+    rollbackPackage
   );
 
   c.header(
     "Location",
-    urlEncode`/apps/${appName}/deployments/${deploymentName}`,
+    urlEncode`/apps/${appName}/deployments/${deploymentName}`
   );
   return c.json({ package: newPackage }, 201);
 });
@@ -1466,7 +1470,7 @@ router.openapi(routes.collaborators.remove, async (c) => {
   }
 
   const isOwner = Object.values(collaborators).some(
-    (c) => c.accountId === accountId && c.permission === "Owner",
+    (c) => c.accountId === accountId && c.permission === "Owner"
   );
   const isSelfRemoval = collaborator.accountId === accountId;
 
@@ -1515,5 +1519,6 @@ router.openapi(routes.metrics.get, async (c) => {
 
   return c.json({ metrics: deploymentMetrics });
 });
+
 
 export { router as managementRouter };
