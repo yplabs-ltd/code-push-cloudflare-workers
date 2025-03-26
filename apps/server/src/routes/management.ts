@@ -450,7 +450,7 @@ const routes = {
     // Release management
     release: createRoute({
       method: "post",
-      path: "/apps/:appName/deployments/:deploymentName/release/",
+      path: "/apps/:appName/deployments/:deploymentName/release",
       description: "Release new package version",
       request: {
         params: z.object({
@@ -484,6 +484,22 @@ const routes = {
               }),
             },
           },
+        },
+      },
+    }),
+    history: createRoute({
+      method: "get",
+      path: "/apps/:appName/deployments/:deploymentName/history",
+      description: "Get deployment history",
+      request: {
+        params: z.object({
+          appName: z.string(),
+          deploymentName: z.string(),
+        }),
+      },
+      responses: {
+        200: {
+          description: "Deployment history retrieved successfully",
         },
       },
     }),
@@ -1520,5 +1536,36 @@ router.openapi(routes.metrics.get, async (c) => {
   return c.json({ metrics: deploymentMetrics });
 });
 
+router.openapi(routes.deployments.history, async (c) => {
+  const storage = getStorageProvider(c);
+  const accountId = c.var.auth.accountId;
+  const { appName, deploymentName } = c.req.valid("param");
+
+  const app = await storage.getApp(accountId, { appName });
+  if (!app) {
+    throw new HTTPException(404, {
+      message: `App "${appName}" not found`,
+    });
+  }
+
+  throwIfInvalidPermissions(app, "Collaborator");
+
+  const deployments = await storage.getDeployments(accountId, app.id);
+  const deployment = deployments.find((d) => d.name === deploymentName);
+
+  if (!deployment) {
+    throw new HTTPException(404, {
+      message: `Deployment "${deploymentName}" not found`,
+    });
+  }
+
+  const history = await storage.getPackageHistory(
+    accountId,
+    app.id,
+    deployment.id
+  );
+
+  return c.json({ history });
+});
 
 export { router as managementRouter };
