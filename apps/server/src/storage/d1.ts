@@ -209,21 +209,23 @@ export class D1StorageProvider implements StorageProvider {
   }
 
   async getApps(accountId: string): Promise<App[]> {
-    const apps = await this.db.query.collaborator.findMany({
-      where: eq(schema.collaborator.accountId, accountId),
-      with: {
-        app: {
-          with: {
-            collaborators: {
-              with: {
-                account: true,
+    const apps = (
+      await this.db.query.collaborator.findMany({
+        where: eq(schema.collaborator.accountId, accountId),
+        with: {
+          app: {
+            with: {
+              collaborators: {
+                with: {
+                  account: true,
+                },
               },
+              deployments: true,
             },
-            deployments: true,
           },
         },
-      },
-    });
+      })
+    ).filter((collab) => collab.app?.deletedAt == null);
 
     return apps
       .map((collab) => ({
@@ -239,7 +241,7 @@ export class D1StorageProvider implements StorageProvider {
             } satisfies Collaborator;
             return acc;
           },
-          {},
+          {}
         ),
         deployments: collab.app.deployments.map((d) => d.name),
       }))
