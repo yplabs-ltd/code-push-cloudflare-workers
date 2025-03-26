@@ -21,9 +21,10 @@ app.use("*", prettyJSON());
 app.use("*", secureHeaders());
 app.use("*", (c, next) => corsMiddleware(c)(c, next));
 // Mount routers
+app.route("/", managementRouter);
 app.route("/auth", authRouter);
 app.route("/acquisition", acquisitionRouter);
-app.route("/management", managementRouter);
+
 // Global error handling
 app.notFound(handle404);
 app.onError(errorHandler);
