@@ -22,8 +22,8 @@ app.use("*", secureHeaders());
 app.use("*", (c, next) => corsMiddleware(c)(c, next));
 // Mount routers
 app.route("/", managementRouter);
+app.route("/", acquisitionRouter);
 app.route("/auth", authRouter);
-app.route("/acquisition", acquisitionRouter);
 
 // Global error handling
 app.notFound(handle404);
@@ -41,13 +41,5 @@ app.doc("/docs", {
   },
 });
 
-app.get("/updateCheck", async (c) => {
-  const result = await handlers.updateCheckHandler(c);
-  return c.json(result);
-});
-app.get("/v0.1/public/codepush/update_check", async (c) => {
-  const result = await handlers.updateCheckV1Handler(c);
-  return c.json(result);
-});
 
 export default app;
