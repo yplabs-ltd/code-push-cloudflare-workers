@@ -16,6 +16,7 @@ import {
   MetricsSchema,
   type Package,
   type PackageInfo,
+  PackageInfoUpdateSchema,
   PackageSchema,
 } from "../types/schemas";
 import { MetricsManager } from "../utils/metrics";
@@ -416,7 +417,7 @@ const routes = {
 
     update: createRoute({
       method: "patch",
-      path: "/apps/:appName/deployments/:deploymentName/",
+      path: "/apps/:appName/deployments/:deploymentName",
       description: "Update deployment",
       request: {
         params: z.object({
@@ -448,45 +449,72 @@ const routes = {
     }),
 
     // Release management
-    release: createRoute({
-      method: "post",
-      path: "/apps/:appName/deployments/:deploymentName/release",
-      description: "Release new package version",
-      request: {
-        params: z.object({
-          appName: z.string(),
-          deploymentName: z.string(),
-        }),
-        body: {
-          content: {
-            "multipart/form-data": {
-              schema: z.object({
-                package: z.instanceof(Blob),
-                packageInfo: z.string().transform((str) => {
-                  try {
-                    return JSON.parse(str) as PackageInfo;
-                  } catch {
-                    throw new Error("Invalid package info");
-                  }
+    release: {
+      create: createRoute({
+        method: "post",
+        path: "/apps/:appName/deployments/:deploymentName/release",
+        description: "Release new package version",
+        request: {
+          params: z.object({
+            appName: z.string(),
+            deploymentName: z.string(),
+          }),
+          body: {
+            content: {
+              "multipart/form-data": {
+                schema: z.object({
+                  package: z.instanceof(Blob),
+                  packageInfo: z.string().transform((str) => {
+                    try {
+                      return JSON.parse(str) as PackageInfo;
+                    } catch {
+                      throw new Error("Invalid package info");
+                    }
+                  }),
                 }),
-              }),
+              },
             },
           },
         },
-      },
-      responses: {
-        201: {
-          description: "Package released successfully",
-          content: {
-            "application/json": {
-              schema: z.object({
-                package: PackageSchema,
-              }),
+        responses: {
+          201: {
+            description: "Package released successfully",
+            content: {
+              "application/json": {
+                schema: z.object({
+                  package: PackageSchema,
+                }),
+              },
             },
           },
         },
-      },
-    }),
+      }),
+      update: createRoute({
+        method: "patch",
+        path: "/apps/:appName/deployments/:deploymentName/release",
+        description: "Update release",
+        request: {
+          params: z.object({
+            appName: z.string(),
+            deploymentName: z.string(),
+          }),
+          body: {
+            content: {
+              "application/json": {
+                schema: z.object({
+                  packageInfo: PackageInfoUpdateSchema,
+                }),
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: "Release updated successfully",
+          },
+        },
+      }),
+    },
     history: createRoute({
       method: "get",
       path: "/apps/:appName/deployments/:deploymentName/history",
@@ -1130,7 +1158,7 @@ router.openapi(routes.deployments.remove, async (c) => {
   return new Response(null, { status: 204 });
 });
 
-router.openapi(routes.deployments.release, async (c) => {
+router.openapi(routes.deployments.release.create, async (c) => {
   const storage = getStorageProvider(c);
   const accountId = c.var.auth.accountId;
   const { appName, deploymentName } = c.req.valid("param");
@@ -1246,6 +1274,53 @@ router.openapi(routes.deployments.release, async (c) => {
     urlEncode`/apps/${appName}/deployments/${deploymentName}`
   );
   return c.json({ package: releasedPackage }, 201);
+});
+
+router.openapi(routes.deployments.release.update, async (c) => {
+  const storage = getStorageProvider(c);
+  const accountId = c.var.auth.accountId;
+  const { appName, deploymentName } = c.req.valid("param");
+  const { packageInfo } = c.req.valid("json");
+
+  const app = await storage.getApp(accountId, { appName });
+  if (!app) {
+    throw new HTTPException(404, {
+      message: `App "${appName}" not found`,
+    });
+  }
+
+  throwIfInvalidPermissions(app, "Collaborator");
+
+  const deployments = await storage.getDeployments(accountId, app.id);
+  const deployment = deployments.find((d) => d.name === deploymentName);
+
+  if (!deployment) {
+    throw new HTTPException(404, {
+      message: `Deployment "${deploymentName}" not found`,
+    });
+  }
+
+  const release = deployment.package;
+  if (!release) {
+    throw new HTTPException(404, {
+      message: `Release package not found`,
+    });
+  }
+  const updatedRelease = {
+    ...release,
+  };
+  if (packageInfo.appVersion) {
+    updatedRelease.appVersion = packageInfo.appVersion;
+  }
+  if (packageInfo.description) {
+    updatedRelease.description = packageInfo.description;
+  }
+  if (packageInfo.isDisabled) {
+    updatedRelease.isDisabled = packageInfo.isDisabled;
+  }
+
+  await storage.updatePackage(updatedRelease);
+  return c.json({ release: updatedRelease });
 });
 
 router.openapi(routes.deployments.promote, async (c) => {
