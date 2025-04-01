@@ -23,8 +23,8 @@ JWT_SECRET=""
 
 [[r2_buckets]]
 binding = "STORAGE_BUCKET"
-bucket_name = ""
-preview_bucket_name = ""
+bucket_name = "code-push-storage"
+preview_bucket_name = "code-push-storage-dev"
 
 
 [env.production]
