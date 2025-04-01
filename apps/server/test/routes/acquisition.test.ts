@@ -193,43 +193,41 @@ describe("Acquisition Routes", () => {
 
   describe("GET /updateCheck", () => {
     it("returns 400 for malformed URL without parameters", async () => {
-      const response = await SELF.fetch(
-        "https://example.com/acquisition/updateCheck",
-      );
+      const response = await SELF.fetch("https://example.com/updateCheck");
       expect(response.status).toBe(400);
     });
 
     it("returns 400 for malformed URL with missing deploymentKey", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/updateCheck?appVersion=1.0.0&packageHash=hash123",
+        "https://example.com/updateCheck?appVersion=1.0.0&packageHash=hash123"
       );
       expect(response.status).toBe(400);
     });
 
     it("returns 400 for malformed URL with missing app version", async () => {
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment.key}&packageHash=hash123`,
+        `https://example.com/updateCheck?deploymentKey=${deployment.key}&packageHash=hash123`
       );
       expect(response.status).toBe(400);
     });
 
     it("returns 400 for malformed URL with non-semver app version", async () => {
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment.key}&packageHash=hash123&appVersion=notSemver`,
+        `https://example.com/updateCheck?deploymentKey=${deployment.key}&packageHash=hash123&appVersion=notSemver`
       );
       expect(response.status).toBe(400);
     });
 
     it("returns 404 for incorrect deployment key", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/updateCheck?deploymentKey=keyThatIsNonExistent&appVersion=1.0.0",
+        "https://example.com/updateCheck?deploymentKey=keyThatIsNonExistent&appVersion=1.0.0"
       );
       expect(response.status).toBe(404);
     });
 
     it("returns 200 and update info for missing patch version by assuming patch version of 0", async () => {
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0`,
+        `https://example.com/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0`
       );
       expect(response.status).toBe(200);
 
@@ -240,10 +238,10 @@ describe("Acquisition Routes", () => {
 
     it("returns 200 and update for appVersion with missing patch version and build metadata", async () => {
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?${qs.stringify({
+        `https://example.com/updateCheck?${qs.stringify({
           deploymentKey: deployment.key,
           appVersion: "1.0+metadata",
-        })}`,
+        })}`
       );
       expect(response.status).toBe(200);
 
@@ -255,7 +253,7 @@ describe("Acquisition Routes", () => {
 
     it("returns 200 and update for exact version match", async () => {
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0`,
+        `https://example.com/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0`
       );
       expect(response.status).toBe(200);
 
@@ -266,7 +264,7 @@ describe("Acquisition Routes", () => {
 
     it("returns 200 and available update with diff package URL", async () => {
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0&packageHash=${packages[0].packageHash}`,
+        `https://example.com/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0&packageHash=${packages[0].packageHash}`
       );
       expect(response.status).toBe(200);
 
@@ -278,7 +276,7 @@ describe("Acquisition Routes", () => {
 
     it("returns 200 and no update for same package hash", async () => {
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0&packageHash=${packages[2].packageHash}`,
+        `https://example.com/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0&packageHash=${packages[2].packageHash}`
       );
       expect(response.status).toBe(200);
 
@@ -294,7 +292,7 @@ describe("Acquisition Routes", () => {
         .where(eq(schema.packages.id, packages[2].id));
 
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0&clientUniqueId=test-device`,
+        `https://example.com/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0&clientUniqueId=test-device`
       );
       expect(response.status).toBe(200);
 
@@ -309,7 +307,7 @@ describe("Acquisition Routes", () => {
         .filter((p) => p.appVersion === "2.0.0")
         .sort((a, b) => b.label.localeCompare(a.label))[0].packageHash;
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=2.0.0&packageHash=${packageHash}`,
+        `https://example.com/updateCheck?deploymentKey=${deployment2.key}&appVersion=2.0.0&packageHash=${packageHash}`
       );
       expect(response.status).toBe(200);
 
@@ -320,7 +318,7 @@ describe("Acquisition Routes", () => {
 
     it("returns 200 and available update for same app version", async () => {
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=1.0.0&packageHash=${packages2[0].packageHash}`,
+        `https://example.com/updateCheck?deploymentKey=${deployment2.key}&appVersion=1.0.0&packageHash=${packages2[0].packageHash}`
       );
       expect(response.status).toBe(200);
 
@@ -338,7 +336,7 @@ describe("Acquisition Routes", () => {
         .where(eq(schema.packages.id, packages2[3].id));
 
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=1.5.0`,
+        `https://example.com/updateCheck?deploymentKey=${deployment2.key}&appVersion=1.5.0`
       );
       expect(response.status).toBe(200);
 
@@ -351,19 +349,19 @@ describe("Acquisition Routes", () => {
   describe("POST /reportStatus/deploy", () => {
     it("returns 400 if invalid json is sent", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/reportStatus/deploy",
+        "https://example.com/reportStatus/deploy",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: "{invalid: json",
-        },
+        }
       );
       expect(response.status).toBe(400);
     });
 
     it("returns 400 if deploymentKey is unspecified", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/reportStatus/deploy",
+        "https://example.com/reportStatus/deploy",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -373,14 +371,14 @@ describe("Acquisition Routes", () => {
             clientUniqueId: "test-device",
             appVersion: "1.0.0",
           }),
-        },
+        }
       );
       expect(response.status).toBe(400);
     });
 
     it("returns 400 if clientUniqueId is unspecified", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/reportStatus/deploy",
+        "https://example.com/reportStatus/deploy",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -390,14 +388,14 @@ describe("Acquisition Routes", () => {
             label: "v1",
             appVersion: "1.0.0",
           }),
-        },
+        }
       );
       expect(response.status).toBe(400);
     });
 
     it("returns 200 for valid deployment report", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/reportStatus/deploy",
+        "https://example.com/reportStatus/deploy",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -408,14 +406,14 @@ describe("Acquisition Routes", () => {
             appVersion: "1.0.0",
             status: "DeploymentSucceeded",
           }),
-        },
+        }
       );
       expect(response.status).toBe(200);
       expect(await response.json()).toEqual({ status: "ok" });
     });
     it("returns 200 for deployment report with previous deployment info", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/reportStatus/deploy",
+        "https://example.com/reportStatus/deploy",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -428,7 +426,7 @@ describe("Acquisition Routes", () => {
             previousDeploymentKey: deployment.key,
             previousLabelOrAppVersion: "v1",
           }),
-        },
+        }
       );
       expect(response.status).toBe(200);
       expect(await response.json()).toEqual({ status: "ok" });
@@ -436,7 +434,7 @@ describe("Acquisition Routes", () => {
 
     it("returns 200 for deployment report without status", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/reportStatus/deploy",
+        "https://example.com/reportStatus/deploy",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -445,7 +443,7 @@ describe("Acquisition Routes", () => {
             clientUniqueId: "test-device",
             appVersion: "1.0.0",
           }),
-        },
+        }
       );
       expect(response.status).toBe(200);
       expect(await response.json()).toEqual({ status: "ok" });
@@ -453,7 +451,7 @@ describe("Acquisition Routes", () => {
 
     it("handles deployment key with whitespace", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/reportStatus/deploy",
+        "https://example.com/reportStatus/deploy",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -463,7 +461,7 @@ describe("Acquisition Routes", () => {
             appVersion: "1.0.0",
             status: "DeploymentSucceeded",
           }),
-        },
+        }
       );
       expect(response.status).toBe(200);
       expect(await response.json()).toEqual({ status: "ok" });
@@ -473,19 +471,19 @@ describe("Acquisition Routes", () => {
   describe("POST /reportStatus/download", () => {
     it("returns 400 if invalid json is sent", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/reportStatus/download",
+        "https://example.com/reportStatus/download",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: "{invalid: json",
-        },
+        }
       );
       expect(response.status).toBe(400);
     });
 
     it("returns 400 if deploymentKey is unspecified", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/reportStatus/download",
+        "https://example.com/reportStatus/download",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -493,14 +491,14 @@ describe("Acquisition Routes", () => {
             label: "v1",
             clientUniqueId: "test-device",
           }),
-        },
+        }
       );
       expect(response.status).toBe(400);
     });
 
     it("returns 400 if label is unspecified", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/reportStatus/download",
+        "https://example.com/reportStatus/download",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -508,14 +506,14 @@ describe("Acquisition Routes", () => {
             deploymentKey: deployment.key,
             clientUniqueId: "test-device",
           }),
-        },
+        }
       );
       expect(response.status).toBe(400);
     });
 
     it("returns 200 for valid download report", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/reportStatus/download",
+        "https://example.com/reportStatus/download",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -524,7 +522,7 @@ describe("Acquisition Routes", () => {
             label: "v1",
             clientUniqueId: "test-device",
           }),
-        },
+        }
       );
       expect(response.status).toBe(200);
       expect(await response.json()).toEqual({ status: "ok" });
@@ -532,7 +530,7 @@ describe("Acquisition Routes", () => {
 
     it("handles deployment key with whitespace", async () => {
       const response = await SELF.fetch(
-        "https://example.com/acquisition/reportStatus/download",
+        "https://example.com/reportStatus/download",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -541,7 +539,7 @@ describe("Acquisition Routes", () => {
             label: "v1",
             clientUniqueId: "test-device",
           }),
-        },
+        }
       );
       expect(response.status).toBe(200);
       expect(await response.json()).toEqual({ status: "ok" });
@@ -551,7 +549,7 @@ describe("Acquisition Routes", () => {
   describe("Complex update scenarios", () => {
     it("returns appropriate update when multiple versions exist", async () => {
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=1.0.0`,
+        `https://example.com/updateCheck?deploymentKey=${deployment2.key}&appVersion=1.0.0`
       );
       expect(response.status).toBe(200);
 
@@ -563,7 +561,7 @@ describe("Acquisition Routes", () => {
 
     it("handles disabled packages correctly", async () => {
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=3.0.0&packageHash=${packages2[2].packageHash}`,
+        `https://example.com/updateCheck?deploymentKey=${deployment2.key}&appVersion=3.0.0&packageHash=${packages2[2].packageHash}`
       );
       expect(response.status).toBe(200);
 
@@ -574,7 +572,7 @@ describe("Acquisition Routes", () => {
 
     it("respects mandatory updates", async () => {
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=3.0.0&packageHash=${packages2[4].packageHash}`,
+        `https://example.com/updateCheck?deploymentKey=${deployment2.key}&appVersion=3.0.0&packageHash=${packages2[4].packageHash}`
       );
       expect(response.status).toBe(200);
 
@@ -592,7 +590,7 @@ describe("Acquisition Routes", () => {
         .where(eq(schema.packages.id, packages2[6].id));
 
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=3.0.0&clientUniqueId=specific-device`,
+        `https://example.com/updateCheck?deploymentKey=${deployment2.key}&appVersion=3.0.0&clientUniqueId=specific-device`
       );
       expect(response.status).toBe(200);
 
@@ -608,7 +606,7 @@ describe("Acquisition Routes", () => {
         .where(eq(schema.packages.id, packages2[6].id));
 
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=3.0.0&clientUniqueId=any-device`,
+        `https://example.com/updateCheck?deploymentKey=${deployment2.key}&appVersion=3.0.0&clientUniqueId=any-device`
       );
       expect(response.status).toBe(200);
 
@@ -619,7 +617,7 @@ describe("Acquisition Routes", () => {
 
     it("returns update for companion app regardless of version", async () => {
       const response = await SELF.fetch(
-        `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=4.0.0&isCompanion=true`,
+        `https://example.com/updateCheck?deploymentKey=${deployment2.key}&appVersion=4.0.0&isCompanion=true`
       );
       expect(response.status).toBe(200);
 
@@ -651,7 +649,7 @@ describe("Acquisition Routes", () => {
 
       it("matches exact versions", async () => {
         const response = await SELF.fetch(
-          `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=2.0.0`,
+          `https://example.com/updateCheck?deploymentKey=${deployment2.key}&appVersion=2.0.0`
         );
         expect(response.status).toBe(200);
 
@@ -662,7 +660,7 @@ describe("Acquisition Routes", () => {
 
       it("matches version ranges", async () => {
         const response = await SELF.fetch(
-          `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=2.1.0`,
+          `https://example.com/updateCheck?deploymentKey=${deployment2.key}&appVersion=2.1.0`
         );
         expect(response.status).toBe(200);
 
@@ -673,7 +671,7 @@ describe("Acquisition Routes", () => {
 
       it("handles pre-release versions correctly", async () => {
         const response = await SELF.fetch(
-          `https://example.com/acquisition/updateCheck?deploymentKey=${deployment2.key}&appVersion=2.0.0-beta`,
+          `https://example.com/updateCheck?deploymentKey=${deployment2.key}&appVersion=2.0.0-beta`
         );
         expect(response.status).toBe(200);
 
