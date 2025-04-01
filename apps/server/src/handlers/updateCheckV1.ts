@@ -1,14 +1,14 @@
+import type { Context } from "hono";
 import qs from "qs";
 import type { z } from "zod";
-import { Context } from "hono";
+import { handlers } from "../handlers";
 import type { Env } from "../types/env";
 import { isStorageError } from "../types/error";
-import {
+import type {
   LegacyUpdateCheckParams,
-  type LegacyUpdateCheckResponse,
+  LegacyUpdateCheckResponse,
   UpdateCheckParams,
 } from "../types/schemas";
-import { handlers } from "../handlers";
 
 const updateCheckV1Handler = async (c: Context<Env>) => {
   const query = c.req.query() as unknown as LegacyUpdateCheckParams;
@@ -63,6 +63,8 @@ const updateCheckV1Handler = async (c: Context<Env>) => {
           is_mandatory: false,
           app_version: query.app_version,
           target_binary_range: query.app_version,
+          should_run_binary_version: false,
+          update_app_version: false,
         },
       } satisfies LegacyUpdateCheckResponse;
     }

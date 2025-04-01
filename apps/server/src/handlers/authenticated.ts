@@ -1,5 +1,5 @@
+import type { Context } from "hono";
 import { getStorageProvider } from "../storage/factory";
-import { Context } from "hono";
 
 export const authenticatedHandler = async (c: Context) => {
   const auth = c.get("auth");
@@ -12,7 +12,7 @@ export const authenticatedHandler = async (c: Context) => {
         message:
           "The session or access key being used is invalid, please run login again.",
       },
-      401
+      401,
     );
   }
 

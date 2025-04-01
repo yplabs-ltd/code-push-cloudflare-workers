@@ -241,7 +241,7 @@ export class D1StorageProvider implements StorageProvider {
             } satisfies Collaborator;
             return acc;
           },
-          {}
+          {},
         ),
         deployments: collab.app.deployments.map((d) => d.name),
       }))

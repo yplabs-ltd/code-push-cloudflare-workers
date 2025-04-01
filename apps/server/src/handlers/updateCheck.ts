@@ -1,22 +1,22 @@
-import { Context } from "hono";
+import type { Context } from "hono";
 
 import { compare, satisfies } from "compare-versions";
 
 import { getStorageProvider } from "../storage/factory";
 
-import {
+import type {
+  Package,
   UpdateCheckParams,
-  type Package,
-  type UpdateCheckResponse,
+  UpdateCheckResponse,
 } from "../types/schemas";
 
+import type { Env } from "../types/env";
 import { rolloutStrategy } from "../utils/rollout";
 import { normalizeVersion } from "../utils/version";
-import type { Env } from "../types/env";
 
 // Return data object instead of response
 const updateCheckHandler = async (
-  c: Context<Env>
+  c: Context<Env>,
 ): Promise<UpdateCheckResponse> => {
   const storage = getStorageProvider(c);
   const query = c.req.query() as unknown as UpdateCheckParams;
@@ -28,7 +28,7 @@ const updateCheckHandler = async (
   const history = await storage.getPackageHistory(
     "", // accountId not needed
     deploymentInfo.appId,
-    deploymentInfo.deploymentId
+    deploymentInfo.deploymentId,
   );
 
   // Handle empty package history
@@ -171,7 +171,7 @@ const updateCheckHandler = async (
     const isInRollout = rolloutStrategy(
       query.clientUniqueId,
       latestSatisfyingEnabledPackage.rollout,
-      latestSatisfyingEnabledPackage.packageHash
+      latestSatisfyingEnabledPackage.packageHash,
     );
 
     if (!isInRollout) {
