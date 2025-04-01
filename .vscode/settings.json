@@ -1,0 +1,14 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "biomejs.biome",
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  // Prettier 비활성화 (Biome과 충돌 방지)
+  "prettier.enable": false,
+  // ESLint 포매팅 비활성화
+  "eslint.format.enable": false
+}

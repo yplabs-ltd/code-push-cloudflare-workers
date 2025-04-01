@@ -7,23 +7,31 @@ d1_databases = [
   { binding = "DB", database_name = "code-push-server-local", database_id = "n/a", migrations_dir = "drizzle/migrations" },
 ]
 
+[observability.logs]
+enabled = true
+
 [vars]
 SERVER_URL = "http://localhost:8787"
 ENABLE_ACCOUNT_REGISTRATION = "true"
-CORS_ORIGINS = "http://localhost:3000"
+CORS_ORIGINS = "http://localhost:5173"
 ENABLE_PACKAGE_DIFFING = "true"
+GITHUB_CLIENT_ID=""
+GITHUB_CLIENT_SECRET=""
+R2_ACCESS_KEY_ID=""
+R2_SECRET_ACCESS_KEY=""
+JWT_SECRET=""
 
 [[r2_buckets]]
 binding = "STORAGE_BUCKET"
 bucket_name = "code-push-storage"
 preview_bucket_name = "code-push-storage-dev"
 
-[env.preview]
-d1_databases = [
-  { binding = "DB", database_name = "code-push-server-preview", database_id = "<id>", migrations_dir = "drizzle/migrations" },
-]
 
 [env.production]
 d1_databases = [
-  { binding = "DB", database_name = "code-push-server-prod", database_id = "<id>", migrations_dir = "drizzle/migrations" },
+  { binding = "DB", database_name = "", database_id = "", migrations_dir = "drizzle/migrations" },
 ]
+r2_buckets = [
+  {binding= "STORAGE_BUCKET", bucket_name="", preview_bucket_name = ""}
+]
+vars={SERVER_URL="", ENABLE_ACCOUNT_REGISTRATION = "",CORS_ORIGINS = "",ENABLE_PACKAGE_DIFFING = "",GITHUB_CLIENT_ID="",GITHUB_CLIENT_SECRET="",  R2_ACCESS_KEY_ID="", R2_SECRET_ACCESS_KEY="", JWT_SECRET="", R2_BUCKET_NAME="", ACCOUNT_ID=""}

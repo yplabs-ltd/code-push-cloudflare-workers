@@ -1,20 +1,20 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
+import { handlers } from "../handlers";
 import type { Env } from "../types/env";
 import {
   ApiResponse,
+  DeploymentLegacyReportBody,
   DeploymentReportBody,
+  DownloadLegacyReportBody,
   DownloadReportBody,
   LegacyUpdateCheckParams,
   LegacyUpdateCheckResponseSchema,
   type Package,
   UpdateCheckParams,
   UpdateCheckResponseSchema,
-  DeploymentLegacyReportBody,
-  DownloadLegacyReportBody,
 } from "../types/schemas";
 import { convertObjectToSnakeCase } from "../utils/convention";
 import { MetricsManager } from "../utils/metrics";
-import { handlers } from "../handlers";
 
 const router = new OpenAPIHono<Env>();
 
@@ -167,7 +167,7 @@ router.openapi(routes.deploymentReport, async (c) => {
       body.deploymentKey.trim(),
       body.label ?? "",
       body.status,
-      body.clientUniqueId
+      body.clientUniqueId,
     );
   } else {
     await metrics.recordDeployment(
@@ -175,7 +175,7 @@ router.openapi(routes.deploymentReport, async (c) => {
       body.label || body.appVersion,
       body.clientUniqueId,
       body.previousDeploymentKey?.trim(),
-      body.previousLabelOrAppVersion
+      body.previousLabelOrAppVersion,
     );
   }
 
@@ -192,7 +192,7 @@ router.openapi(routes.deploymentReportV1, async (c) => {
       body.deployment_key.trim(),
       body.label ?? "",
       body.status,
-      body.client_unique_id
+      body.client_unique_id,
     );
   } else {
     await metrics.recordDeployment(
@@ -200,7 +200,7 @@ router.openapi(routes.deploymentReportV1, async (c) => {
       body.label || body.app_version,
       body.client_unique_id,
       body.previous_deployment_key?.trim(),
-      body.previous_label_or_app_version
+      body.previous_label_or_app_version,
     );
   }
 
@@ -215,7 +215,7 @@ router.openapi(routes.downloadReport, async (c) => {
   await metrics.recordDownload(
     body.deploymentKey.trim(),
     body.label,
-    body.clientUniqueId
+    body.clientUniqueId,
   );
 
   const response: ApiResponse = { status: "ok" };
@@ -229,7 +229,7 @@ router.openapi(routes.downloadReportV1, async (c) => {
   await metrics.recordDownload(
     body.deployment_key.trim(),
     body.label,
-    body.client_unique_id
+    body.client_unique_id,
   );
 
   const response: ApiResponse = { status: "ok" };

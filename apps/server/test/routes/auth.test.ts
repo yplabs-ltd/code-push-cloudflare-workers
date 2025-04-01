@@ -16,18 +16,15 @@ describe("Auth Routes", () => {
     await auth.cleanup();
   });
 
-  describe("GET /auth/github/login", () => {
+  describe("GET /auth/login", () => {
     it("should redirect to GitHub OAuth", async () => {
-      const response = await SELF.fetch(
-        "https://example.com/auth/github/login",
-        {
-          redirect: "manual",
-        },
-      );
+      const response = await SELF.fetch("https://example.com/auth/login", {
+        redirect: "manual",
+      });
 
       expect(response.status).toBe(302);
       expect(response.headers.get("Location")).toMatch(
-        /^https:\/\/github.com\/login\/oauth\/authorize/,
+        /^https:\/\/github.com\/login\/oauth\/authorize/
       );
     });
   });

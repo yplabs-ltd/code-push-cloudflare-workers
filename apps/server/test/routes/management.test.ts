@@ -51,12 +51,9 @@ describe("Management Routes", () => {
         await auth.createTestAccessKey();
         await auth.createTestAccessKey();
 
-        const response = await SELF.fetch(
-          "https://example.com/management/accessKeys",
-          {
-            headers,
-          },
-        );
+        const response = await SELF.fetch("https://example.com/accessKeys", {
+          headers,
+        });
 
         expect(response.status).toBe(200);
         const data = await response.json();
@@ -75,9 +72,7 @@ describe("Management Routes", () => {
       });
 
       it("returns 401 when not authenticated", async () => {
-        const response = await SELF.fetch(
-          "https://example.com/management/accessKeys",
-        );
+        const response = await SELF.fetch("https://example.com/accessKeys");
         expect(response.status).toBe(401);
       });
     });
@@ -86,16 +81,13 @@ describe("Management Routes", () => {
       it("creates new access key with defaults", async () => {
         const headers = await auth.getAuthHeaders();
 
-        const response = await SELF.fetch(
-          "https://example.com/management/accessKeys",
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              friendlyName: "Test Key",
-            }),
-          },
-        );
+        const response = await SELF.fetch("https://example.com/accessKeys", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            friendlyName: "Test Key",
+          }),
+        });
 
         expect(response.status).toBe(201);
 
@@ -116,17 +108,14 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
         const ttl = 3600000; // 1 hour
 
-        const response = await SELF.fetch(
-          "https://example.com/management/accessKeys",
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              friendlyName: "Test Key",
-              ttl,
-            }),
-          },
-        );
+        const response = await SELF.fetch("https://example.com/accessKeys", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            friendlyName: "Test Key",
+            ttl,
+          }),
+        });
 
         expect(response.status).toBe(201);
 
@@ -138,23 +127,20 @@ describe("Management Routes", () => {
           .parse(data);
 
         expect(validated.accessKey.expires).toBeLessThanOrEqual(
-          Date.now() + ttl + 1000,
+          Date.now() + ttl + 1000
         );
       });
 
       it("validates friendlyName", async () => {
         const headers = await auth.getAuthHeaders();
 
-        const response = await SELF.fetch(
-          "https://example.com/management/accessKeys",
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              friendlyName: "",
-            }),
-          },
-        );
+        const response = await SELF.fetch("https://example.com/accessKeys", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            friendlyName: "",
+          }),
+        });
 
         expect(response.status).toBe(400);
       });
@@ -163,7 +149,7 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         // Create first key
-        await SELF.fetch("https://example.com/management/accessKeys", {
+        await SELF.fetch("https://example.com/accessKeys", {
           method: "POST",
           headers,
           body: JSON.stringify({
@@ -172,16 +158,13 @@ describe("Management Routes", () => {
         });
 
         // Attempt duplicate
-        const response = await SELF.fetch(
-          "https://example.com/management/accessKeys",
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              friendlyName: "Test Key",
-            }),
-          },
-        );
+        const response = await SELF.fetch("https://example.com/accessKeys", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            friendlyName: "Test Key",
+          }),
+        });
 
         expect(response.status).toBe(409);
       });
@@ -193,10 +176,10 @@ describe("Management Routes", () => {
         const key = await auth.createTestAccessKey();
 
         const response = await SELF.fetch(
-          `https://example.com/management/accessKeys/${key.name}`,
+          `https://example.com/accessKeys/${key.name}`,
           {
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(200);
@@ -217,10 +200,10 @@ describe("Management Routes", () => {
         const key = await auth.createTestAccessKey();
 
         const response = await SELF.fetch(
-          `https://example.com/management/accessKeys/${key.friendlyName}`,
+          `https://example.com/accessKeys/${key.friendlyName}`,
           {
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(200);
@@ -240,10 +223,10 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          "https://example.com/management/accessKeys/non-existent",
+          "https://example.com/accessKeys/non-existent",
           {
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(404);
@@ -256,14 +239,14 @@ describe("Management Routes", () => {
         const key = await auth.createTestAccessKey();
 
         const response = await SELF.fetch(
-          `https://example.com/management/accessKeys/${key.name}`,
+          `https://example.com/accessKeys/${key.name}`,
           {
             method: "PATCH",
             headers,
             body: JSON.stringify({
               friendlyName: "Updated Name",
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(200);
@@ -284,14 +267,14 @@ describe("Management Routes", () => {
         const ttl = 7200000; // 2 hours
 
         const response = await SELF.fetch(
-          `https://example.com/management/accessKeys/${key.name}`,
+          `https://example.com/accessKeys/${key.name}`,
           {
             method: "PATCH",
             headers,
             body: JSON.stringify({
               ttl,
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(200);
@@ -304,7 +287,7 @@ describe("Management Routes", () => {
           .parse(data);
 
         expect(validated.accessKey.expires).toBeLessThanOrEqual(
-          Date.now() + ttl + 1000,
+          Date.now() + ttl + 1000
         );
       });
 
@@ -314,14 +297,14 @@ describe("Management Routes", () => {
         const key2 = await auth.createTestAccessKey();
 
         const response = await SELF.fetch(
-          `https://example.com/management/accessKeys/${key2.name}`,
+          `https://example.com/accessKeys/${key2.name}`,
           {
             method: "PATCH",
             headers,
             body: JSON.stringify({
               friendlyName: key1.friendlyName,
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(409);
@@ -332,14 +315,14 @@ describe("Management Routes", () => {
         const key = await auth.createTestAccessKey();
 
         const response = await SELF.fetch(
-          `https://example.com/management/accessKeys/${key.name}`,
+          `https://example.com/accessKeys/${key.name}`,
           {
             method: "PATCH",
             headers,
             body: JSON.stringify({
               ttl: -1,
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(400);
@@ -352,21 +335,21 @@ describe("Management Routes", () => {
         const key = await auth.createTestAccessKey();
 
         const response = await SELF.fetch(
-          `https://example.com/management/accessKeys/${key.name}`,
+          `https://example.com/accessKeys/${key.name}`,
           {
             method: "DELETE",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(204);
 
         // Verify deletion
         const getResponse = await SELF.fetch(
-          `https://example.com/management/accessKeys/${key.name}`,
+          `https://example.com/accessKeys/${key.name}`,
           {
             headers,
-          },
+          }
         );
         expect(getResponse.status).toBe(404);
       });
@@ -375,11 +358,11 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          "https://example.com/management/accessKeys/non-existent",
+          "https://example.com/accessKeys/non-existent",
           {
             method: "DELETE",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(404);
@@ -417,12 +400,9 @@ describe("Management Routes", () => {
           },
         ]);
 
-        const response = await SELF.fetch(
-          "https://example.com/management/apps",
-          {
-            headers,
-          },
-        );
+        const response = await SELF.fetch("https://example.com/apps", {
+          headers,
+        });
 
         expect(response.status).toBe(200);
         const data = await response.json();
@@ -434,10 +414,10 @@ describe("Management Routes", () => {
 
         expect(validated.apps).toHaveLength(2);
         expect(
-          validated.apps[0].collaborators[auth.getCurrentEmail()].permission,
+          validated.apps[0].collaborators[auth.getCurrentEmail()].permission
         ).toBe("Owner");
         expect(
-          validated.apps[1].collaborators[auth.getCurrentEmail()].permission,
+          validated.apps[1].collaborators[auth.getCurrentEmail()].permission
         ).toBe("Collaborator");
       });
 
@@ -463,12 +443,9 @@ describe("Management Routes", () => {
           },
         ]);
 
-        const response = await SELF.fetch(
-          "https://example.com/management/apps",
-          {
-            headers,
-          },
-        );
+        const response = await SELF.fetch("https://example.com/apps", {
+          headers,
+        });
 
         expect(response.status).toBe(200);
         const data = await response.json();
@@ -485,12 +462,9 @@ describe("Management Routes", () => {
       it("returns empty array when no apps exist", async () => {
         const headers = await auth.getAuthHeaders();
 
-        const response = await SELF.fetch(
-          "https://example.com/management/apps",
-          {
-            headers,
-          },
-        );
+        const response = await SELF.fetch("https://example.com/apps", {
+          headers,
+        });
 
         expect(response.status).toBe(200);
         const data = await response.json();
@@ -508,16 +482,13 @@ describe("Management Routes", () => {
       it("creates new app with default deployments", async () => {
         const headers = await auth.getAuthHeaders();
 
-        const response = await SELF.fetch(
-          "https://example.com/management/apps",
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              name: "test-app",
-            }),
-          },
-        );
+        const response = await SELF.fetch("https://example.com/apps/", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            name: "test-app",
+          }),
+        });
 
         expect(response.status).toBe(201);
         const data = await response.json();
@@ -530,7 +501,7 @@ describe("Management Routes", () => {
         expect(validated.app.name).toBe("test-app");
         expect(validated.app.deployments).toEqual(["Production", "Staging"]);
         expect(
-          validated.app.collaborators[auth.getCurrentEmail()].permission,
+          validated.app.collaborators[auth.getCurrentEmail()].permission
         ).toBe("Owner");
 
         // Verify deployments were created
@@ -547,17 +518,14 @@ describe("Management Routes", () => {
       it("creates app without default deployments when specified", async () => {
         const headers = await auth.getAuthHeaders();
 
-        const response = await SELF.fetch(
-          "https://example.com/management/apps",
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              name: "test-app",
-              manuallyProvisionDeployments: true,
-            }),
-          },
-        );
+        const response = await SELF.fetch("https://example.com/apps/", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            name: "test-app",
+            manuallyProvisionDeployments: true,
+          }),
+        });
 
         expect(response.status).toBe(201);
         const data = await response.json();
@@ -581,7 +549,7 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         // Create first app
-        await SELF.fetch("https://example.com/management/apps", {
+        await SELF.fetch("https://example.com/apps/", {
           method: "POST",
           headers,
           body: JSON.stringify({
@@ -590,16 +558,13 @@ describe("Management Routes", () => {
         });
 
         // Try to create duplicate
-        const response = await SELF.fetch(
-          "https://example.com/management/apps",
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              name: "test-app",
-            }),
-          },
-        );
+        const response = await SELF.fetch("https://example.com/apps/", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            name: "test-app",
+          }),
+        });
 
         expect(response.status).toBe(409);
       });
@@ -607,16 +572,13 @@ describe("Management Routes", () => {
       it("validates app name", async () => {
         const headers = await auth.getAuthHeaders();
 
-        const response = await SELF.fetch(
-          "https://example.com/management/apps",
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              name: "", // Invalid empty name
-            }),
-          },
-        );
+        const response = await SELF.fetch("https://example.com/apps/", {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            name: "", // Invalid empty name
+          }),
+        });
 
         expect(response.status).toBe(400);
       });
@@ -636,10 +598,10 @@ describe("Management Routes", () => {
         });
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}`,
+          `https://example.com/apps/${app.name}`,
           {
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(200);
@@ -658,10 +620,10 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          "https://example.com/management/apps/non-existent",
+          "https://example.com/apps/non-existent",
           {
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(404);
@@ -675,8 +637,9 @@ describe("Management Routes", () => {
           email: "test2@example.com",
           name: "Test User",
         };
-        const { account: otherAccount } =
-          await auth.createTestAccount(testUser);
+        const { account: otherAccount } = await auth.createTestAccount(
+          testUser
+        );
         await db.insert(schema.app).values(app);
         await db.insert(schema.collaborator).values({
           appId: app.id,
@@ -685,10 +648,10 @@ describe("Management Routes", () => {
         });
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}`,
+          `https://example.com/apps/${app.name}`,
           {
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(404);
@@ -709,14 +672,14 @@ describe("Management Routes", () => {
         });
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}`,
+          `https://example.com/apps/${app.name}`,
           {
             method: "PATCH",
             headers,
             body: JSON.stringify({
               name: "updated-name",
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(200);
@@ -752,14 +715,14 @@ describe("Management Routes", () => {
 
         // Try to update app2 to app1's name
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app2.name}`,
+          `https://example.com/apps/${app2.name}`,
           {
             method: "PATCH",
             headers,
             body: JSON.stringify({
               name: app1.name,
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(409);
@@ -778,14 +741,14 @@ describe("Management Routes", () => {
         });
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}`,
+          `https://example.com/apps/${app.name}`,
           {
             method: "PATCH",
             headers,
             body: JSON.stringify({
               name: "new-name",
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(403);
@@ -811,11 +774,11 @@ describe("Management Routes", () => {
         await db.insert(schema.packages).values(package1);
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}`,
+          `https://example.com/apps/${app.name}`,
           {
             method: "DELETE",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(204);
@@ -843,11 +806,11 @@ describe("Management Routes", () => {
         });
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}`,
+          `https://example.com/apps/${app.name}`,
           {
             method: "DELETE",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(403);
@@ -857,11 +820,11 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          "https://example.com/management/apps/non-existent",
+          "https://example.com/apps/non-existent",
           {
             method: "DELETE",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(404);
@@ -878,8 +841,9 @@ describe("Management Routes", () => {
           email: "test2@example.com",
           name: "Test User 2",
         };
-        const { account: targetAccount } =
-          await auth.createTestAccount(testUser);
+        const { account: targetAccount } = await auth.createTestAccount(
+          testUser
+        );
 
         await db.insert(schema.app).values(app);
         await db.insert(schema.collaborator).values({
@@ -889,11 +853,11 @@ describe("Management Routes", () => {
         });
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/transfer/${targetAccount.email}`,
+          `https://example.com/apps/${app.name}/transfer/${targetAccount.email}`,
           {
             method: "POST",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(201);
@@ -904,12 +868,12 @@ describe("Management Routes", () => {
         });
 
         const originalOwner = collaborators.find(
-          (c) => c.accountId === auth.getCurrentAccountId(),
+          (c) => c.accountId === auth.getCurrentAccountId()
         );
         expect(originalOwner?.permission).toBe("Collaborator");
 
         const newOwner = collaborators.find(
-          (c) => c.accountId === targetAccount.id,
+          (c) => c.accountId === targetAccount.id
         );
         expect(newOwner?.permission).toBe("Owner");
       });
@@ -926,11 +890,11 @@ describe("Management Routes", () => {
         });
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/transfer/non-existent@example.com`,
+          `https://example.com/apps/${app.name}/transfer/non-existent@example.com`,
           {
             method: "POST",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(404);
@@ -950,11 +914,11 @@ describe("Management Routes", () => {
         });
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/transfer/${targetAccount.email}`,
+          `https://example.com/apps/${app.name}/transfer/${targetAccount.email}`,
           {
             method: "POST",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(403);
@@ -985,8 +949,8 @@ describe("Management Routes", () => {
         await db.insert(schema.deployment).values([deployment1, deployment2]);
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments`,
-          { headers },
+          `https://example.com/apps/${app.name}/deployments/`,
+          { headers }
         );
 
         expect(response.status).toBe(200);
@@ -1012,8 +976,8 @@ describe("Management Routes", () => {
         await db.insert(schema.deployment).values([deployment1, deployment2]);
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments`,
-          { headers },
+          `https://example.com/apps/${app.name}/deployments/`,
+          { headers }
         );
 
         expect(response.status).toBe(200);
@@ -1037,8 +1001,8 @@ describe("Management Routes", () => {
           .where(eq(schema.collaborator.appId, app.id));
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments`,
-          { headers },
+          `https://example.com/apps/${app.name}/deployments`,
+          { headers }
         );
 
         expect(response.status).toBe(404);
@@ -1050,14 +1014,14 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments`,
+          `https://example.com/apps/${app.name}/deployments/`,
           {
             method: "POST",
             headers,
             body: JSON.stringify({
               name: "test-deployment",
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(201);
@@ -1077,7 +1041,7 @@ describe("Management Routes", () => {
         const customKey = `dk_${generateKey()}`;
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments`,
+          `https://example.com/apps/${app.name}/deployments/`,
           {
             method: "POST",
             headers,
@@ -1085,7 +1049,7 @@ describe("Management Routes", () => {
               name: "test-deployment",
               key: customKey,
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(201);
@@ -1103,27 +1067,24 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         // Create first deployment
-        await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments`,
-          {
-            method: "POST",
-            headers,
-            body: JSON.stringify({
-              name: "test-deployment",
-            }),
-          },
-        );
+        await SELF.fetch(`https://example.com/apps/${app.name}/deployments/`, {
+          method: "POST",
+          headers,
+          body: JSON.stringify({
+            name: "test-deployment",
+          }),
+        });
 
         // Try to create duplicate
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments`,
+          `https://example.com/apps/${app.name}/deployments/`,
           {
             method: "POST",
             headers,
             body: JSON.stringify({
               name: "test-deployment",
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(409);
@@ -1139,14 +1100,14 @@ describe("Management Routes", () => {
           .where(eq(schema.collaborator.appId, app.id));
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments`,
+          `https://example.com/apps/${app.name}/deployments/`,
           {
             method: "POST",
             headers,
             body: JSON.stringify({
               name: "test-deployment",
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(403);
@@ -1161,8 +1122,8 @@ describe("Management Routes", () => {
         await db.insert(schema.deployment).values(deployment);
 
         const response = await SELF.fetch(
-          urlEncode`https://example.com/management/apps/${app.name}/deployments/${deployment.name}`,
-          { headers },
+          urlEncode`https://example.com/apps/${app.name}/deployments/${deployment.name}`,
+          { headers }
         );
 
         expect(response.status).toBe(200);
@@ -1193,8 +1154,8 @@ describe("Management Routes", () => {
         ]);
 
         const response = await SELF.fetch(
-          urlEncode`https://example.com/management/apps/${app.name}/deployments/${deployment.name}`,
-          { headers },
+          urlEncode`https://example.com/apps/${app.name}/deployments/${deployment.name}`,
+          { headers }
         );
 
         expect(response.status).toBe(200);
@@ -1214,8 +1175,8 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments/non-existent`,
-          { headers },
+          `https://example.com/apps/${app.name}/deployments/non-existent`,
+          { headers }
         );
 
         expect(response.status).toBe(404);
@@ -1230,14 +1191,14 @@ describe("Management Routes", () => {
         await db.insert(schema.deployment).values(deployment);
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments/${deployment.name}`,
+          `https://example.com/apps/${app.name}/deployments/${deployment.name}/`,
           {
             method: "PATCH",
             headers,
             body: JSON.stringify({
               name: "updated-name",
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(200);
@@ -1259,14 +1220,14 @@ describe("Management Routes", () => {
         await db.insert(schema.deployment).values([deployment1, deployment2]);
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments/${deployment2.name}`,
+          `https://example.com/apps/${app.name}/deployments/${deployment2.name}/`,
           {
             method: "PATCH",
             headers,
             body: JSON.stringify({
               name: deployment1.name,
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(409);
@@ -1285,14 +1246,14 @@ describe("Management Routes", () => {
           .where(eq(schema.collaborator.appId, app.id));
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments/${deployment.name}`,
+          `https://example.com/apps/${app.name}/deployments/${deployment.name}/`,
           {
             method: "PATCH",
             headers,
             body: JSON.stringify({
               name: "new-name",
             }),
-          },
+          }
         );
 
         expect(response.status).toBe(403);
@@ -1314,11 +1275,11 @@ describe("Management Routes", () => {
         ]);
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments/${deployment.name}`,
+          `https://example.com/apps/${app.name}/deployments/${deployment.name}`,
           {
             method: "DELETE",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(204);
@@ -1343,11 +1304,11 @@ describe("Management Routes", () => {
           .where(eq(schema.collaborator.appId, app.id));
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments/${deployment.name}`,
+          `https://example.com/apps/${app.name}/deployments/${deployment.name}`,
           {
             method: "DELETE",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(403);
@@ -1357,11 +1318,11 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments/non-existent`,
+          `https://example.com/apps/${app.name}/deployments/non-existent`,
           {
             method: "DELETE",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(404);
@@ -1395,8 +1356,8 @@ describe("Management Routes", () => {
         });
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/collaborators`,
-          { headers },
+          `https://example.com/apps/${app.name}/collaborators`,
+          { headers }
         );
 
         expect(response.status).toBe(200);
@@ -1409,10 +1370,10 @@ describe("Management Routes", () => {
 
         expect(Object.keys(validated.collaborators)).toHaveLength(2);
         expect(validated.collaborators[auth.getCurrentEmail()].permission).toBe(
-          "Owner",
+          "Owner"
         );
         expect(
-          validated.collaborators[collaboratorAccount.email].permission,
+          validated.collaborators[collaboratorAccount.email].permission
         ).toBe("Collaborator");
       });
 
@@ -1425,8 +1386,8 @@ describe("Management Routes", () => {
           .where(eq(schema.collaborator.appId, app.id));
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/collaborators`,
-          { headers },
+          `https://example.com/apps/${app.name}/collaborators`,
+          { headers }
         );
 
         expect(response.status).toBe(404);
@@ -1441,11 +1402,11 @@ describe("Management Routes", () => {
         await db.insert(schema.account).values(collaboratorAccount);
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/collaborators/${collaboratorAccount.email}`,
+          `https://example.com/apps/${app.name}/collaborators/${collaboratorAccount.email}`,
           {
             method: "POST",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(201);
@@ -1454,7 +1415,7 @@ describe("Management Routes", () => {
         const collaborator = await db.query.collaborator.findFirst({
           where: and(
             eq(schema.collaborator.appId, app.id),
-            eq(schema.collaborator.accountId, collaboratorAccount.id),
+            eq(schema.collaborator.accountId, collaboratorAccount.id)
           ),
         });
         expect(collaborator).toBeDefined();
@@ -1473,11 +1434,11 @@ describe("Management Routes", () => {
         });
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/collaborators/${collaboratorAccount.email}`,
+          `https://example.com/apps/${app.name}/collaborators/${collaboratorAccount.email}`,
           {
             method: "POST",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(409);
@@ -1495,11 +1456,11 @@ describe("Management Routes", () => {
         const collaboratorAccount = createTestAccount();
         await db.insert(schema.account).values(collaboratorAccount);
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/collaborators/${collaboratorAccount.email}`,
+          `https://example.com/apps/${app.name}/collaborators/${collaboratorAccount.email}`,
           {
             method: "POST",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(403);
@@ -1509,11 +1470,11 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/collaborators/non-existent@example.com`,
+          `https://example.com/apps/${app.name}/collaborators/non-existent@example.com`,
           {
             method: "POST",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(404);
@@ -1533,11 +1494,11 @@ describe("Management Routes", () => {
         });
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/collaborators/${collaboratorAccount.email}`,
+          `https://example.com/apps/${app.name}/collaborators/${collaboratorAccount.email}`,
           {
             method: "DELETE",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(204);
@@ -1546,7 +1507,7 @@ describe("Management Routes", () => {
         const collaborator = await db.query.collaborator.findFirst({
           where: and(
             eq(schema.collaborator.appId, app.id),
-            eq(schema.collaborator.accountId, collaboratorAccount.id),
+            eq(schema.collaborator.accountId, collaboratorAccount.id)
           ),
         });
         expect(collaborator).toBeFalsy();
@@ -1562,11 +1523,13 @@ describe("Management Routes", () => {
           .where(eq(schema.collaborator.appId, app.id));
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/collaborators/${auth.getCurrentEmail()}`,
+          `https://example.com/apps/${
+            app.name
+          }/collaborators/${auth.getCurrentEmail()}`,
           {
             method: "DELETE",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(204);
@@ -1576,11 +1539,13 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/collaborators/${auth.getCurrentEmail()}`,
+          `https://example.com/apps/${
+            app.name
+          }/collaborators/${auth.getCurrentEmail()}`,
           {
             method: "DELETE",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(409);
@@ -1605,11 +1570,11 @@ describe("Management Routes", () => {
           .where(eq(schema.collaborator.appId, app.id));
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/collaborators/${collaboratorAccount.email}`,
+          `https://example.com/apps/${app.name}/collaborators/${collaboratorAccount.email}`,
           {
             method: "DELETE",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(403);
@@ -1619,11 +1584,11 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/collaborators/non-existent@example.com`,
+          `https://example.com/apps/${app.name}/collaborators/non-existent@example.com`,
           {
             method: "DELETE",
             headers,
-          },
+          }
         );
 
         expect(response.status).toBe(404);
@@ -1675,8 +1640,8 @@ describe("Management Routes", () => {
         ]);
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments/${deployment.name}/metrics`,
-          { headers },
+          `https://example.com/apps/${app.name}/deployments/${deployment.name}/metrics`,
+          { headers }
         );
 
         expect(response.status).toBe(200);
@@ -1696,8 +1661,8 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments/${deployment.name}/metrics`,
-          { headers },
+          `https://example.com/apps/${app.name}/deployments/${deployment.name}/metrics`,
+          { headers }
         );
 
         expect(response.status).toBe(200);
@@ -1720,8 +1685,8 @@ describe("Management Routes", () => {
           .where(eq(schema.collaborator.appId, app.id));
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments/${deployment.name}/metrics`,
-          { headers },
+          `https://example.com/apps/${app.name}/deployments/${deployment.name}/metrics`,
+          { headers }
         );
 
         expect(response.status).toBe(404);
@@ -1731,8 +1696,8 @@ describe("Management Routes", () => {
         const headers = await auth.getAuthHeaders();
 
         const response = await SELF.fetch(
-          `https://example.com/management/apps/${app.name}/deployments/non-existent/metrics`,
-          { headers },
+          `https://example.com/apps/${app.name}/deployments/non-existent/metrics`,
+          { headers }
         );
 
         expect(response.status).toBe(404);

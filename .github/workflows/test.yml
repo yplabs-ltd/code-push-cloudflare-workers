@@ -2,7 +2,10 @@ name: Test
 
 on:
   push:
+    branches:
+      - main  # main 브랜치에 push될 때
   pull_request:
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 jobs:
@@ -11,6 +14,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+     
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -30,8 +37,16 @@ jobs:
           key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
+
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Clear TypeScript cache
+        run: |
+          cd apps/server
+          rm -rf node_modules/.cache
+          rm -rf .tsbuildinfo
+          
       - name: Run checks
         run: |
           cd apps/server
