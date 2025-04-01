@@ -10,7 +10,7 @@
     "list:production": "wrangler d1 migrations list DB --env production",
     "apply": "wrangler d1 migrations apply DB --local",
     "apply:preview": "wrangler d1 migrations apply DB --env preview",
-    "apply:production": "wrangler d1 migrations apply DB --env production",
+    "apply:production": "wrangler d1 migrations apply DB --env production --remote",
     "check": "biome ci --diagnostic-level=error ./src",
     "typecheck": "tsc --noEmit"
   },
