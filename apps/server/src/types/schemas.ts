@@ -56,6 +56,17 @@ export const PackageInfoSchema = z.object({
 });
 export type PackageInfo = z.infer<typeof PackageInfoSchema>;
 
+export const PackageInfoUpdateSchema = z.object({
+  appVersion: z
+    .string()
+    .regex(/^\d+\.\d+\.\d+$/)
+    .nullable()
+    .optional(),
+  description: z.string().nullable().optional(),
+  isDisabled: z.boolean().nullable().optional(),
+});
+export type PackageInfoUpdate = z.infer<typeof PackageInfoUpdateSchema>;
+
 export const PackageSchema = z.object({
   appVersion: z.string().regex(/^\d+\.\d+\.\d+$/),
   blobUrl: z.string(),
@@ -134,6 +145,7 @@ export const UpdateCheckResponseSchema = z.object({
   updateInfo: z.object({
     isAvailable: z.boolean(),
     isMandatory: z.boolean(),
+    isDisabled: z.boolean().optional().default(false),
     appVersion: z.string(),
     packageHash: z.string().optional(),
     label: z.string().optional(),
@@ -157,8 +169,9 @@ export const LegacyUpdateCheckResponseSchema = z.object({
     package_size: z.number().optional(),
     description: z.string().optional(),
     download_url: z.string().optional(),
-    should_run_binary_version: z.boolean().optional(),
-    update_app_version: z.boolean().optional(),
+    should_run_binary_version: z.boolean().optional().default(false),
+    update_app_version: z.boolean().optional().default(false),
+    target_binary_range: z.string().optional(),
   }),
 });
 export type LegacyUpdateCheckResponse = z.infer<
@@ -203,6 +216,7 @@ export const DeploymentReportBody = z.object({
   previousLabelOrAppVersion: z.string().optional(),
   status: z.enum(["DeploymentSucceeded", "DeploymentFailed"]).optional(),
 });
+
 export type DeploymentReportBody = z.infer<typeof DeploymentReportBody>;
 
 export const DownloadReportBody = z.object({
