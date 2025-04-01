@@ -2,7 +2,10 @@ name: Test
 
 on:
   push:
+    branches:
+      - main  # main 브랜치에 push될 때
   pull_request:
+    types: [opened, synchronize, reopened]
   workflow_dispatch:
 
 jobs:
