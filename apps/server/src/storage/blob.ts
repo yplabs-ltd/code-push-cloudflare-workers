@@ -94,8 +94,10 @@ export class BlobStorageProvider {
 
   async moveBlob(sourcePath: string, destinationPath: string): Promise<string> {
     try {
-      // Get source object
-      const sourceObject = await this.storage.get(sourcePath);
+      const actualSourcePath = sourcePath.includes("?")
+        ? sourcePath.split("?")[0].split("/").pop()
+        : sourcePath;
+      const sourceObject = await this.storage.get(actualSourcePath);
       if (!sourceObject) {
         throw createStorageError(ErrorCode.NotFound, "Source blob not found");
       }
@@ -106,7 +108,7 @@ export class BlobStorageProvider {
         await sourceObject.arrayBuffer(),
         {
           customMetadata: sourceObject.customMetadata,
-        },
+        }
       );
 
       // Delete original
