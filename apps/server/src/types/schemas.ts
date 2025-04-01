@@ -157,8 +157,9 @@ export const LegacyUpdateCheckResponseSchema = z.object({
     package_size: z.number().optional(),
     description: z.string().optional(),
     download_url: z.string().optional(),
-    should_run_binary_version: z.boolean().optional(),
-    update_app_version: z.boolean().optional(),
+    should_run_binary_version: z.boolean().optional().default(false),
+    update_app_version: z.boolean().optional().default(false),
+    target_binary_range: z.string().optional(),
   }),
 });
 export type LegacyUpdateCheckResponse = z.infer<
