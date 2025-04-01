@@ -42,13 +42,15 @@ const updateCheckV1Handler = async (c: Context<Env>) => {
         is_available: result.updateInfo.isAvailable,
         is_mandatory: result.updateInfo.isMandatory,
         app_version: result.updateInfo.appVersion,
-        should_run_binary_version: result.updateInfo.shouldRunBinaryVersion,
-        update_app_version: result.updateInfo.updateAppVersion,
+        should_run_binary_version:
+          result.updateInfo.shouldRunBinaryVersion ?? false,
+        update_app_version: result.updateInfo.updateAppVersion ?? false,
         package_hash: result.updateInfo.packageHash,
         label: result.updateInfo.label,
         package_size: result.updateInfo.packageSize,
         description: result.updateInfo.description,
         download_url: result.updateInfo.downloadURL,
+        target_binary_range: result.updateInfo.appVersion,
       },
     };
 
@@ -60,6 +62,7 @@ const updateCheckV1Handler = async (c: Context<Env>) => {
           is_available: false,
           is_mandatory: false,
           app_version: query.app_version,
+          target_binary_range: query.app_version,
         },
       } satisfies LegacyUpdateCheckResponse;
     }

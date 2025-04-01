@@ -15,7 +15,9 @@ import { normalizeVersion } from "../utils/version";
 import type { Env } from "../types/env";
 
 // Return data object instead of response
-const updateCheckHandler = async (c: Context<Env>) => {
+const updateCheckHandler = async (
+  c: Context<Env>
+): Promise<UpdateCheckResponse> => {
   const storage = getStorageProvider(c);
   const query = c.req.query() as unknown as UpdateCheckParams;
 
