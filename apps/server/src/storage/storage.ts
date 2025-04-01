@@ -82,6 +82,8 @@ export interface StorageProvider {
     pkg: Omit<Package, "label">
   ): Promise<Package>;
 
+  updatePackage(pkg: Package): Promise<void>;
+
   getPackageHistory(
     accountId: string,
     appId: string,

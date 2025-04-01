@@ -769,7 +769,18 @@ export class D1StorageProvider implements StorageProvider {
     };
   }
 
+  async updatePackage(pkg: Package): Promise<Package> {
+    await this.db
+      .update(schema.packages)
+      .set({
+        appVersion: pkg.appVersion,
+        description: pkg.description,
+        isDisabled: pkg.isDisabled,
+      })
+      .where(eq(schema.packages.packageHash, pkg.packageHash));
 
+    return pkg;
+  }
 
   async getPackageHistory(
     accountId: string,
