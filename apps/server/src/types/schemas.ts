@@ -211,3 +211,22 @@ export const DownloadReportBody = z.object({
   clientUniqueId: z.string(),
 });
 export type DownloadReportBody = z.infer<typeof DownloadReportBody>;
+
+export const DownloadLegacyReportBody = z.object({
+  deployment_key: z.string(),
+  label: z.string(),
+  client_unique_id: z.string(),
+});
+export type DownloadLegacyReportBody = z.infer<typeof DownloadLegacyReportBody>;
+export const DeploymentLegacyReportBody = z.object({
+  deployment_key: z.string(),
+  client_unique_id: z.string(),
+  label: z.string().optional(),
+  app_version: z.string(),
+  previous_deployment_key: z.string().optional(),
+  previous_label_or_app_version: z.string().optional(),
+  status: z.enum(["DeploymentSucceeded", "DeploymentFailed"]).optional(),
+});
+export type DeploymentLegacyReportBody = z.infer<
+  typeof DeploymentLegacyReportBody
+>;

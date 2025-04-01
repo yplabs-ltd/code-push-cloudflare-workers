@@ -9,6 +9,8 @@ import {
   type Package,
   UpdateCheckParams,
   UpdateCheckResponseSchema,
+  DeploymentLegacyReportBody,
+  DownloadLegacyReportBody,
 } from "../types/schemas";
 import { convertObjectToSnakeCase } from "../utils/convention";
 import { MetricsManager } from "../utils/metrics";
@@ -82,7 +84,7 @@ const routes = {
       body: {
         content: {
           "application/json": {
-            schema: DeploymentReportBody,
+            schema: DeploymentLegacyReportBody,
           },
         },
       },
@@ -129,7 +131,7 @@ const routes = {
       body: {
         content: {
           "application/json": {
-            schema: DownloadReportBody,
+            schema: DownloadLegacyReportBody,
           },
         },
       },
@@ -187,18 +189,18 @@ router.openapi(routes.deploymentReportV1, async (c) => {
 
   if (body.status) {
     await metrics.recordDeploymentStatus(
-      body.deploymentKey.trim(),
+      body.deployment_key.trim(),
       body.label ?? "",
       body.status,
-      body.clientUniqueId
+      body.client_unique_id
     );
   } else {
     await metrics.recordDeployment(
-      body.deploymentKey.trim(),
-      body.label || body.appVersion,
-      body.clientUniqueId,
-      body.previousDeploymentKey?.trim(),
-      body.previousLabelOrAppVersion
+      body.deployment_key.trim(),
+      body.label || body.app_version,
+      body.client_unique_id,
+      body.previous_deployment_key?.trim(),
+      body.previous_label_or_app_version
     );
   }
 
@@ -225,9 +227,9 @@ router.openapi(routes.downloadReportV1, async (c) => {
   const metrics = new MetricsManager(c);
 
   await metrics.recordDownload(
-    body.deploymentKey.trim(),
+    body.deployment_key.trim(),
     body.label,
-    body.clientUniqueId
+    body.client_unique_id
   );
 
   const response: ApiResponse = { status: "ok" };
