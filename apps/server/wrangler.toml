@@ -29,9 +29,9 @@ preview_bucket_name = "code-push-storage-dev"
 
 [env.production]
 d1_databases = [
-  { binding = "DB", database_name = "", database_id = "", migrations_dir = "drizzle/migrations" },
+  { binding = "DB", database_name = "codepush-server-prod", database_id = "aee5850e-b85e-47c6-a0fb-782591e47e5d", migrations_dir = "drizzle/migrations" },
 ]
 r2_buckets = [
-  {binding= "STORAGE_BUCKET", bucket_name="", preview_bucket_name = ""}
+  {binding= "STORAGE_BUCKET", bucket_name="code-push-storage", preview_bucket_name = "code-push-storage-dev"}
 ]
 vars={SERVER_URL="", ENABLE_ACCOUNT_REGISTRATION = "",CORS_ORIGINS = "",ENABLE_PACKAGE_DIFFING = "",GITHUB_CLIENT_ID="",GITHUB_CLIENT_SECRET="",  R2_ACCESS_KEY_ID="", R2_SECRET_ACCESS_KEY="", JWT_SECRET="", R2_BUCKET_NAME="", ACCOUNT_ID=""}
