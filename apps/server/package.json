@@ -2,7 +2,7 @@
   "name": "code-push-cloudflare-workers",
   "scripts": {
     "dev": "wrangler dev",
-    "publish": "wrangler deploy --env production",
+    "publish": "wrangler publish --env production",
     "test": "vitest --config vitest.config.ts",
     "generate": "drizzle-kit generate",
     "list": "wrangler d1 migrations list DB --local",
