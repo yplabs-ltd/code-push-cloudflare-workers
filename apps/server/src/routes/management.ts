@@ -1303,7 +1303,7 @@ router.openapi(routes.deployments.release.update, async (c) => {
   const release = deployment.package;
   if (!release) {
     throw new HTTPException(404, {
-      message: `Release package not found`,
+      message: "Release package not found",
     });
   }
   const updatedRelease = {

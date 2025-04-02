@@ -109,7 +109,7 @@ export class BlobStorageProvider {
         await sourceObject.arrayBuffer(),
         {
           customMetadata: sourceObject.customMetadata,
-        }
+        },
       );
 
       // Delete original

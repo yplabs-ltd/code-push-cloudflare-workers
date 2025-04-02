@@ -32,13 +32,13 @@ export class D1StorageProvider implements StorageProvider {
   private getBlobPath(
     appId: string,
     deploymentId: string,
-    filename: string
+    filename: string,
   ): string {
     return `apps/${appId}/deployments/${deploymentId}/${filename}`;
   }
 
   private mapPackageFromDB(
-    dbPackage: typeof schema.packages.$inferSelect
+    dbPackage: typeof schema.packages.$inferSelect,
   ): Omit<Package, "diffPackageMap" | "blobUrl" | "manifestBlobUrl"> {
     return {
       appVersion: dbPackage.appVersion,
@@ -69,7 +69,7 @@ export class D1StorageProvider implements StorageProvider {
     if (existing) {
       throw createStorageError(
         ErrorCode.AlreadyExists,
-        "Account already exists"
+        "Account already exists",
       );
     }
 
@@ -89,7 +89,7 @@ export class D1StorageProvider implements StorageProvider {
     const account = await this.db.query.account.findFirst({
       where: and(
         eq(schema.account.id, accountId),
-        isNull(schema.account.deletedAt)
+        isNull(schema.account.deletedAt),
       ),
     });
 
@@ -111,7 +111,7 @@ export class D1StorageProvider implements StorageProvider {
     const account = await this.db.query.account.findFirst({
       where: and(
         eq(schema.account.email, email.toLowerCase()),
-        isNull(schema.account.deletedAt)
+        isNull(schema.account.deletedAt),
       ),
     });
 
@@ -133,7 +133,7 @@ export class D1StorageProvider implements StorageProvider {
     const account = await this.db.query.account.findFirst({
       where: and(
         eq(schema.account.email, email.toLowerCase()),
-        isNull(schema.account.deletedAt)
+        isNull(schema.account.deletedAt),
       ),
     });
 
@@ -173,7 +173,7 @@ export class D1StorageProvider implements StorageProvider {
   // App operations
   async addApp(
     accountId: string,
-    app: Omit<App, "id" | "collaborators">
+    app: Omit<App, "id" | "collaborators">,
   ): Promise<App> {
     const id = generateKey();
 
@@ -256,14 +256,14 @@ export class D1StorageProvider implements StorageProvider {
         }
       | {
           appName: string;
-        }
+        },
   ): Promise<App> {
     const app = await this.db.query.app.findFirst({
       where: and(
         "appId" in condition
           ? eq(schema.app.id, condition.appId)
           : eq(schema.app.name, condition.appName),
-        isNull(schema.app.deletedAt)
+        isNull(schema.app.deletedAt),
       ),
       with: {
         collaborators: {
@@ -311,13 +311,13 @@ export class D1StorageProvider implements StorageProvider {
 
     // Verify ownership
     const isOwner = Object.values(existing.collaborators).some(
-      (c) => c.accountId === accountId && c.permission === "Owner"
+      (c) => c.accountId === accountId && c.permission === "Owner",
     );
 
     if (!isOwner) {
       throw createStorageError(
         ErrorCode.Invalid,
-        "Only owners can update apps"
+        "Only owners can update apps",
       );
     }
 
@@ -332,13 +332,13 @@ export class D1StorageProvider implements StorageProvider {
 
     // Verify ownership
     const isOwner = Object.values(app.collaborators).some(
-      (c) => c.accountId === accountId && c.permission === "Owner"
+      (c) => c.accountId === accountId && c.permission === "Owner",
     );
 
     if (!isOwner) {
       throw createStorageError(
         ErrorCode.Invalid,
-        "Only owners can remove apps"
+        "Only owners can remove apps",
       );
     }
 
@@ -355,20 +355,20 @@ export class D1StorageProvider implements StorageProvider {
   async transferApp(
     accountId: string,
     appId: string,
-    email: string
+    email: string,
   ): Promise<void> {
     const app = await this.getApp(accountId, { appId });
     const targetAccount = await this.getAccountByEmail(email);
 
     // Verify ownership
     const isOwner = Object.values(app.collaborators).some(
-      (c) => c.accountId === accountId && c.permission === "Owner"
+      (c) => c.accountId === accountId && c.permission === "Owner",
     );
 
     if (!isOwner) {
       throw createStorageError(
         ErrorCode.Invalid,
-        "Only owners can transfer apps"
+        "Only owners can transfer apps",
       );
     }
 
@@ -380,15 +380,15 @@ export class D1StorageProvider implements StorageProvider {
       .where(
         and(
           eq(schema.collaborator.appId, appId),
-          eq(schema.collaborator.accountId, accountId)
-        )
+          eq(schema.collaborator.accountId, accountId),
+        ),
       );
 
     // Make target account owner
     const existingCollaborator = await this.db.query.collaborator.findFirst({
       where: and(
         eq(schema.collaborator.appId, appId),
-        eq(schema.collaborator.accountId, targetAccount.id)
+        eq(schema.collaborator.accountId, targetAccount.id),
       ),
     });
 
@@ -399,8 +399,8 @@ export class D1StorageProvider implements StorageProvider {
         .where(
           and(
             eq(schema.collaborator.appId, appId),
-            eq(schema.collaborator.accountId, targetAccount.id)
-          )
+            eq(schema.collaborator.accountId, targetAccount.id),
+          ),
         );
     } else {
       await this.db.insert(schema.collaborator).values({
@@ -415,20 +415,20 @@ export class D1StorageProvider implements StorageProvider {
   async addCollaborator(
     accountId: string,
     appId: string,
-    email: string
+    email: string,
   ): Promise<void> {
     const app = await this.getApp(accountId, { appId });
     const collaborator = await this.getAccountByEmail(email);
 
     // Verify ownership
     const isOwner = Object.values(app.collaborators).some(
-      (c) => c.accountId === accountId && c.permission === "Owner"
+      (c) => c.accountId === accountId && c.permission === "Owner",
     );
 
     if (!isOwner) {
       throw createStorageError(
         ErrorCode.Invalid,
-        "Only owners can add collaborators"
+        "Only owners can add collaborators",
       );
     }
 
@@ -436,7 +436,7 @@ export class D1StorageProvider implements StorageProvider {
     if (app.collaborators[email]) {
       throw createStorageError(
         ErrorCode.AlreadyExists,
-        "User is already a collaborator"
+        "User is already a collaborator",
       );
     }
 
@@ -449,7 +449,7 @@ export class D1StorageProvider implements StorageProvider {
 
   async getCollaborators(
     accountId: string,
-    appId: string
+    appId: string,
   ): Promise<CollaboratorMap> {
     const app = await this.db.query.app.findFirst({
       where: eq(schema.app.id, appId),
@@ -479,14 +479,14 @@ export class D1StorageProvider implements StorageProvider {
   async removeCollaborator(
     accountId: string,
     appId: string,
-    email: string
+    email: string,
   ): Promise<void> {
     const app = await this.getApp(accountId, { appId });
     const collaborator = await this.getAccountByEmail(email);
 
     // Verify ownership or self-removal
     const isOwner = Object.values(app.collaborators).some(
-      (c) => c.accountId === accountId && c.permission === "Owner"
+      (c) => c.accountId === accountId && c.permission === "Owner",
     );
     const isSelfRemoval = collaborator.id === accountId;
 
@@ -504,14 +504,14 @@ export class D1StorageProvider implements StorageProvider {
       .where(
         and(
           eq(schema.collaborator.appId, appId),
-          eq(schema.collaborator.accountId, collaborator.id)
-        )
+          eq(schema.collaborator.accountId, collaborator.id),
+        ),
       );
   }
   async addDeployment(
     accountId: string,
     appId: string,
-    deployment: Omit<Deployment, "id" | "package">
+    deployment: Omit<Deployment, "id" | "package">,
   ): Promise<string> {
     await this.getApp(accountId, { appId });
     const id = generateKey();
@@ -520,14 +520,14 @@ export class D1StorageProvider implements StorageProvider {
     const existingDeployment = await this.db.query.deployment.findFirst({
       where: and(
         eq(schema.deployment.appId, appId),
-        eq(schema.deployment.name, deployment.name)
+        eq(schema.deployment.name, deployment.name),
       ),
     });
 
     if (existingDeployment) {
       throw createStorageError(
         ErrorCode.AlreadyExists,
-        "Deployment already exists"
+        "Deployment already exists",
       );
     }
 
@@ -545,12 +545,12 @@ export class D1StorageProvider implements StorageProvider {
   async getDeployment(
     accountId: string,
     appId: string,
-    deploymentId: string
+    deploymentId: string,
   ): Promise<Deployment> {
     const deployment = await this.db.query.deployment.findFirst({
       where: and(
         eq(schema.deployment.id, deploymentId),
-        isNull(schema.deployment.deletedAt)
+        isNull(schema.deployment.deletedAt),
       ),
       with: {
         packages: {
@@ -593,7 +593,7 @@ export class D1StorageProvider implements StorageProvider {
 
   async getDeployments(
     accountId: string,
-    appId: string
+    appId: string,
   ): Promise<Deployment[]> {
     const deployments = await this.db.query.deployment.findMany({
       where: eq(schema.deployment.appId, appId),
@@ -642,7 +642,7 @@ export class D1StorageProvider implements StorageProvider {
     const deployment = await this.db.query.deployment.findFirst({
       where: and(
         eq(schema.deployment.key, deploymentKey),
-        isNull(schema.deployment.deletedAt)
+        isNull(schema.deployment.deletedAt),
       ),
       columns: {
         id: true,
@@ -663,7 +663,7 @@ export class D1StorageProvider implements StorageProvider {
   async updateDeployment(
     accountId: string,
     appId: string,
-    deployment: Deployment
+    deployment: Deployment,
   ): Promise<void> {
     await this.db
       .update(schema.deployment)
@@ -676,7 +676,7 @@ export class D1StorageProvider implements StorageProvider {
   async removeDeployment(
     accountId: string,
     appId: string,
-    deploymentId: string
+    deploymentId: string,
   ): Promise<void> {
     // Mark deployment as deleted
     await this.db
@@ -690,7 +690,7 @@ export class D1StorageProvider implements StorageProvider {
 
   // Package methods
   private async getPackageDiffs(
-    packageId: string
+    packageId: string,
   ): Promise<PackageHashToBlobInfoMap> {
     const diffs = await this.db.query.packageDiff.findMany({
       where: eq(schema.packageDiff.packageId, packageId),
@@ -710,7 +710,7 @@ export class D1StorageProvider implements StorageProvider {
     accountId: string,
     appId: string,
     deploymentId: string,
-    pkg: Omit<Package, "label">
+    pkg: Omit<Package, "label">,
   ): Promise<Package> {
     // Get current package count for label
     const packagesCount = await this.db.query.packages.findMany({
@@ -735,7 +735,7 @@ export class D1StorageProvider implements StorageProvider {
     if (pkg.manifestBlobUrl && manifestBlobPath) {
       manifestUrl = await this.blob.moveBlob(
         pkg.manifestBlobUrl,
-        manifestBlobPath
+        manifestBlobPath,
       );
     }
 
@@ -785,12 +785,12 @@ export class D1StorageProvider implements StorageProvider {
   async getPackageHistory(
     accountId: string,
     appId: string,
-    deploymentId: string
+    deploymentId: string,
   ): Promise<Package[]> {
     const packages = await this.db.query.packages.findMany({
       where: and(
         eq(schema.packages.deploymentId, deploymentId),
-        isNull(schema.packages.deletedAt)
+        isNull(schema.packages.deletedAt),
       ),
       orderBy: (packages, { asc }) => [asc(packages.uploadTime)],
     });
@@ -804,12 +804,12 @@ export class D1StorageProvider implements StorageProvider {
           ? await this.blob.getBlobUrl(p.manifestBlobPath)
           : "",
         diffPackageMap: await this.getPackageDiffs(p.id),
-      }))
+      })),
     );
   }
 
   async getPackageHistoryFromDeploymentKey(
-    deploymentKey: string
+    deploymentKey: string,
   ): Promise<Package[]> {
     const deployment = await this.db.query.deployment.findFirst({
       where: eq(schema.deployment.key, deploymentKey),
@@ -826,12 +826,12 @@ export class D1StorageProvider implements StorageProvider {
     accountId: string,
     appId: string,
     deploymentId: string,
-    history: Package[]
+    history: Package[],
   ): Promise<void> {
     if (!history?.length) {
       throw createStorageError(
         ErrorCode.Invalid,
-        "Cannot update with empty history"
+        "Cannot update with empty history",
       );
     }
 
@@ -880,7 +880,7 @@ export class D1StorageProvider implements StorageProvider {
   async clearPackageHistory(
     accountId: string,
     appId: string,
-    deploymentId: string
+    deploymentId: string,
   ): Promise<void> {
     // Delete packages
     await this.db
@@ -896,7 +896,7 @@ export class D1StorageProvider implements StorageProvider {
   async addBlob(
     blobId: string,
     data: ArrayBuffer,
-    size: number
+    size: number,
   ): Promise<string> {
     return this.blob.addBlob(blobId, data, size);
   }
@@ -912,7 +912,7 @@ export class D1StorageProvider implements StorageProvider {
   // Access key methods
   async addAccessKey(
     accountId: string,
-    accessKey: Omit<AccessKey, "id">
+    accessKey: Omit<AccessKey, "id">,
   ): Promise<string> {
     const id = generateKey();
 
@@ -932,7 +932,7 @@ export class D1StorageProvider implements StorageProvider {
   }
 
   private mapAccessKeyFromDB(
-    dbAccessKey: typeof schema.accessKey.$inferSelect
+    dbAccessKey: typeof schema.accessKey.$inferSelect,
   ): AccessKey {
     return {
       id: dbAccessKey.id,
@@ -949,13 +949,13 @@ export class D1StorageProvider implements StorageProvider {
   // For getAccessKey
   async getAccessKey(
     accountId: string,
-    accessKeyId: string
+    accessKeyId: string,
   ): Promise<AccessKey> {
     const key = await this.db.query.accessKey.findFirst({
       where: and(
         eq(schema.accessKey.id, accessKeyId),
         eq(schema.accessKey.accountId, accountId),
-        isNull(schema.accessKey.deletedAt)
+        isNull(schema.accessKey.deletedAt),
       ),
     });
 
@@ -971,7 +971,7 @@ export class D1StorageProvider implements StorageProvider {
     const keys = await this.db.query.accessKey.findMany({
       where: and(
         eq(schema.accessKey.accountId, accountId),
-        isNull(schema.accessKey.deletedAt)
+        isNull(schema.accessKey.deletedAt),
       ),
     });
 
@@ -986,8 +986,8 @@ export class D1StorageProvider implements StorageProvider {
         and(
           eq(schema.accessKey.id, accessKeyId),
           eq(schema.accessKey.accountId, accountId),
-          isNull(schema.accessKey.deletedAt)
-        )
+          isNull(schema.accessKey.deletedAt),
+        ),
       );
 
     if (!result) {
@@ -997,7 +997,7 @@ export class D1StorageProvider implements StorageProvider {
 
   async updateAccessKey(
     accountId: string,
-    accessKey: AccessKey
+    accessKey: AccessKey,
   ): Promise<void> {
     await this.db
       .update(schema.accessKey)
@@ -1009,8 +1009,8 @@ export class D1StorageProvider implements StorageProvider {
       .where(
         and(
           eq(schema.accessKey.id, accessKey.id),
-          eq(schema.accessKey.accountId, accountId)
-        )
+          eq(schema.accessKey.accountId, accountId),
+        ),
       );
   }
 }
