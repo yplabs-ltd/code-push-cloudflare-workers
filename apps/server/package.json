@@ -12,7 +12,8 @@
     "apply:preview": "wrangler d1 migrations apply DB --env preview",
     "apply:production": "wrangler d1 migrations apply DB --env production --remote",
     "check": "biome ci --diagnostic-level=error ./src",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build": "wrangler build"
   },
   "dependencies": {
     "@hono/zod-openapi": "^0.18.3",
