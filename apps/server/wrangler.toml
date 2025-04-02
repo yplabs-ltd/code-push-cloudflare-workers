@@ -3,33 +3,36 @@ main = "src/index.ts"
 compatibility_date = "2024-12-30"
 compatibility_flags = ["nodejs_compat"]
 
-d1_databases = [
-  { binding = "DB", database_name = "code-push-server-local", database_id = "n/a", migrations_dir = "drizzle/migrations" },
-]
-
 [observability.logs]
 enabled = true
 
+# ✅ 로컬(dev) 환경용
 [vars]
 SERVER_URL = "http://localhost:8787"
 ENABLE_ACCOUNT_REGISTRATION = "true"
 CORS_ORIGINS = "http://localhost:5173"
 ENABLE_PACKAGE_DIFFING = "true"
-GITHUB_CLIENT_ID="Ov23liuoVBhHRJ02UweV"
-GITHUB_CLIENT_SECRET="7fa9fa60d5480bf0583e54b8bfd395c037bf7a68"
-R2_ACCESS_KEY_ID="ec8865ca2f1824ae927e0660ba705032"
-R2_SECRET_ACCESS_KEY="f042b67f46d7cced0c90cb50c2b3e54390bc5a15c15b83688d30c9d4bac268c5"
-JWT_SECRET="cd6507d9f671dca2a70eff43d70fcc94f1abe50ee82f25bac1a603ea76fb7e17"
+GITHUB_CLIENT_ID = "Ov23liuoVBhHRJ02UweV"
+GITHUB_CLIENT_SECRET = "7fa9fa60d5480bf0583e54b8bfd395c037bf7a68"
+R2_ACCESS_KEY_ID = "ec8865ca2f1824ae927e0660ba705032"
+R2_SECRET_ACCESS_KEY = "f042b67f46d7cced0c90cb50c2b3e54390bc5a15c15b83688d30c9d4bac268c5"
+JWT_SECRET = "cd6507d9f671dca2a70eff43d70fcc94f1abe50ee82f25bac1a603ea76fb7e17"
 
 [[r2_buckets]]
 binding = "STORAGE_BUCKET"
 bucket_name = "code-push-storage"
 preview_bucket_name = "code-push-storage-dev"
 
+d1_databases = [
+  { binding = "DB", database_name = "code-push-server-local", database_id = "n/a", migrations_dir = "drizzle/migrations" },
+]
 
+# ✅ 프로덕션 환경 정의
+[env.production]
 d1_databases = [
   { binding = "DB", database_name = "codepush-server-prod", database_id = "aee5850e-b85e-47c6-a0fb-782591e47e5d", migrations_dir = "drizzle/migrations" },
 ]
+
 r2_buckets = [
-  {binding= "STORAGE_BUCKET", bucket_name="code-push-storage", preview_bucket_name = "code-push-storage-dev"}
+  { binding = "STORAGE_BUCKET", bucket_name = "code-push-storage", preview_bucket_name = "code-push-storage-dev" }
 ]
