@@ -21,6 +21,7 @@ export default defineWorkersProject(async () => {
           miniflare: {
             // Add a test-only binding for migrations, so we can apply them in a
             // setup file
+            d1Databases: ["DB"],
             bindings: {
               TEST_MIGRATIONS: migrations,
               GITHUB_CLIENT_ID: "xxx",

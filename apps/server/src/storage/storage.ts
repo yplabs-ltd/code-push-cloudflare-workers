@@ -20,7 +20,7 @@ export interface StorageProvider {
   // App operations
   addApp(
     accountId: string,
-    app: Omit<App, "id" | "collaborators" | "deployments">
+    app: Omit<App, "id" | "collaborators" | "deployments">,
   ): Promise<App>;
   getApps(accountId: string): Promise<App[]>;
   getApp(
@@ -31,7 +31,7 @@ export interface StorageProvider {
         }
       | {
           appName: string;
-        }
+        },
   ): Promise<App>;
   removeApp(accountId: string, appId: string): Promise<void>;
   updateApp(accountId: string, app: App): Promise<void>;
@@ -41,37 +41,37 @@ export interface StorageProvider {
   addCollaborator(
     accountId: string,
     appId: string,
-    email: string
+    email: string,
   ): Promise<void>;
   getCollaborators(accountId: string, appId: string): Promise<CollaboratorMap>;
   removeCollaborator(
     accountId: string,
     appId: string,
-    email: string
+    email: string,
   ): Promise<void>;
 
   // Deployment operations
   addDeployment(
     accountId: string,
     appId: string,
-    deployment: Omit<Deployment, "id" | "package">
+    deployment: Omit<Deployment, "id" | "package">,
   ): Promise<string>;
   getDeployment(
     accountId: string,
     appId: string,
-    deploymentId: string
+    deploymentId: string,
   ): Promise<Deployment>;
   getDeploymentInfo(deploymentKey: string): Promise<DeploymentInfo>;
   getDeployments(accountId: string, appId: string): Promise<Deployment[]>;
   removeDeployment(
     accountId: string,
     appId: string,
-    deploymentId: string
+    deploymentId: string,
   ): Promise<void>;
   updateDeployment(
     accountId: string,
     appId: string,
-    deployment: Deployment
+    deployment: Deployment,
   ): Promise<void>;
 
   // Package operations
@@ -79,33 +79,33 @@ export interface StorageProvider {
     accountId: string,
     appId: string,
     deploymentId: string,
-    pkg: Omit<Package, "label">
+    pkg: Omit<Package, "label">,
   ): Promise<Package>;
 
-  updatePackage(pkg: Package): Promise<void>;
+  updatePackage(pkg: Package): Promise<Package>;
 
   getPackageHistory(
     accountId: string,
     appId: string,
-    deploymentId: string
+    deploymentId: string,
   ): Promise<Package[]>;
   getPackageHistoryFromDeploymentKey(deploymentKey: string): Promise<Package[]>;
   updatePackageHistory(
     accountId: string,
     appId: string,
     deploymentId: string,
-    history: Package[]
+    history: Package[],
   ): Promise<void>;
   clearPackageHistory(
     accountId: string,
     appId: string,
-    deploymentId: string
+    deploymentId: string,
   ): Promise<void>;
 
   // Access key operations
   addAccessKey(
     accountId: string,
-    accessKey: Omit<AccessKey, "id">
+    accessKey: Omit<AccessKey, "id">,
   ): Promise<string>;
   getAccessKey(accountId: string, accessKeyId: string): Promise<AccessKey>;
   getAccessKeys(accountId: string): Promise<AccessKey[]>;
@@ -116,7 +116,7 @@ export interface StorageProvider {
   addBlob(
     blobId: string,
     data: ArrayBuffer | Uint8Array,
-    size: number
+    size: number,
   ): Promise<string>;
   getBlobUrl(blobId: string): Promise<string>;
   removeBlob(blobId: string): Promise<void>;

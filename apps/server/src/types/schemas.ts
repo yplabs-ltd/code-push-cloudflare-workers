@@ -145,7 +145,6 @@ export const UpdateCheckResponseSchema = z.object({
   updateInfo: z.object({
     isAvailable: z.boolean(),
     isMandatory: z.boolean(),
-    isDisabled: z.boolean().optional().default(false),
     appVersion: z.string(),
     packageHash: z.string().optional(),
     label: z.string().optional(),

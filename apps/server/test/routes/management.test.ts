@@ -1191,14 +1191,14 @@ describe("Management Routes", () => {
         await db.insert(schema.deployment).values(deployment);
 
         const response = await SELF.fetch(
-          `https://example.com/apps/${app.name}/deployments/${deployment.name}/`,
+          `https://example.com/apps/${app.name}/deployments/${deployment.name}`,
           {
             method: "PATCH",
             headers,
             body: JSON.stringify({
               name: "updated-name",
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(200);
@@ -1220,14 +1220,14 @@ describe("Management Routes", () => {
         await db.insert(schema.deployment).values([deployment1, deployment2]);
 
         const response = await SELF.fetch(
-          `https://example.com/apps/${app.name}/deployments/${deployment2.name}/`,
+          `https://example.com/apps/${app.name}/deployments/${deployment2.name}`,
           {
             method: "PATCH",
             headers,
             body: JSON.stringify({
               name: deployment1.name,
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(409);
@@ -1246,14 +1246,14 @@ describe("Management Routes", () => {
           .where(eq(schema.collaborator.appId, app.id));
 
         const response = await SELF.fetch(
-          `https://example.com/apps/${app.name}/deployments/${deployment.name}/`,
+          `https://example.com/apps/${app.name}/deployments/${deployment.name}`,
           {
             method: "PATCH",
             headers,
             body: JSON.stringify({
               name: "new-name",
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(403);
