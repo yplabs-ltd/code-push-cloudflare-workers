@@ -1159,7 +1159,6 @@ router.openapi(routes.deployments.remove, async (c) => {
 });
 
 router.openapi(routes.deployments.release.create, async (c) => {
-
   const storage = getStorageProvider(c);
   const accountId = c.var.auth.accountId;
   const { appName, deploymentName } = c.req.valid("param");
@@ -1282,7 +1281,6 @@ router.openapi(routes.deployments.release.update, async (c) => {
   const accountId = c.var.auth.accountId;
   const { appName, deploymentName } = c.req.valid("param");
   const { packageInfo } = c.req.valid("json");
-  
 
   const app = await storage.getApp(accountId, { appName });
   if (!app) {
@@ -1295,7 +1293,6 @@ router.openapi(routes.deployments.release.update, async (c) => {
 
   const deployments = await storage.getDeployments(accountId, app.id);
   const deployment = deployments.find((d) => d.name === deploymentName);
-
 
   if (!deployment) {
     throw new HTTPException(404, {
@@ -1312,7 +1309,7 @@ router.openapi(routes.deployments.release.update, async (c) => {
   const release = packageInfo.label
     ? packageHistory.find((p) => p.label === packageInfo.label)
     : packageHistory[packageHistory.length - 1];
-  
+
   if (!release) {
     throw new HTTPException(404, {
       message: "Release package not found",

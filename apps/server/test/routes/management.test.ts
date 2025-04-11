@@ -127,7 +127,7 @@ describe("Management Routes", () => {
           .parse(data);
 
         expect(validated.accessKey.expires).toBeLessThanOrEqual(
-          Date.now() + ttl + 1000
+          Date.now() + ttl + 1000,
         );
       });
 
@@ -179,7 +179,7 @@ describe("Management Routes", () => {
           `https://example.com/accessKeys/${key.name}`,
           {
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(200);
@@ -203,7 +203,7 @@ describe("Management Routes", () => {
           `https://example.com/accessKeys/${key.friendlyName}`,
           {
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(200);
@@ -226,7 +226,7 @@ describe("Management Routes", () => {
           "https://example.com/accessKeys/non-existent",
           {
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(404);
@@ -246,7 +246,7 @@ describe("Management Routes", () => {
             body: JSON.stringify({
               friendlyName: "Updated Name",
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(200);
@@ -274,7 +274,7 @@ describe("Management Routes", () => {
             body: JSON.stringify({
               ttl,
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(200);
@@ -287,7 +287,7 @@ describe("Management Routes", () => {
           .parse(data);
 
         expect(validated.accessKey.expires).toBeLessThanOrEqual(
-          Date.now() + ttl + 1000
+          Date.now() + ttl + 1000,
         );
       });
 
@@ -304,7 +304,7 @@ describe("Management Routes", () => {
             body: JSON.stringify({
               friendlyName: key1.friendlyName,
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(409);
@@ -322,7 +322,7 @@ describe("Management Routes", () => {
             body: JSON.stringify({
               ttl: -1,
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(400);
@@ -339,7 +339,7 @@ describe("Management Routes", () => {
           {
             method: "DELETE",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(204);
@@ -349,7 +349,7 @@ describe("Management Routes", () => {
           `https://example.com/accessKeys/${key.name}`,
           {
             headers,
-          }
+          },
         );
         expect(getResponse.status).toBe(404);
       });
@@ -362,7 +362,7 @@ describe("Management Routes", () => {
           {
             method: "DELETE",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(404);
@@ -414,10 +414,10 @@ describe("Management Routes", () => {
 
         expect(validated.apps).toHaveLength(2);
         expect(
-          validated.apps[0].collaborators[auth.getCurrentEmail()].permission
+          validated.apps[0].collaborators[auth.getCurrentEmail()].permission,
         ).toBe("Owner");
         expect(
-          validated.apps[1].collaborators[auth.getCurrentEmail()].permission
+          validated.apps[1].collaborators[auth.getCurrentEmail()].permission,
         ).toBe("Collaborator");
       });
 
@@ -501,7 +501,7 @@ describe("Management Routes", () => {
         expect(validated.app.name).toBe("test-app");
         expect(validated.app.deployments).toEqual(["Production", "Staging"]);
         expect(
-          validated.app.collaborators[auth.getCurrentEmail()].permission
+          validated.app.collaborators[auth.getCurrentEmail()].permission,
         ).toBe("Owner");
 
         // Verify deployments were created
@@ -601,7 +601,7 @@ describe("Management Routes", () => {
           `https://example.com/apps/${app.name}`,
           {
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(200);
@@ -623,7 +623,7 @@ describe("Management Routes", () => {
           "https://example.com/apps/non-existent",
           {
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(404);
@@ -637,9 +637,8 @@ describe("Management Routes", () => {
           email: "test2@example.com",
           name: "Test User",
         };
-        const { account: otherAccount } = await auth.createTestAccount(
-          testUser
-        );
+        const { account: otherAccount } =
+          await auth.createTestAccount(testUser);
         await db.insert(schema.app).values(app);
         await db.insert(schema.collaborator).values({
           appId: app.id,
@@ -651,7 +650,7 @@ describe("Management Routes", () => {
           `https://example.com/apps/${app.name}`,
           {
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(404);
@@ -679,7 +678,7 @@ describe("Management Routes", () => {
             body: JSON.stringify({
               name: "updated-name",
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(200);
@@ -722,7 +721,7 @@ describe("Management Routes", () => {
             body: JSON.stringify({
               name: app1.name,
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(409);
@@ -748,7 +747,7 @@ describe("Management Routes", () => {
             body: JSON.stringify({
               name: "new-name",
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(403);
@@ -778,7 +777,7 @@ describe("Management Routes", () => {
           {
             method: "DELETE",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(204);
@@ -810,7 +809,7 @@ describe("Management Routes", () => {
           {
             method: "DELETE",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(403);
@@ -824,7 +823,7 @@ describe("Management Routes", () => {
           {
             method: "DELETE",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(404);
@@ -841,9 +840,8 @@ describe("Management Routes", () => {
           email: "test2@example.com",
           name: "Test User 2",
         };
-        const { account: targetAccount } = await auth.createTestAccount(
-          testUser
-        );
+        const { account: targetAccount } =
+          await auth.createTestAccount(testUser);
 
         await db.insert(schema.app).values(app);
         await db.insert(schema.collaborator).values({
@@ -857,7 +855,7 @@ describe("Management Routes", () => {
           {
             method: "POST",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(201);
@@ -868,12 +866,12 @@ describe("Management Routes", () => {
         });
 
         const originalOwner = collaborators.find(
-          (c) => c.accountId === auth.getCurrentAccountId()
+          (c) => c.accountId === auth.getCurrentAccountId(),
         );
         expect(originalOwner?.permission).toBe("Collaborator");
 
         const newOwner = collaborators.find(
-          (c) => c.accountId === targetAccount.id
+          (c) => c.accountId === targetAccount.id,
         );
         expect(newOwner?.permission).toBe("Owner");
       });
@@ -894,7 +892,7 @@ describe("Management Routes", () => {
           {
             method: "POST",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(404);
@@ -918,7 +916,7 @@ describe("Management Routes", () => {
           {
             method: "POST",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(403);
@@ -950,7 +948,7 @@ describe("Management Routes", () => {
 
         const response = await SELF.fetch(
           `https://example.com/apps/${app.name}/deployments/`,
-          { headers }
+          { headers },
         );
 
         expect(response.status).toBe(200);
@@ -977,7 +975,7 @@ describe("Management Routes", () => {
 
         const response = await SELF.fetch(
           `https://example.com/apps/${app.name}/deployments/`,
-          { headers }
+          { headers },
         );
 
         expect(response.status).toBe(200);
@@ -1002,7 +1000,7 @@ describe("Management Routes", () => {
 
         const response = await SELF.fetch(
           `https://example.com/apps/${app.name}/deployments`,
-          { headers }
+          { headers },
         );
 
         expect(response.status).toBe(404);
@@ -1021,7 +1019,7 @@ describe("Management Routes", () => {
             body: JSON.stringify({
               name: "test-deployment",
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(201);
@@ -1049,7 +1047,7 @@ describe("Management Routes", () => {
               name: "test-deployment",
               key: customKey,
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(201);
@@ -1084,7 +1082,7 @@ describe("Management Routes", () => {
             body: JSON.stringify({
               name: "test-deployment",
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(409);
@@ -1107,7 +1105,7 @@ describe("Management Routes", () => {
             body: JSON.stringify({
               name: "test-deployment",
             }),
-          }
+          },
         );
 
         expect(response.status).toBe(403);
@@ -1123,7 +1121,7 @@ describe("Management Routes", () => {
 
         const response = await SELF.fetch(
           urlEncode`https://example.com/apps/${app.name}/deployments/${deployment.name}`,
-          { headers }
+          { headers },
         );
 
         expect(response.status).toBe(200);
@@ -1155,7 +1153,7 @@ describe("Management Routes", () => {
 
         const response = await SELF.fetch(
           urlEncode`https://example.com/apps/${app.name}/deployments/${deployment.name}`,
-          { headers }
+          { headers },
         );
 
         expect(response.status).toBe(200);
@@ -1176,7 +1174,7 @@ describe("Management Routes", () => {
 
         const response = await SELF.fetch(
           `https://example.com/apps/${app.name}/deployments/non-existent`,
-          { headers }
+          { headers },
         );
 
         expect(response.status).toBe(404);
@@ -1279,7 +1277,7 @@ describe("Management Routes", () => {
           {
             method: "DELETE",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(204);
@@ -1308,7 +1306,7 @@ describe("Management Routes", () => {
           {
             method: "DELETE",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(403);
@@ -1322,7 +1320,7 @@ describe("Management Routes", () => {
           {
             method: "DELETE",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(404);
@@ -1357,7 +1355,7 @@ describe("Management Routes", () => {
 
         const response = await SELF.fetch(
           `https://example.com/apps/${app.name}/collaborators`,
-          { headers }
+          { headers },
         );
 
         expect(response.status).toBe(200);
@@ -1370,10 +1368,10 @@ describe("Management Routes", () => {
 
         expect(Object.keys(validated.collaborators)).toHaveLength(2);
         expect(validated.collaborators[auth.getCurrentEmail()].permission).toBe(
-          "Owner"
+          "Owner",
         );
         expect(
-          validated.collaborators[collaboratorAccount.email].permission
+          validated.collaborators[collaboratorAccount.email].permission,
         ).toBe("Collaborator");
       });
 
@@ -1387,7 +1385,7 @@ describe("Management Routes", () => {
 
         const response = await SELF.fetch(
           `https://example.com/apps/${app.name}/collaborators`,
-          { headers }
+          { headers },
         );
 
         expect(response.status).toBe(404);
@@ -1406,7 +1404,7 @@ describe("Management Routes", () => {
           {
             method: "POST",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(201);
@@ -1415,7 +1413,7 @@ describe("Management Routes", () => {
         const collaborator = await db.query.collaborator.findFirst({
           where: and(
             eq(schema.collaborator.appId, app.id),
-            eq(schema.collaborator.accountId, collaboratorAccount.id)
+            eq(schema.collaborator.accountId, collaboratorAccount.id),
           ),
         });
         expect(collaborator).toBeDefined();
@@ -1438,7 +1436,7 @@ describe("Management Routes", () => {
           {
             method: "POST",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(409);
@@ -1460,7 +1458,7 @@ describe("Management Routes", () => {
           {
             method: "POST",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(403);
@@ -1474,7 +1472,7 @@ describe("Management Routes", () => {
           {
             method: "POST",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(404);
@@ -1498,7 +1496,7 @@ describe("Management Routes", () => {
           {
             method: "DELETE",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(204);
@@ -1507,7 +1505,7 @@ describe("Management Routes", () => {
         const collaborator = await db.query.collaborator.findFirst({
           where: and(
             eq(schema.collaborator.appId, app.id),
-            eq(schema.collaborator.accountId, collaboratorAccount.id)
+            eq(schema.collaborator.accountId, collaboratorAccount.id),
           ),
         });
         expect(collaborator).toBeFalsy();
@@ -1529,7 +1527,7 @@ describe("Management Routes", () => {
           {
             method: "DELETE",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(204);
@@ -1545,7 +1543,7 @@ describe("Management Routes", () => {
           {
             method: "DELETE",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(409);
@@ -1574,7 +1572,7 @@ describe("Management Routes", () => {
           {
             method: "DELETE",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(403);
@@ -1588,7 +1586,7 @@ describe("Management Routes", () => {
           {
             method: "DELETE",
             headers,
-          }
+          },
         );
 
         expect(response.status).toBe(404);
@@ -1641,7 +1639,7 @@ describe("Management Routes", () => {
 
         const response = await SELF.fetch(
           `https://example.com/apps/${app.name}/deployments/${deployment.name}/metrics`,
-          { headers }
+          { headers },
         );
 
         expect(response.status).toBe(200);
@@ -1662,7 +1660,7 @@ describe("Management Routes", () => {
 
         const response = await SELF.fetch(
           `https://example.com/apps/${app.name}/deployments/${deployment.name}/metrics`,
-          { headers }
+          { headers },
         );
 
         expect(response.status).toBe(200);
@@ -1686,7 +1684,7 @@ describe("Management Routes", () => {
 
         const response = await SELF.fetch(
           `https://example.com/apps/${app.name}/deployments/${deployment.name}/metrics`,
-          { headers }
+          { headers },
         );
 
         expect(response.status).toBe(404);
@@ -1697,7 +1695,7 @@ describe("Management Routes", () => {
 
         const response = await SELF.fetch(
           `https://example.com/apps/${app.name}/deployments/non-existent/metrics`,
-          { headers }
+          { headers },
         );
 
         expect(response.status).toBe(404);
