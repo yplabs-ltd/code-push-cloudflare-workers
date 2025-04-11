@@ -1704,4 +1704,100 @@ describe("Management Routes", () => {
       });
     });
   });
+  describe("PATCH /apps/:appName/deployments/:deploymentName/release", () => {
+    let app: typeof schema.app.$inferInsert;
+    beforeEach(async () => {
+      // Create test app
+      app = createTestApp();
+      await db.insert(schema.app).values(app);
+      await db.insert(schema.collaborator).values({
+        appId: app.id,
+        accountId: auth.getCurrentAccountId(),
+        permission: "Owner",
+      });
+    });
+    it("updates the latest release when no label is provided", async () => {
+      const headers = await auth.getAuthHeaders();
+
+      const deployment = await createTestDeployment(app.id);
+      await db.insert(schema.deployment).values(deployment);
+      const package1 = await createTestPackage(deployment.id, {
+        label: "v1",
+        appVersion: "1.0.0",
+      });
+      const package2 = await createTestPackage(deployment.id, {
+        label: "v2",
+        appVersion: "1.0.1",
+      });
+      await db.insert(schema.packages).values(package1);
+      await db.insert(schema.packages).values(package2);
+      await Promise.all([
+        createTestBlob(package1.blobPath, "blob1"),
+        createTestBlob(package1.manifestBlobPath as string, "blob2"),
+        createTestBlob(package2.blobPath, "blob3"),
+        createTestBlob(package2.manifestBlobPath as string, "blob4"),
+      ]);
+
+      const response = await SELF.fetch(
+        `https://example.com/apps/${app.name}/deployments/${deployment.name}/release`,
+        {
+          method: "PATCH",
+          headers,
+          body: JSON.stringify({
+            packageInfo: {
+              description: "Updated description",
+            },
+          }),
+        },
+      );
+
+      expect(response.status).toBe(200);
+      const data = await response.json();
+      expect(data.release.label).toBe("v2");
+      expect(data.release.description).toBe("Updated description");
+      expect(data.release.appVersion).toBe("1.0.1");
+    });
+
+    it("updates specific release when label is provided", async () => {
+      const headers = await auth.getAuthHeaders();
+      const deployment = createTestDeployment(app.id);
+      await db.insert(schema.deployment).values(deployment);
+      const package1 = await createTestPackage(deployment.id, {
+        label: "v1",
+        appVersion: "1.0.0",
+      });
+      const package2 = await createTestPackage(deployment.id, {
+        label: "v2",
+        appVersion: "1.0.1",
+      });
+      await db.insert(schema.packages).values(package1);
+      await db.insert(schema.packages).values(package2);
+      await Promise.all([
+        createTestBlob(package1.blobPath, "blob1"),
+        createTestBlob(package1.manifestBlobPath as string, "blob2"),
+        createTestBlob(package2.blobPath, "blob3"),
+        createTestBlob(package2.manifestBlobPath as string, "blob4"),
+      ]);
+      const response = await SELF.fetch(
+        `https://example.com/apps/${app.name}/deployments/${deployment.name}/release`,
+        {
+          method: "PATCH",
+          headers,
+          body: JSON.stringify({
+            packageInfo: {
+              label: "v1",
+              description: "Updated v1 description",
+            },
+          }),
+        },
+      );
+
+      const data = await response.json();
+      console.log("response----", data);
+      expect(data.release.label).toBe("v1");
+      expect(response.status).toBe(200);
+      expect(data.release.description).toBe("Updated v1 description");
+      expect(data.release.appVersion).toBe("1.0.0");
+    });
+  });
 });
