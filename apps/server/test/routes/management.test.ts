@@ -1752,7 +1752,7 @@ describe("Management Routes", () => {
       );
 
       expect(response.status).toBe(200);
-      const data = await response.json();
+      const data: any = await response.json();
       expect(data.release.label).toBe("v2");
       expect(data.release.description).toBe("Updated description");
       expect(data.release.appVersion).toBe("1.0.1");
@@ -1792,10 +1792,9 @@ describe("Management Routes", () => {
         },
       );
 
-      const data = await response.json();
-
-      expect(data.release.label).toBe("v1");
       expect(response.status).toBe(200);
+      const data: any = await response.json();
+      expect(data.release.label).toBe("v1");
       expect(data.release.description).toBe("Updated v1 description");
       expect(data.release.appVersion).toBe("1.0.0");
     });
