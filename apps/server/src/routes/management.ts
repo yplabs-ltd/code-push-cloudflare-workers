@@ -1282,10 +1282,9 @@ router.openapi(routes.deployments.release.update, async (c) => {
   const accountId = c.var.auth.accountId;
   const { appName, deploymentName } = c.req.valid("param");
   const { packageInfo } = c.req.valid("json");
-  console.log("Request:", { accountId, appName, deploymentName, packageInfo });
+  
 
   const app = await storage.getApp(accountId, { appName });
-  console.log("App:", app);
   if (!app) {
     throw new HTTPException(404, {
       message: `App "${appName}" not found`,
@@ -1296,7 +1295,7 @@ router.openapi(routes.deployments.release.update, async (c) => {
 
   const deployments = await storage.getDeployments(accountId, app.id);
   const deployment = deployments.find((d) => d.name === deploymentName);
-  console.log("deployment----", deployment);
+
 
   if (!deployment) {
     throw new HTTPException(404, {
@@ -1313,7 +1312,7 @@ router.openapi(routes.deployments.release.update, async (c) => {
   const release = packageInfo.label
     ? packageHistory.find((p) => p.label === packageInfo.label)
     : packageHistory[packageHistory.length - 1];
-  console.log("release----", release);
+  
   if (!release) {
     throw new HTTPException(404, {
       message: "Release package not found",

@@ -1793,7 +1793,7 @@ describe("Management Routes", () => {
       );
 
       const data = await response.json();
-      console.log("response----", data);
+
       expect(data.release.label).toBe("v1");
       expect(response.status).toBe(200);
       expect(data.release.description).toBe("Updated v1 description");
