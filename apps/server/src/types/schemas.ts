@@ -64,6 +64,7 @@ export const PackageInfoUpdateSchema = z.object({
     .optional(),
   description: z.string().nullable().optional(),
   isDisabled: z.boolean().nullable().optional(),
+  label: z.string().nullable().optional(),
 });
 export type PackageInfoUpdate = z.infer<typeof PackageInfoUpdateSchema>;
 

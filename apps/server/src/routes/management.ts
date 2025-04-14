@@ -1300,7 +1300,16 @@ router.openapi(routes.deployments.release.update, async (c) => {
     });
   }
 
-  const release = deployment.package;
+  const packageHistory = await storage.getPackageHistory(
+    accountId,
+    app.id,
+    deployment.id,
+  );
+
+  const release = packageInfo.label
+    ? packageHistory.find((p) => p.label === packageInfo.label)
+    : packageHistory[packageHistory.length - 1];
+
   if (!release) {
     throw new HTTPException(404, {
       message: "Release package not found",
