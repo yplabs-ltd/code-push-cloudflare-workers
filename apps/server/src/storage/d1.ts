@@ -692,18 +692,20 @@ export class D1StorageProvider implements StorageProvider {
   private async getPackageDiffs(
     packageId: string,
   ): Promise<PackageHashToBlobInfoMap> {
-    const diffs = await this.db.query.packageDiff.findMany({
-      where: eq(schema.packageDiff.packageId, packageId),
-    });
+    return {};
 
-    const result: PackageHashToBlobInfoMap = {};
-    for (const diff of diffs) {
-      result[diff.sourcePackageHash] = {
-        size: diff.size,
-        url: await this.blob.getBlobUrl(diff.blobPath),
-      };
-    }
-    return result;
+    // const diffs = await this.db.query.packageDiff.findMany({
+    //   where: eq(schema.packageDiff.packageId, packageId),
+    // });
+
+    // const result: PackageHashToBlobInfoMap = {};
+    // for (const diff of diffs) {
+    //   result[diff.sourcePackageHash] = {
+    //     size: diff.size,
+    //     url: await this.blob.getBlobUrl(diff.blobPath),
+    //   };
+    // }
+    // return result;
   }
 
   async commitPackage(
