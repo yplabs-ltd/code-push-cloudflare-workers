@@ -5,7 +5,15 @@ import { ErrorCode, isStorageError } from "../types/error";
 import { createStorageError } from "./storage";
 import type { CacheProvider } from "./cache";
 
-export class BlobStorageProvider {
+export interface BlobStorageProvider {
+  addBlob(blobId: string, data: ArrayBuffer, size: number): Promise<string>;
+  getBlobUrl(path: string): Promise<string>;
+  removeBlob(path: string): Promise<void>;
+  moveBlob(sourcePath: string, destinationPath: string): Promise<string>;
+  deletePath(prefix: string): Promise<void>;
+}
+
+export class R2BlobStorageProvider implements BlobStorageProvider {
   private readonly storage: R2Bucket;
   private readonly aws: AwsClient;
   private readonly accountId: string;
