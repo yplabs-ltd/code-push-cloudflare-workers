@@ -3,17 +3,26 @@ import type { Context } from "hono";
 import type { Env } from "../types/env";
 import { ErrorCode, isStorageError } from "../types/error";
 import { createStorageError } from "./storage";
+import type { CacheProvider } from "./cache";
 
 export class BlobStorageProvider {
   private readonly storage: R2Bucket;
   private readonly aws: AwsClient;
   private readonly accountId: string;
   private readonly bucketName: string;
+  private readonly cacheKeys = {
+    blobUrl: (path: string) => `blob-url:${path}`,
+  };
+  private readonly cache: CacheProvider;
 
-  constructor(private readonly ctx: Context<Env>) {
+  constructor(
+    private readonly ctx: Context<Env>,
+    private readonly cacheProvider: CacheProvider,
+  ) {
     this.storage = ctx.env.STORAGE_BUCKET;
     this.accountId = ctx.env.ACCOUNT_ID;
     this.bucketName = ctx.env.R2_BUCKET_NAME;
+    this.cache = cacheProvider;
 
     this.aws = new AwsClient({
       accessKeyId: ctx.env.R2_ACCESS_KEY_ID,
@@ -43,6 +52,12 @@ export class BlobStorageProvider {
   }
 
   async getBlobUrl(path: string): Promise<string> {
+    const cacheKey = this.cacheKeys.blobUrl(path);
+    const cachedUrl = await this.cache.get(cacheKey);
+    if (cachedUrl) {
+      return cachedUrl;
+    }
+
     try {
       const object = await this.storage.head(path);
       if (!object) {
@@ -67,6 +82,7 @@ export class BlobStorageProvider {
         },
       );
 
+      await this.cache.set(cacheKey, signed.url, 1800);
       return signed.url;
     } catch (error) {
       if (isStorageError(error) && error.code === ErrorCode.NotFound) {
