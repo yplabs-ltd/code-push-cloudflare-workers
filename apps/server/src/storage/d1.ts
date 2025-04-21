@@ -18,14 +18,20 @@ import type {
 import { generateKey } from "../utils/security";
 import { BlobStorageProvider } from "./blob";
 import { type StorageProvider, createStorageError } from "./storage";
+import { type CacheProvider } from "./cache";
 
 export class D1StorageProvider implements StorageProvider {
   private readonly db: DrizzleD1Database<typeof schema>;
   private readonly blob: BlobStorageProvider;
+  private readonly cache: CacheProvider;
 
-  constructor(private readonly ctx: Context<Env>) {
+  constructor(
+    private readonly ctx: Context<Env>,
+    cacheProvider: CacheProvider,
+  ) {
     this.db = drizzle(ctx.env.DB, { schema });
     this.blob = new BlobStorageProvider(ctx);
+    this.cache = cacheProvider;
   }
 
   // Helper methods
@@ -789,6 +795,12 @@ export class D1StorageProvider implements StorageProvider {
     appId: string,
     deploymentId: string,
   ): Promise<Package[]> {
+    const cacheKey = `package:history:${appId}:${deploymentId}`;
+    const cachedPackages = await this.cache.get(cacheKey);
+    if (cachedPackages) {
+      return JSON.parse(cachedPackages);
+    }
+
     const packages = await this.db.query.packages.findMany({
       where: and(
         eq(schema.packages.deploymentId, deploymentId),
@@ -797,17 +809,20 @@ export class D1StorageProvider implements StorageProvider {
       orderBy: (packages, { asc }) => [asc(packages.uploadTime)],
     });
 
-    return Promise.all(
+    const result = await Promise.all(
       packages.map(async (p) => ({
         ...this.mapPackageFromDB(p),
         blobUrl: await this.blob.getBlobUrl(p.blobPath),
-        // Use empty string as default for manifestBlobUrl
         manifestBlobUrl: p.manifestBlobPath
           ? await this.blob.getBlobUrl(p.manifestBlobPath)
           : "",
         diffPackageMap: await this.getPackageDiffs(p.id),
       })),
     );
+
+    // Cache the result for 5 minutes
+    await this.cache.set(cacheKey, JSON.stringify(result), 300);
+    return result;
   }
 
   async getPackageHistoryFromDeploymentKey(
