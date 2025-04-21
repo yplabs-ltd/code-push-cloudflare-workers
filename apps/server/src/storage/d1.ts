@@ -34,7 +34,7 @@ export class D1StorageProvider implements StorageProvider {
     private readonly cache: CacheProvider,
     private readonly blob: BlobStorageProvider,
   ) {
-    this.db = drizzle(ctx.env.DB, { schema });
+    this.db = drizzle(this.ctx.env.DB, { schema });
   }
 
   // Helper methods
@@ -578,7 +578,7 @@ export class D1StorageProvider implements StorageProvider {
     if (!deployment) {
       throw createStorageError(ErrorCode.NotFound, "Deployment not found");
     }
-    this.cache.set(cacheKey, JSON.stringify(deployment), 300);
+    
 
     const returningDeployment: Deployment = {
       id: deployment.id,
@@ -604,6 +604,7 @@ export class D1StorageProvider implements StorageProvider {
       } satisfies Package;
     }
 
+    this.cache.set(cacheKey, JSON.stringify(returningDeployment), 300);
     return returningDeployment;
   }
 
