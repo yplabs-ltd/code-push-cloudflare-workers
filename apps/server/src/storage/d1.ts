@@ -18,20 +18,26 @@ import type {
 import { generateKey } from "../utils/security";
 import { BlobStorageProvider } from "./blob";
 import { type StorageProvider, createStorageError } from "./storage";
-import { type CacheProvider } from "./cache";
+import type { CacheProvider } from "./cache";
 
 export class D1StorageProvider implements StorageProvider {
   private readonly db: DrizzleD1Database<typeof schema>;
   private readonly blob: BlobStorageProvider;
   private readonly cache: CacheProvider;
+  private readonly cacheKeys = {
+    package: (accountId: string, appId: string, deploymentId: string) =>
+      `package:${accountId}:${appId}:${deploymentId}`,
+    deployment: (accountId: string, appId: string, deploymentId: string) =>
+      `deployment:${accountId}:${appId}:${deploymentId}`,
+  };
 
   constructor(
     private readonly ctx: Context<Env>,
     cacheProvider: CacheProvider,
   ) {
     this.db = drizzle(ctx.env.DB, { schema });
-    this.blob = new BlobStorageProvider(ctx);
     this.cache = cacheProvider;
+    this.blob = new BlobStorageProvider(ctx, cacheProvider);
   }
 
   // Helper methods
@@ -553,6 +559,12 @@ export class D1StorageProvider implements StorageProvider {
     appId: string,
     deploymentId: string,
   ): Promise<Deployment> {
+    const cacheKey = this.cacheKeys.deployment(accountId, appId, deploymentId);
+    const cachedDeployment = await this.cache.get(cacheKey);
+    if (cachedDeployment) {
+      return JSON.parse(cachedDeployment);
+    }
+
     const deployment = await this.db.query.deployment.findFirst({
       where: and(
         eq(schema.deployment.id, deploymentId),
@@ -569,6 +581,7 @@ export class D1StorageProvider implements StorageProvider {
     if (!deployment) {
       throw createStorageError(ErrorCode.NotFound, "Deployment not found");
     }
+    this.cache.set(cacheKey, JSON.stringify(deployment), 300);
 
     const returningDeployment: Deployment = {
       id: deployment.id,
@@ -768,6 +781,9 @@ export class D1StorageProvider implements StorageProvider {
       uploadTime: pkg.uploadTime,
     });
 
+    const cacheKey = this.cacheKeys.package(accountId, appId, deploymentId);
+    await this.cache.del(cacheKey);
+
     return {
       ...pkg,
       label,
@@ -786,7 +802,6 @@ export class D1StorageProvider implements StorageProvider {
         isDisabled: pkg.isDisabled,
       })
       .where(eq(schema.packages.packageHash, pkg.packageHash));
-
     return pkg;
   }
 
@@ -795,7 +810,7 @@ export class D1StorageProvider implements StorageProvider {
     appId: string,
     deploymentId: string,
   ): Promise<Package[]> {
-    const cacheKey = `package:history:${appId}:${deploymentId}`;
+    const cacheKey = this.cacheKeys.package(accountId, appId, deploymentId);
     const cachedPackages = await this.cache.get(cacheKey);
     if (cachedPackages) {
       return JSON.parse(cachedPackages);
@@ -858,6 +873,9 @@ export class D1StorageProvider implements StorageProvider {
       .set({ deletedAt: Date.now() })
       .where(eq(schema.packages.deploymentId, deploymentId));
 
+    const cacheKey = this.cacheKeys.package(accountId, appId, deploymentId);
+    await this.cache.del(cacheKey);
+
     // Insert new history
     for (const [index, pkg] of history.entries()) {
       const id = generateKey();
@@ -904,6 +922,9 @@ export class D1StorageProvider implements StorageProvider {
       .update(schema.packages)
       .set(schema.packages)
       .where(eq(schema.packages.deploymentId, deploymentId));
+
+    const cacheKey = this.cacheKeys.package(accountId, appId, deploymentId);
+    await this.cache.del(cacheKey);
 
     // Delete all package blobs
     // await this.blob.deletePath(`apps/${appId}/deployments/${deploymentId}`);
