@@ -16,14 +16,12 @@ import type {
   PackageHashToBlobInfoMap,
 } from "../types/schemas";
 import { generateKey } from "../utils/security";
-import { BlobStorageProvider } from "./blob";
+import type { BlobStorageProvider } from "./blob";
 import { type StorageProvider, createStorageError } from "./storage";
 import type { CacheProvider } from "./cache";
 
 export class D1StorageProvider implements StorageProvider {
   private readonly db: DrizzleD1Database<typeof schema>;
-  private readonly blob: BlobStorageProvider;
-  private readonly cache: CacheProvider;
   private readonly cacheKeys = {
     package: (accountId: string, appId: string, deploymentId: string) =>
       `package:${accountId}:${appId}:${deploymentId}`,
@@ -33,11 +31,10 @@ export class D1StorageProvider implements StorageProvider {
 
   constructor(
     private readonly ctx: Context<Env>,
-    cacheProvider: CacheProvider,
+    private readonly cache: CacheProvider,
+    private readonly blob: BlobStorageProvider,
   ) {
     this.db = drizzle(ctx.env.DB, { schema });
-    this.cache = cacheProvider;
-    this.blob = new BlobStorageProvider(ctx, cacheProvider);
   }
 
   // Helper methods

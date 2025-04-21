@@ -13,17 +13,14 @@ export class BlobStorageProvider {
   private readonly cacheKeys = {
     blobUrl: (path: string) => `blob-url:${path}`,
   };
-  private readonly cache: CacheProvider;
 
   constructor(
     private readonly ctx: Context<Env>,
-    private readonly cacheProvider: CacheProvider,
+    private readonly cache: CacheProvider,
   ) {
     this.storage = ctx.env.STORAGE_BUCKET;
     this.accountId = ctx.env.ACCOUNT_ID;
     this.bucketName = ctx.env.R2_BUCKET_NAME;
-    this.cache = cacheProvider;
-
     this.aws = new AwsClient({
       accessKeyId: ctx.env.R2_ACCESS_KEY_ID,
       secretAccessKey: ctx.env.R2_SECRET_ACCESS_KEY,
