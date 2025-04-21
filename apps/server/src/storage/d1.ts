@@ -17,8 +17,8 @@ import type {
 } from "../types/schemas";
 import { generateKey } from "../utils/security";
 import type { BlobStorageProvider } from "./blob";
-import { type StorageProvider, createStorageError } from "./storage";
 import type { CacheProvider } from "./cache";
+import { type StorageProvider, createStorageError } from "./storage";
 
 export class D1StorageProvider implements StorageProvider {
   private readonly db: DrizzleD1Database<typeof schema>;
@@ -578,7 +578,6 @@ export class D1StorageProvider implements StorageProvider {
     if (!deployment) {
       throw createStorageError(ErrorCode.NotFound, "Deployment not found");
     }
-    
 
     const returningDeployment: Deployment = {
       id: deployment.id,

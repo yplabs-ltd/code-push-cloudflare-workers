@@ -2,8 +2,8 @@ import { AwsClient } from "aws4fetch";
 import type { Context } from "hono";
 import type { Env } from "../types/env";
 import { ErrorCode, isStorageError } from "../types/error";
-import { createStorageError } from "./storage";
 import type { CacheProvider } from "./cache";
+import { createStorageError } from "./storage";
 
 export interface BlobStorageProvider {
   addBlob(blobId: string, data: ArrayBuffer, size: number): Promise<string>;
