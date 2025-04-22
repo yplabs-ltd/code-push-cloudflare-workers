@@ -1,4 +1,3 @@
-
 export interface BucketProvider {
   head(key: string): Promise<BucketObject | null>;
   get(key: string): Promise<BucketObjectBody | null>;
