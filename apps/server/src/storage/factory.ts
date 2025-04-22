@@ -1,7 +1,8 @@
 import type { Context } from "hono";
 import type { Env } from "../types/env";
 import { BlobStorageProvider, type IBlobStorageProvider } from "./blob";
-import { type BucketProvider, R2BucketProvider } from "./bucket";
+import type { BucketProvider } from "./bucket";
+import { R2BucketProvider } from "./r2";
 import { type CacheProvider, InMemoryCacheProvider } from "./cache";
 import { D1StorageProvider } from "./d1";
 import type { StorageProvider } from "./storage";
