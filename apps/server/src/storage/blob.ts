@@ -2,19 +2,33 @@ import { AwsClient } from "aws4fetch";
 import type { Context } from "hono";
 import type { Env } from "../types/env";
 import { ErrorCode, isStorageError } from "../types/error";
+import type { CacheProvider } from "./cache";
 import { createStorageError } from "./storage";
 
-export class BlobStorageProvider {
+export interface BlobStorageProvider {
+  addBlob(blobId: string, data: ArrayBuffer, size: number): Promise<string>;
+  getBlobUrl(path: string): Promise<string>;
+  removeBlob(path: string): Promise<void>;
+  moveBlob(sourcePath: string, destinationPath: string): Promise<string>;
+  deletePath(prefix: string): Promise<void>;
+}
+
+export class R2BlobStorageProvider implements BlobStorageProvider {
   private readonly storage: R2Bucket;
   private readonly aws: AwsClient;
   private readonly accountId: string;
   private readonly bucketName: string;
+  private readonly cacheKeys = {
+    blobUrl: (path: string) => `blob-url:${path}`,
+  };
 
-  constructor(private readonly ctx: Context<Env>) {
+  constructor(
+    private readonly ctx: Context<Env>,
+    private readonly cache: CacheProvider,
+  ) {
     this.storage = ctx.env.STORAGE_BUCKET;
     this.accountId = ctx.env.ACCOUNT_ID;
     this.bucketName = ctx.env.R2_BUCKET_NAME;
-
     this.aws = new AwsClient({
       accessKeyId: ctx.env.R2_ACCESS_KEY_ID,
       secretAccessKey: ctx.env.R2_SECRET_ACCESS_KEY,
@@ -43,6 +57,12 @@ export class BlobStorageProvider {
   }
 
   async getBlobUrl(path: string): Promise<string> {
+    const cacheKey = this.cacheKeys.blobUrl(path);
+    const cachedUrl = await this.cache.get(cacheKey);
+    if (cachedUrl) {
+      return cachedUrl;
+    }
+
     try {
       const object = await this.storage.head(path);
       if (!object) {
@@ -67,6 +87,7 @@ export class BlobStorageProvider {
         },
       );
 
+      await this.cache.set(cacheKey, signed.url, 1800);
       return signed.url;
     } catch (error) {
       if (isStorageError(error) && error.code === ErrorCode.NotFound) {
