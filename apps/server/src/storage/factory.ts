@@ -1,15 +1,16 @@
 import type { Context } from "hono";
 import type { Env } from "../types/env";
-import type { BlobStorageProvider } from "./blob";
-import { R2BlobStorageProvider } from "./blob";
+import { type IBlobStorageProvider, BlobStorageProvider } from "./blob";
 import { type CacheProvider, InMemoryCacheProvider } from "./cache";
 import { D1StorageProvider } from "./d1";
 import type { StorageProvider } from "./storage";
+import { type BucketProvider, R2BucketProvider } from "./bucket";
 
 let storageInstance: StorageProvider | null = null;
 let lastContext: Context<Env> | null = null;
 let cacheInstance: CacheProvider | null = null;
-let blobInstance: BlobStorageProvider | null = null;
+let blobInstance: IBlobStorageProvider | null = null;
+let objectStorageInstance: BucketProvider | null = null;
 
 export function getStorageProvider(ctx: Context<Env>): StorageProvider {
   // If context changed or no instance exists, create new instance
@@ -29,12 +30,20 @@ export function getCacheProvider(ctx: Context<Env>): CacheProvider {
   return cacheInstance;
 }
 
+export function getObjectStorageProvider(ctx: Context<Env>): BucketProvider {
+  if (!objectStorageInstance) {
+    objectStorageInstance = new R2BucketProvider(ctx.env.STORAGE_BUCKET);
+  }
+  return objectStorageInstance;
+}
+
 export function getBlobProvider(
   ctx: Context<Env>,
   cache: CacheProvider,
-): BlobStorageProvider {
+): IBlobStorageProvider {
   if (!blobInstance || ctx !== lastContext) {
-    blobInstance = new R2BlobStorageProvider(ctx, cache);
+    const objectStorage = getObjectStorageProvider(ctx);
+    blobInstance = new BlobStorageProvider(ctx, cache, objectStorage);
   }
   return blobInstance;
 }

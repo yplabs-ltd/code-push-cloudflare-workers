@@ -4,8 +4,8 @@ import type { Env } from "../types/env";
 import { ErrorCode, isStorageError } from "../types/error";
 import type { CacheProvider } from "./cache";
 import { createStorageError } from "./storage";
-
-export interface BlobStorageProvider {
+import type { BucketProvider } from "./bucket";
+export interface IBlobStorageProvider {
   addBlob(blobId: string, data: ArrayBuffer, size: number): Promise<string>;
   getBlobUrl(path: string): Promise<string>;
   removeBlob(path: string): Promise<void>;
@@ -13,8 +13,7 @@ export interface BlobStorageProvider {
   deletePath(prefix: string): Promise<void>;
 }
 
-export class R2BlobStorageProvider implements BlobStorageProvider {
-  private readonly storage: R2Bucket;
+export class BlobStorageProvider implements IBlobStorageProvider {
   private readonly aws: AwsClient;
   private readonly accountId: string;
   private readonly bucketName: string;
@@ -25,8 +24,8 @@ export class R2BlobStorageProvider implements BlobStorageProvider {
   constructor(
     private readonly ctx: Context<Env>,
     private readonly cache: CacheProvider,
+    private readonly objectStorage: BucketProvider,
   ) {
-    this.storage = ctx.env.STORAGE_BUCKET;
     this.accountId = ctx.env.ACCOUNT_ID;
     this.bucketName = ctx.env.R2_BUCKET_NAME;
     this.aws = new AwsClient({
@@ -41,7 +40,7 @@ export class R2BlobStorageProvider implements BlobStorageProvider {
     size: number,
   ): Promise<string> {
     try {
-      await this.storage.put(blobId, data, {
+      await this.objectStorage.put(blobId, data, {
         customMetadata: {
           size: size.toString(),
         },
@@ -64,14 +63,16 @@ export class R2BlobStorageProvider implements BlobStorageProvider {
     }
 
     try {
-      const object = await this.storage.head(path);
+      const object = await this.objectStorage.head(path);
       if (!object) {
         throw createStorageError(ErrorCode.NotFound, "Blob not found");
       }
 
       // Construct URL for the R2 object
-      const url = new URL(
-        `https://${this.bucketName}.${this.accountId}.r2.cloudflarestorage.com/${path}`,
+      const url = this.objectStorage.buildUrl(
+        this.bucketName,
+        path,
+        this.accountId,
       );
 
       // Set expiration to 1 hour (3600 seconds)
@@ -103,7 +104,7 @@ export class R2BlobStorageProvider implements BlobStorageProvider {
 
   async removeBlob(path: string): Promise<void> {
     try {
-      await this.storage.delete(path);
+      await this.objectStorage.delete(path);
     } catch (error) {
       console.error("Error removing blob:", error);
       throw createStorageError(
@@ -119,13 +120,13 @@ export class R2BlobStorageProvider implements BlobStorageProvider {
         ? sourcePath.split("?")[0].split("/").pop()
         : sourcePath;
       const actualSourcePath = parsedSrcPath ?? "";
-      const sourceObject = await this.storage.get(actualSourcePath);
+      const sourceObject = await this.objectStorage.get(actualSourcePath);
       if (!sourceObject) {
         throw createStorageError(ErrorCode.NotFound, "Source blob not found");
       }
 
       // Copy to new location
-      await this.storage.put(
+      await this.objectStorage.put(
         destinationPath,
         await sourceObject.arrayBuffer(),
         {
@@ -134,7 +135,7 @@ export class R2BlobStorageProvider implements BlobStorageProvider {
       );
 
       // Delete original
-      await this.storage.delete(sourcePath);
+      await this.objectStorage.delete(sourcePath);
 
       // Return URL for new location
       return await this.getBlobUrl(destinationPath);
@@ -149,7 +150,7 @@ export class R2BlobStorageProvider implements BlobStorageProvider {
 
   async deletePath(prefix: string): Promise<void> {
     try {
-      const objects = await this.storage.list({
+      const objects = await this.objectStorage.list({
         prefix,
       });
 
@@ -181,7 +182,7 @@ export class R2BlobStorageProvider implements BlobStorageProvider {
 
   private async deleteObjects(keys: string[]): Promise<void> {
     try {
-      await Promise.all(keys.map((key) => this.storage.delete(key)));
+      await Promise.all(keys.map((key) => this.objectStorage.delete(key)));
     } catch (error) {
       console.error("Error deleting objects:", error);
       throw createStorageError(
