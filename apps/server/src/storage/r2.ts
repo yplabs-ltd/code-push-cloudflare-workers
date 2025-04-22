@@ -1,4 +1,3 @@
-
 import type { BucketObject, BucketObjects, BucketProvider } from "./bucket";
 
 export class R2BucketProvider implements BucketProvider {
@@ -36,4 +35,3 @@ export class R2BucketProvider implements BucketProvider {
     );
   }
 }
-  

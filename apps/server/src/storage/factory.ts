@@ -2,9 +2,9 @@ import type { Context } from "hono";
 import type { Env } from "../types/env";
 import { BlobStorageProvider, type IBlobStorageProvider } from "./blob";
 import type { BucketProvider } from "./bucket";
-import { S3BucketProvider } from "./s3";
 import { type CacheProvider, InMemoryCacheProvider } from "./cache";
 import { D1StorageProvider } from "./d1";
+import { S3BucketProvider } from "./s3";
 import type { StorageProvider } from "./storage";
 
 let storageInstance: StorageProvider | null = null;
