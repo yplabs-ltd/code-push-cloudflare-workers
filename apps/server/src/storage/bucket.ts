@@ -7,7 +7,7 @@ export interface BucketProvider {
     key: string,
     value: ArrayBuffer,
     options: {
-      customMetadata: Record<string, string>;
+      customMetadata?: Record<string, string>;
     },
   ): Promise<BucketObject>;
   buildUrl(bucketName: string, path: string, accountId: string): URL;
