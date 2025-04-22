@@ -2,7 +2,7 @@ import type { Context } from "hono";
 import type { Env } from "../types/env";
 import { BlobStorageProvider, type IBlobStorageProvider } from "./blob";
 import type { BucketProvider } from "./bucket";
-import { R2BucketProvider } from "./r2";
+import { S3BucketProvider } from "./s3";
 import { type CacheProvider, InMemoryCacheProvider } from "./cache";
 import { D1StorageProvider } from "./d1";
 import type { StorageProvider } from "./storage";
@@ -33,7 +33,12 @@ export function getCacheProvider(ctx: Context<Env>): CacheProvider {
 
 export function getObjectStorageProvider(ctx: Context<Env>): BucketProvider {
   if (!objectStorageInstance) {
-    objectStorageInstance = new R2BucketProvider(ctx.env.STORAGE_BUCKET);
+    objectStorageInstance = new S3BucketProvider(
+      ctx.env.AWS_REGION,
+      ctx.env.AWS_ACCESS_KEY_ID,
+      ctx.env.AWS_SECRET_ACCESS_KEY,
+      ctx.env.S3_BUCKET_NAME,
+    );
   }
   return objectStorageInstance;
 }
