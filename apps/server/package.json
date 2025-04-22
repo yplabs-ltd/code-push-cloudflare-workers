@@ -16,6 +16,7 @@
     "build": "wrangler build"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.787.0",
     "@hono/zod-openapi": "^0.18.3",
     "@hono/zod-validator": "^0.4.2",
     "@tsndr/cloudflare-worker-jwt": "^3.1.3",
