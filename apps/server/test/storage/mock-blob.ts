@@ -1,9 +1,9 @@
 import { Context } from "hono";
-import type { BlobStorageProvider } from "../../src/storage/blob";
+import type { IBlobStorageProvider } from "../../src/storage/blob";
 import type { CacheProvider } from "../../src/storage/cache";
-import { Env } from "../../src/types/env";
+import type { Env } from "../../src/types/env";
 
-export class MockBlobStorageProvider implements BlobStorageProvider {
+export class MockBlobStorageProvider implements IBlobStorageProvider {
   private readonly store = new Map<string, ArrayBuffer>();
   private readonly urls = new Map<string, string>();
 

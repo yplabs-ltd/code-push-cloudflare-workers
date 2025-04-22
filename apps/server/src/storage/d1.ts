@@ -16,7 +16,7 @@ import type {
   PackageHashToBlobInfoMap,
 } from "../types/schemas";
 import { generateKey } from "../utils/security";
-import type { BlobStorageProvider } from "./blob";
+import type { IBlobStorageProvider } from "./blob";
 import type { CacheProvider } from "./cache";
 import { type StorageProvider, createStorageError } from "./storage";
 
@@ -32,7 +32,7 @@ export class D1StorageProvider implements StorageProvider {
   constructor(
     private readonly ctx: Context<Env>,
     private readonly cache: CacheProvider,
-    private readonly blob: BlobStorageProvider,
+    private readonly blob: IBlobStorageProvider,
   ) {
     this.db = drizzle(this.ctx.env.DB, { schema });
   }
