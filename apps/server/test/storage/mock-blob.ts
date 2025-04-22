@@ -1,7 +1,8 @@
-import { Context } from "hono";
+import type { Context } from "hono";
 import type { IBlobStorageProvider } from "../../src/storage/blob";
 import type { CacheProvider } from "../../src/storage/cache";
 import type { Env } from "../../src/types/env";
+import type { BucketProvider } from "../../src/storage/bucket";
 
 export class MockBlobStorageProvider implements IBlobStorageProvider {
   private readonly store = new Map<string, ArrayBuffer>();
@@ -10,6 +11,7 @@ export class MockBlobStorageProvider implements IBlobStorageProvider {
   constructor(
     private readonly ctx: Context<Env>,
     private readonly cache: CacheProvider,
+    private readonly bucketProvider: BucketProvider,
   ) {}
 
   async addBlob(
@@ -18,6 +20,9 @@ export class MockBlobStorageProvider implements IBlobStorageProvider {
     size: number,
   ): Promise<string> {
     this.store.set(blobId, data);
+    await this.bucketProvider.put(blobId, new Uint8Array(data).buffer, {
+      customMetadata: {},
+    });
 
     const url = `https://mock-storage.com/${blobId}`;
     this.urls.set(blobId, url);
@@ -33,6 +38,7 @@ export class MockBlobStorageProvider implements IBlobStorageProvider {
   async removeBlob(path: string): Promise<void> {
     this.store.delete(path);
     this.urls.delete(path);
+    await this.bucketProvider.delete(path);
   }
 
   async moveBlob(sourceUrl: string, targetPath: string): Promise<string> {
@@ -54,10 +60,12 @@ export class MockBlobStorageProvider implements IBlobStorageProvider {
       throw new Error(`Invalid target path: ${targetPath}`);
     }
 
-    console.log("targetBlobId", targetBlobId);
-
     this.store.set(targetBlobId, data);
     this.store.delete(sourceBlobId);
+    await this.bucketProvider.put(targetBlobId, new Uint8Array(data).buffer, {
+      customMetadata: {},
+    });
+    await this.bucketProvider.delete(sourceBlobId);
 
     const url = `https://mock-storage.com/${targetBlobId}`;
     this.urls.set(targetBlobId, url);
@@ -69,6 +77,7 @@ export class MockBlobStorageProvider implements IBlobStorageProvider {
       if (key.startsWith(prefix)) {
         this.store.delete(key);
         this.urls.delete(key);
+        await this.bucketProvider.delete(key);
       }
     }
   }
