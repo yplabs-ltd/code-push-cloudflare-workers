@@ -18,6 +18,7 @@ R2_ACCESS_KEY_ID = "ec8865ca2f1824ae927e0660ba705032"
 R2_SECRET_ACCESS_KEY = "f042b67f46d7cced0c90cb50c2b3e54390bc5a15c15b83688d30c9d4bac268c5"
 JWT_SECRET = "cd6507d9f671dca2a70eff43d70fcc94f1abe50ee82f25bac1a603ea76fb7e17"
 
+
 [[r2_buckets]]
 binding = "STORAGE_BUCKET"
 bucket_name = "code-push-storage"
@@ -36,3 +37,9 @@ d1_databases = [
 r2_buckets = [
   { binding = "STORAGE_BUCKET", bucket_name = "code-push-storage", preview_bucket_name = "code-push-storage-dev" }
 ]
+
+[env.production.vars]
+AWS_REGION = "ap-northeast-2"
+AWS_ACCESS_KEY_ID = ""
+AWS_SECRET_ACCESS_KEY =""
+AWS_S3_BUCKET_NAME ="code-pus-prod"
