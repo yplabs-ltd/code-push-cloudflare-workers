@@ -5,7 +5,6 @@ import { ErrorCode, isStorageError } from "../types/error";
 import type { BucketProvider } from "./bucket";
 import type { CacheProvider } from "./cache";
 import { createStorageError } from "./storage";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 export interface IBlobStorageProvider {
   addBlob(blobId: string, data: ArrayBuffer, size: number): Promise<string>;
   getBlobUrl(path: string): Promise<string>;
