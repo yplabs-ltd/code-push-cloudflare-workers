@@ -37,7 +37,7 @@ export function getObjectStorageProvider(ctx: Context<Env>): BucketProvider {
       ctx.env.AWS_REGION,
       ctx.env.AWS_ACCESS_KEY_ID,
       ctx.env.AWS_SECRET_ACCESS_KEY,
-      ctx.env.S3_BUCKET_NAME,
+      ctx.env.AWS_S3_BUCKET_NAME,
     );
   }
   return objectStorageInstance;
