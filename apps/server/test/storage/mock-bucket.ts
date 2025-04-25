@@ -32,7 +32,11 @@ export class MockBucketProvider implements BucketProvider {
       size: item.data.byteLength,
       lastModified: new Date(),
       customMetadata: item.metadata,
-      arrayBuffer: async () => item.data.buffer,
+      arrayBuffer: async () => {
+        const buffer = new ArrayBuffer(item.data.length);
+        new Uint8Array(buffer).set(item.data);
+        return buffer;
+      },
     };
   }
 
