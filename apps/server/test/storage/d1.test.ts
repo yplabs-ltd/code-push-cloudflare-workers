@@ -10,6 +10,7 @@ import {
   createTestApp,
   createTestDeployment,
   createTestPackage,
+  getMockBucketProvider,
 } from "../utils/fixtures";
 import { env } from "cloudflare:test";
 import { MockBlobStorageProvider } from "./mock-blob";
@@ -48,9 +49,13 @@ describe("D1StorageProvider Cache", () => {
     } as unknown as Context<Env>;
 
     mockCache = new InMemoryCacheProvider();
-    mockBlob = new MockBlobStorageProvider(mockCtx, mockCache);
+    const mockBucketProvider = getMockBucketProvider();
+    mockBlob = new MockBlobStorageProvider(
+      mockCtx,
+      mockCache,
+      mockBucketProvider,
+    );
     storage = new D1StorageProvider(mockCtx, mockCache, mockBlob);
-    console.log(typeof mockCtx.env.DB.prepare);
   });
 
   afterEach(async () => {

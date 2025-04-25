@@ -29,8 +29,8 @@ export class BlobStorageProvider implements IBlobStorageProvider {
     this.accountId = ctx.env.ACCOUNT_ID;
     this.bucketName = ctx.env.R2_BUCKET_NAME;
     this.aws = new AwsClient({
-      accessKeyId: ctx.env.R2_ACCESS_KEY_ID,
-      secretAccessKey: ctx.env.R2_SECRET_ACCESS_KEY,
+      accessKeyId: ctx.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: ctx.env.AWS_SECRET_ACCESS_KEY,
     });
   }
 
@@ -63,10 +63,11 @@ export class BlobStorageProvider implements IBlobStorageProvider {
     }
 
     try {
-      const object = await this.objectStorage.head(path);
-      if (!object) {
-        throw createStorageError(ErrorCode.NotFound, "Blob not found");
-      }
+      // const object = await this.objectStorage.head(path);
+      // if (!object) {
+      //   return null;
+      //   throw createStorageError(ErrorCode.NotFound, "Blob not found");
+      // }
 
       // Construct URL for the R2 object
       const url = this.objectStorage.buildUrl(
