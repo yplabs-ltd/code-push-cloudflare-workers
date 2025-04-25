@@ -1,0 +1,38 @@
+repos:
+  - repo: local
+    hooks:
+      - id: biome-check
+        name: Biome Check
+        entry: >
+          bash -c '
+          FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E "^apps/server/.*\.(ts|tsx)$|^test/.*\.(ts|tsx)$");
+          if [ -n "$FILES" ]; then
+            echo "Checking files: $FILES";
+            pnpm biome check --fix --unsafe $FILES;
+          else
+            exit 0;
+          fi'
+        language: system
+        pass_filenames: false
+        always_run: true
+        files: ^(apps/server/|test/).*\.(ts|tsx)$
+        exclude: ''
+        types: [file]
+
+      - id: biome-format
+        name: Biome Format
+        entry: >
+          bash -c '
+          FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E "^apps/server/.*\.(ts|tsx)$|^test/.*\.(ts|tsx)$");
+          if [ -n "$FILES" ]; then
+            echo "Formatting files: $FILES";
+            pnpm biome format --write $FILES;
+          else
+            exit 0;
+          fi'
+        language: system
+        pass_filenames: false
+        always_run: true
+        files: ^(apps/server/|test/).*\.(ts|tsx)$
+        exclude: ''
+        types: [file]
