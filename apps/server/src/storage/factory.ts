@@ -4,8 +4,8 @@ import { BlobStorageProvider, type IBlobStorageProvider } from "./blob";
 import type { BucketProvider } from "./bucket";
 import { type CacheProvider, InMemoryCacheProvider } from "./cache";
 import { D1StorageProvider } from "./d1";
-import type { StorageProvider } from "./storage";
 import { R2BucketProvider } from "./r2";
+import type { StorageProvider } from "./storage";
 
 let storageInstance: StorageProvider | null = null;
 let lastContext: Context<Env> | null = null;
