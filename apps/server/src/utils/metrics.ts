@@ -124,9 +124,9 @@ export class MetricsManager {
       );
 
       await this.db.run(sql`
-        UPDATE metrics
+        UPDATE metric
         SET count = count - 1
-        WHERE deploymentId = ${previousDeploymentKey} AND label = ${previousLabel} AND type = ${MetricType.ACTIVE} AND count > 0
+        WHERE deployment_id = ${previousDeploymentKey} AND label = ${previousLabel} AND type = ${MetricType.ACTIVE} AND count > 0
         `);
     }
 
