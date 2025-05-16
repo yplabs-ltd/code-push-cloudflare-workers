@@ -29,8 +29,8 @@ export class BlobStorageProvider implements IBlobStorageProvider {
     this.accountId = ctx.env.ACCOUNT_ID;
     this.bucketName = ctx.env.R2_BUCKET_NAME;
     this.aws = new AwsClient({
-      accessKeyId: ctx.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: ctx.env.AWS_SECRET_ACCESS_KEY,
+      accessKeyId: ctx.env.R2_ACCESS_KEY_ID,
+      secretAccessKey: ctx.env.R2_SECRET_ACCESS_KEY,
     });
   }
 
