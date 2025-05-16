@@ -1,19 +1,18 @@
 {
   "name": "code-push-cloudflare-workers",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "wrangler dev --env local",
     "publish": "wrangler publish --env production",
-    "test": "vitest --config vitest.config.ts",
     "generate": "drizzle-kit generate",
-    "list": "wrangler d1 migrations list DB --local",
-    "list:preview": "wrangler d1 migrations list DB --env preview",
+    "secrets:list:production": "wrangler secret list --env production",
+    "list:local": "wrangler d1 migrations list DB --local",
     "list:production": "wrangler d1 migrations list DB --env production",
-    "apply": "wrangler d1 migrations apply DB --local",
-    "apply:preview": "wrangler d1 migrations apply DB --env preview",
+    "apply:local": "wrangler d1 migrations apply DB --local",
     "apply:production": "wrangler d1 migrations apply DB --env production --remote",
     "check": "biome ci --diagnostic-level=error ./src",
     "typecheck": "tsc --noEmit",
-    "build": "wrangler build"
+    "build": "wrangler build",
+    "test": "vitest --config vitest.config.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.787.0",
