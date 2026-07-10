@@ -17,17 +17,10 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { api } from "@/lib/api";
-import type { ManagementAppsGet200Response } from "@code-push-cloudflare-workers/api-client";
+import type { AppsGet200Response } from "@code-push-cloudflare-workers/api-client";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import {
-  Link as LinkIcon,
-  MoreVertical,
-  Package,
-  Plus,
-  Trash2,
-  Users2,
-} from "lucide-react";
+import { MoreVertical, Package, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 
 export const AppsPage = () => {
@@ -37,10 +30,10 @@ export const AppsPage = () => {
     id: string;
   } | null>(null);
 
-  const { data, isLoading } = useQuery<ManagementAppsGet200Response>({
+  const { data, isLoading } = useQuery<AppsGet200Response>({
     queryKey: ["apps"],
     queryFn: async () => {
-      const response = await api.managementAppsGet();
+      const response = await api.appsGet();
       return response.data;
     },
   });
@@ -133,27 +126,6 @@ export const AppsPage = () => {
                           <Package className="mr-2 h-4 w-4" />
                           View App
                         </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href="/apps/$appName/collaborators"
-                          params={{ appName: app.name }}
-                          className="cursor-pointer"
-                        >
-                          <Users2 className="mr-2 h-4 w-4" />
-                          Manage Collaborators
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => {
-                          // Copy deployment key to clipboard
-                          navigator.clipboard.writeText(
-                            app.deployments[0]?.key ?? "",
-                          );
-                        }}
-                      >
-                        <LinkIcon className="mr-2 h-4 w-4" />
-                        Copy Deployment Key
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem

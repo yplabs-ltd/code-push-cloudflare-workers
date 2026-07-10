@@ -10,42 +10,40 @@ interface AuthProviderProps {
 
 export const AuthProvider = ({ children }: AuthProviderProps) => {
   const navigate = useNavigate();
-  const { setAuth, isAuthenticated } = useAuthStore();
+  const { status, setAuthenticated, setUnauthenticated } = useAuthStore();
 
-  const { data: accountData, isError } = useQuery({
+  // 세션 쿠키는 withCredentials로 자동 전송된다. accountGet 성공=인증됨.
+  const { data, isSuccess, isError } = useQuery({
     queryKey: ['account'],
     queryFn: async () => {
-      try {
-        const response = await api.managementAccountGet();
-        return response.data;
-      } catch (error) {
-        // If unauthorized, clear auth state
-        if ((error as any)?.response?.status === 401) {
-          setAuth({ isAuthenticated: false, account: null });
-        }
-        throw error;
-      }
+      const response = await api.accountGet();
+      return response.data;
     },
     retry: false,
-    enabled: true, // Always try to fetch on mount
   });
 
   useEffect(() => {
-    if (accountData?.account) {
-      setAuth({
-        isAuthenticated: true,
-        account: {
-          id: accountData.account.id,
-          name: accountData.account.name,
-          email: accountData.account.email,
-        },
+    if (isSuccess && data?.account) {
+      setAuthenticated({
+        id: data.account.id,
+        name: data.account.name,
+        email: data.account.email,
       });
     }
-  }, [accountData, setAuth]);
+  }, [isSuccess, data, setAuthenticated]);
 
   useEffect(() => {
-    // If we're not authenticated and not on the login page, redirect
-    if (!isAuthenticated && !window.location.pathname.includes('/login')) {
+    if (isError) {
+      setUnauthenticated();
+    }
+  }, [isError, setUnauthenticated]);
+
+  useEffect(() => {
+    // 미인증이 확정된 경우에만 로그인으로. loading 중에는 리다이렉트하지 않는다.
+    if (
+      status === 'unauthenticated' &&
+      !window.location.pathname.includes('/login')
+    ) {
       navigate({
         to: '/login',
         search: {
@@ -53,7 +51,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         },
       });
     }
-  }, [isAuthenticated, navigate]);
+  }, [status, navigate]);
 
   return <>{children}</>;
 };

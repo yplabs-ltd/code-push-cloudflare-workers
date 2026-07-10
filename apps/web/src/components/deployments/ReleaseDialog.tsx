@@ -16,13 +16,6 @@ import {
   FormLabel,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/lib/api";
@@ -72,7 +65,7 @@ export const ReleaseDialog = ({
       formData.append("package", selectedFile);
       formData.append("packageInfo", JSON.stringify(values));
 
-      const response = await api.managementAppsAppNameDeploymentsDeploymentNameReleasePost(
+      const response = await api.appsAppNameDeploymentsDeploymentNameReleasePost(
         appName,
         deploymentName,
         selectedFile,
