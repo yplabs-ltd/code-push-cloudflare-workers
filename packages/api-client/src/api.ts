@@ -26,264 +26,875 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
 /**
  * 
  * @export
- * @interface AcquisitionReportStatusDeployPost200Response
+ * @interface AccessKeysAccessKeyNamePatchRequest
  */
-export interface AcquisitionReportStatusDeployPost200Response {
+export interface AccessKeysAccessKeyNamePatchRequest {
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionReportStatusDeployPost200Response
+     * @memberof AccessKeysAccessKeyNamePatchRequest
      */
-    'status': AcquisitionReportStatusDeployPost200ResponseStatusEnum;
+    'friendlyName'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof AccessKeysAccessKeyNamePatchRequest
+     */
+    'ttl'?: number;
 }
-
-export const AcquisitionReportStatusDeployPost200ResponseStatusEnum = {
-    Ok: 'ok'
-} as const;
-
-export type AcquisitionReportStatusDeployPost200ResponseStatusEnum = typeof AcquisitionReportStatusDeployPost200ResponseStatusEnum[keyof typeof AcquisitionReportStatusDeployPost200ResponseStatusEnum];
-
 /**
  * 
  * @export
- * @interface AcquisitionReportStatusDeployPostRequest
+ * @interface AccessKeysGet200Response
  */
-export interface AcquisitionReportStatusDeployPostRequest {
+export interface AccessKeysGet200Response {
     /**
      * 
-     * @type {string}
-     * @memberof AcquisitionReportStatusDeployPostRequest
+     * @type {Array<AccessKeysGet200ResponseAccessKeysInner>}
+     * @memberof AccessKeysGet200Response
      */
-    'deploymentKey': string;
+    'accessKeys': Array<AccessKeysGet200ResponseAccessKeysInner>;
+}
+/**
+ * 
+ * @export
+ * @interface AccessKeysGet200ResponseAccessKeysInner
+ */
+export interface AccessKeysGet200ResponseAccessKeysInner {
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionReportStatusDeployPostRequest
+     * @memberof AccessKeysGet200ResponseAccessKeysInner
      */
-    'clientUniqueId': string;
+    'id': string;
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionReportStatusDeployPostRequest
+     * @memberof AccessKeysGet200ResponseAccessKeysInner
      */
-    'label'?: string;
+    'name'?: string;
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionReportStatusDeployPostRequest
+     * @memberof AccessKeysGet200ResponseAccessKeysInner
+     */
+    'friendlyName': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AccessKeysGet200ResponseAccessKeysInner
+     */
+    'createdBy': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof AccessKeysGet200ResponseAccessKeysInner
+     */
+    'createdTime': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof AccessKeysGet200ResponseAccessKeysInner
+     */
+    'expires': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof AccessKeysGet200ResponseAccessKeysInner
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AccessKeysGet200ResponseAccessKeysInner
+     */
+    'isSession'?: boolean;
+}
+/**
+ * 
+ * @export
+ * @interface AccessKeysPost201Response
+ */
+export interface AccessKeysPost201Response {
+    /**
+     * 
+     * @type {AccessKeysGet200ResponseAccessKeysInner}
+     * @memberof AccessKeysPost201Response
+     */
+    'accessKey': AccessKeysGet200ResponseAccessKeysInner;
+}
+/**
+ * 
+ * @export
+ * @interface AccessKeysPostRequest
+ */
+export interface AccessKeysPostRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof AccessKeysPostRequest
+     */
+    'friendlyName': string;
+    /**
+     * 
+     * @type {number}
+     * @memberof AccessKeysPostRequest
+     */
+    'ttl'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof AccessKeysPostRequest
+     */
+    'createdBy'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface AccountGet200Response
+ */
+export interface AccountGet200Response {
+    /**
+     * 
+     * @type {AccountGet200ResponseAccount}
+     * @memberof AccountGet200Response
+     */
+    'account': AccountGet200ResponseAccount;
+}
+/**
+ * 
+ * @export
+ * @interface AccountGet200ResponseAccount
+ */
+export interface AccountGet200ResponseAccount {
+    /**
+     * 
+     * @type {string}
+     * @memberof AccountGet200ResponseAccount
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AccountGet200ResponseAccount
+     */
+    'email': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AccountGet200ResponseAccount
+     */
+    'name': string;
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof AccountGet200ResponseAccount
+     */
+    'linkedProviders': Array<string>;
+    /**
+     * 
+     * @type {string}
+     * @memberof AccountGet200ResponseAccount
+     */
+    'gitHubId'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof AccountGet200ResponseAccount
+     */
+    'createdTime': number;
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameCollaboratorsGet200Response
+ */
+export interface AppsAppNameCollaboratorsGet200Response {
+    /**
+     * 
+     * @type {{ [key: string]: AppsGet200ResponseAppsInnerCollaboratorsValue; }}
+     * @memberof AppsAppNameCollaboratorsGet200Response
+     */
+    'collaborators': { [key: string]: AppsGet200ResponseAppsInnerCollaboratorsValue; };
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsDeploymentNameMetricsGet200Response
+ */
+export interface AppsAppNameDeploymentsDeploymentNameMetricsGet200Response {
+    /**
+     * 
+     * @type {{ [key: string]: AppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue; }}
+     * @memberof AppsAppNameDeploymentsDeploymentNameMetricsGet200Response
+     */
+    'metrics': { [key: string]: AppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue; };
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue
+ */
+export interface AppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue {
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue
+     */
+    'active': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue
+     */
+    'downloads'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue
+     */
+    'installed'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue
+     */
+    'failed'?: number;
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsDeploymentNameReleasePatchRequest
+ */
+export interface AppsAppNameDeploymentsDeploymentNameReleasePatchRequest {
+    /**
+     * 
+     * @type {AppsAppNameDeploymentsDeploymentNameReleasePatchRequestPackageInfo}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePatchRequest
+     */
+    'packageInfo': AppsAppNameDeploymentsDeploymentNameReleasePatchRequestPackageInfo;
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsDeploymentNameReleasePatchRequestPackageInfo
+ */
+export interface AppsAppNameDeploymentsDeploymentNameReleasePatchRequestPackageInfo {
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePatchRequestPackageInfo
+     */
+    'appVersion'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePatchRequestPackageInfo
+     */
+    'description'?: string | null;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePatchRequestPackageInfo
+     */
+    'isDisabled'?: boolean | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePatchRequestPackageInfo
+     */
+    'label'?: string | null;
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsDeploymentNameReleasePost201Response
+ */
+export interface AppsAppNameDeploymentsDeploymentNameReleasePost201Response {
+    /**
+     * 
+     * @type {AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201Response
+     */
+    'package': AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage;
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+ */
+export interface AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage {
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
      */
     'appVersion': string;
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionReportStatusDeployPostRequest
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
      */
-    'previousDeploymentKey'?: string;
+    'blobUrl': string;
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionReportStatusDeployPostRequest
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
      */
-    'previousLabelOrAppVersion'?: string;
+    'description'?: string;
     /**
      * 
-     * @type {string}
-     * @memberof AcquisitionReportStatusDeployPostRequest
+     * @type {{ [key: string]: AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue; }}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
      */
-    'status'?: AcquisitionReportStatusDeployPostRequestStatusEnum;
-}
-
-export const AcquisitionReportStatusDeployPostRequestStatusEnum = {
-    DeploymentSucceeded: 'DeploymentSucceeded',
-    DeploymentFailed: 'DeploymentFailed'
-} as const;
-
-export type AcquisitionReportStatusDeployPostRequestStatusEnum = typeof AcquisitionReportStatusDeployPostRequestStatusEnum[keyof typeof AcquisitionReportStatusDeployPostRequestStatusEnum];
-
-/**
- * 
- * @export
- * @interface AcquisitionReportStatusDownloadPostRequest
- */
-export interface AcquisitionReportStatusDownloadPostRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof AcquisitionReportStatusDownloadPostRequest
-     */
-    'deploymentKey': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AcquisitionReportStatusDownloadPostRequest
-     */
-    'label': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AcquisitionReportStatusDownloadPostRequest
-     */
-    'clientUniqueId': string;
-}
-/**
- * 
- * @export
- * @interface AcquisitionUpdateCheckGet200Response
- */
-export interface AcquisitionUpdateCheckGet200Response {
-    /**
-     * 
-     * @type {AcquisitionUpdateCheckGet200ResponseUpdateInfo}
-     * @memberof AcquisitionUpdateCheckGet200Response
-     */
-    'updateInfo': AcquisitionUpdateCheckGet200ResponseUpdateInfo;
-}
-/**
- * 
- * @export
- * @interface AcquisitionUpdateCheckGet200ResponseUpdateInfo
- */
-export interface AcquisitionUpdateCheckGet200ResponseUpdateInfo {
+    'diffPackageMap'?: { [key: string]: AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue; };
     /**
      * 
      * @type {boolean}
-     * @memberof AcquisitionUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
      */
-    'isAvailable': boolean;
+    'isDisabled': boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof AcquisitionUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
      */
     'isMandatory': boolean;
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     */
+    'label'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     */
+    'manifestBlobUrl': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     */
+    'originalDeployment'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     */
+    'originalLabel'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     */
+    'packageHash': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     */
+    'releasedBy'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     */
+    'releaseMethod'?: AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackageReleaseMethodEnum;
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     */
+    'rollout'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     */
+    'size': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     */
+    'uploadTime': number;
+}
+
+export const AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackageReleaseMethodEnum = {
+    Upload: 'Upload',
+    Promote: 'Promote',
+    Rollback: 'Rollback'
+} as const;
+
+export type AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackageReleaseMethodEnum = typeof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackageReleaseMethodEnum[keyof typeof AppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackageReleaseMethodEnum];
+
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsGet200Response
+ */
+export interface AppsAppNameDeploymentsGet200Response {
+    /**
+     * 
+     * @type {Array<AppsAppNameDeploymentsGet200ResponseDeploymentsInner>}
+     * @memberof AppsAppNameDeploymentsGet200Response
+     */
+    'deployments': Array<AppsAppNameDeploymentsGet200ResponseDeploymentsInner>;
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsGet200ResponseDeploymentsInner
+ */
+export interface AppsAppNameDeploymentsGet200ResponseDeploymentsInner {
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInner
+     */
+    'id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInner
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInner
+     */
+    'key': string;
+    /**
+     * 
+     * @type {AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInner
+     */
+    'package'?: AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInner
+     */
+    'createdTime': number;
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+ */
+export interface AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage {
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
      */
     'appVersion': string;
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'blobUrl': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {{ [key: string]: AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue; }}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'diffPackageMap'?: { [key: string]: AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue; };
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'isDisabled': boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'isMandatory': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'label'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'manifestBlobUrl': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'originalDeployment'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'originalLabel'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'packageHash': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'releasedBy'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'releaseMethod'?: AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageReleaseMethodEnum;
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'rollout'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'size': number;
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     */
+    'uploadTime': number;
+}
+
+export const AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageReleaseMethodEnum = {
+    Upload: 'Upload',
+    Promote: 'Promote',
+    Rollback: 'Rollback'
+} as const;
+
+export type AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageReleaseMethodEnum = typeof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageReleaseMethodEnum[keyof typeof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageReleaseMethodEnum];
+
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue
+ */
+export interface AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue {
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue
+     */
+    'size': number;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue
+     */
+    'url': string;
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsPost201Response
+ */
+export interface AppsAppNameDeploymentsPost201Response {
+    /**
+     * 
+     * @type {AppsAppNameDeploymentsGet200ResponseDeploymentsInner}
+     * @memberof AppsAppNameDeploymentsPost201Response
+     */
+    'deployment': AppsAppNameDeploymentsGet200ResponseDeploymentsInner;
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsPostRequest
+ */
+export interface AppsAppNameDeploymentsPostRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsPostRequest
+     */
+    'name': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsPostRequest
+     */
+    'key'?: string;
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest
+ */
+export interface AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest {
+    /**
+     * 
+     * @type {AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest
+     */
+    'packageInfo'?: AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo;
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+ */
+export interface AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo {
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     */
+    'appVersion'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     */
+    'blobUrl'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {{ [key: string]: AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue; }}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     */
+    'diffPackageMap'?: { [key: string]: AppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue; };
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     */
+    'isDisabled'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     */
+    'isMandatory'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     */
+    'label'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     */
+    'manifestBlobUrl'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     */
+    'originalDeployment'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     */
+    'originalLabel'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
      */
     'packageHash'?: string;
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
      */
-    'label'?: string;
+    'releasedBy'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     */
+    'releaseMethod'?: AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfoReleaseMethodEnum;
     /**
      * 
      * @type {number}
-     * @memberof AcquisitionUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
      */
-    'packageSize'?: number;
+    'rollout'?: number | null;
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     */
+    'size'?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     */
+    'uploadTime'?: number;
+}
+
+export const AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfoReleaseMethodEnum = {
+    Upload: 'Upload',
+    Promote: 'Promote',
+    Rollback: 'Rollback'
+} as const;
+
+export type AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfoReleaseMethodEnum = typeof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfoReleaseMethodEnum[keyof typeof AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfoReleaseMethodEnum];
+
+/**
+ * 
+ * @export
+ * @interface AppsAppNamePatchRequest
+ */
+export interface AppsAppNamePatchRequest {
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsAppNamePatchRequest
      */
-    'description'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof AcquisitionUpdateCheckGet200ResponseUpdateInfo
-     */
-    'downloadUrl'?: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof AcquisitionUpdateCheckGet200ResponseUpdateInfo
-     */
-    'shouldRunBinaryVersion'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof AcquisitionUpdateCheckGet200ResponseUpdateInfo
-     */
-    'updateAppVersion'?: boolean;
+    'name': string;
 }
 /**
  * 
  * @export
- * @interface AcquisitionV01PublicCodepushUpdateCheckGet200Response
+ * @interface AppsGet200Response
  */
-export interface AcquisitionV01PublicCodepushUpdateCheckGet200Response {
+export interface AppsGet200Response {
     /**
      * 
-     * @type {AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo}
-     * @memberof AcquisitionV01PublicCodepushUpdateCheckGet200Response
+     * @type {Array<AppsGet200ResponseAppsInner>}
+     * @memberof AppsGet200Response
      */
-    'update_info': AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo;
+    'apps': Array<AppsGet200ResponseAppsInner>;
 }
 /**
  * 
  * @export
- * @interface AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+ * @interface AppsGet200ResponseAppsInner
  */
-export interface AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo {
-    /**
-     * 
-     * @type {boolean}
-     * @memberof AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
-     */
-    'is_available': boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
-     */
-    'is_mandatory': boolean;
+export interface AppsGet200ResponseAppsInner {
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsGet200ResponseAppsInner
      */
-    'app_version': string;
+    'id': string;
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsGet200ResponseAppsInner
      */
-    'package_hash'?: string;
+    'name': string;
     /**
      * 
-     * @type {string}
-     * @memberof AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     * @type {{ [key: string]: AppsGet200ResponseAppsInnerCollaboratorsValue; }}
+     * @memberof AppsGet200ResponseAppsInner
      */
-    'label'?: string;
+    'collaborators'?: { [key: string]: AppsGet200ResponseAppsInnerCollaboratorsValue; };
+    /**
+     * 
+     * @type {Array<string>}
+     * @memberof AppsGet200ResponseAppsInner
+     */
+    'deployments': Array<string>;
     /**
      * 
      * @type {number}
-     * @memberof AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsGet200ResponseAppsInner
      */
-    'package_size'?: number;
+    'createdTime': number;
+}
+/**
+ * 
+ * @export
+ * @interface AppsGet200ResponseAppsInnerCollaboratorsValue
+ */
+export interface AppsGet200ResponseAppsInnerCollaboratorsValue {
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsGet200ResponseAppsInnerCollaboratorsValue
      */
-    'description'?: string;
+    'accountId': string;
     /**
      * 
      * @type {string}
-     * @memberof AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsGet200ResponseAppsInnerCollaboratorsValue
      */
-    'download_url'?: string;
+    'permission': AppsGet200ResponseAppsInnerCollaboratorsValuePermissionEnum;
     /**
      * 
      * @type {boolean}
-     * @memberof AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsGet200ResponseAppsInnerCollaboratorsValue
      */
-    'should_run_binary_version'?: boolean;
+    'isCurrentAccount'?: boolean | null;
+}
+
+export const AppsGet200ResponseAppsInnerCollaboratorsValuePermissionEnum = {
+    Owner: 'Owner',
+    Collaborator: 'Collaborator'
+} as const;
+
+export type AppsGet200ResponseAppsInnerCollaboratorsValuePermissionEnum = typeof AppsGet200ResponseAppsInnerCollaboratorsValuePermissionEnum[keyof typeof AppsGet200ResponseAppsInnerCollaboratorsValuePermissionEnum];
+
+/**
+ * 
+ * @export
+ * @interface AppsPost201Response
+ */
+export interface AppsPost201Response {
+    /**
+     * 
+     * @type {AppsGet200ResponseAppsInner}
+     * @memberof AppsPost201Response
+     */
+    'app': AppsGet200ResponseAppsInner;
+}
+/**
+ * 
+ * @export
+ * @interface AppsPostRequest
+ */
+export interface AppsPostRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsPostRequest
+     */
+    'name': string;
     /**
      * 
      * @type {boolean}
-     * @memberof AcquisitionV01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     * @memberof AppsPostRequest
      */
-    'update_app_version'?: boolean;
+    'manuallyProvisionDeployments'?: boolean;
 }
 /**
  * 
@@ -307,831 +918,352 @@ export interface AuthGithubCallbackGet400Response {
 /**
  * 
  * @export
- * @interface ManagementAccessKeysAccessKeyNamePatchRequest
+ * @interface ReportStatusDeployPost200Response
  */
-export interface ManagementAccessKeysAccessKeyNamePatchRequest {
+export interface ReportStatusDeployPost200Response {
     /**
      * 
      * @type {string}
-     * @memberof ManagementAccessKeysAccessKeyNamePatchRequest
+     * @memberof ReportStatusDeployPost200Response
      */
-    'friendlyName'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAccessKeysAccessKeyNamePatchRequest
-     */
-    'ttl'?: number;
+    'status': ReportStatusDeployPost200ResponseStatusEnum;
 }
+
+export const ReportStatusDeployPost200ResponseStatusEnum = {
+    Ok: 'ok'
+} as const;
+
+export type ReportStatusDeployPost200ResponseStatusEnum = typeof ReportStatusDeployPost200ResponseStatusEnum[keyof typeof ReportStatusDeployPost200ResponseStatusEnum];
+
 /**
  * 
  * @export
- * @interface ManagementAccessKeysGet200Response
+ * @interface ReportStatusDeployPostRequest
  */
-export interface ManagementAccessKeysGet200Response {
-    /**
-     * 
-     * @type {Array<ManagementAccessKeysGet200ResponseAccessKeysInner>}
-     * @memberof ManagementAccessKeysGet200Response
-     */
-    'accessKeys': Array<ManagementAccessKeysGet200ResponseAccessKeysInner>;
-}
-/**
- * 
- * @export
- * @interface ManagementAccessKeysGet200ResponseAccessKeysInner
- */
-export interface ManagementAccessKeysGet200ResponseAccessKeysInner {
+export interface ReportStatusDeployPostRequest {
     /**
      * 
      * @type {string}
-     * @memberof ManagementAccessKeysGet200ResponseAccessKeysInner
+     * @memberof ReportStatusDeployPostRequest
      */
-    'id': string;
+    'deploymentKey': string;
     /**
      * 
      * @type {string}
-     * @memberof ManagementAccessKeysGet200ResponseAccessKeysInner
+     * @memberof ReportStatusDeployPostRequest
      */
-    'name': string;
+    'clientUniqueId': string;
     /**
      * 
      * @type {string}
-     * @memberof ManagementAccessKeysGet200ResponseAccessKeysInner
+     * @memberof ReportStatusDeployPostRequest
      */
-    'friendlyName': string;
+    'label'?: string;
     /**
      * 
      * @type {string}
-     * @memberof ManagementAccessKeysGet200ResponseAccessKeysInner
-     */
-    'createdBy': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAccessKeysGet200ResponseAccessKeysInner
-     */
-    'createdTime': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAccessKeysGet200ResponseAccessKeysInner
-     */
-    'expires': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAccessKeysGet200ResponseAccessKeysInner
-     */
-    'description'?: string;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ManagementAccessKeysGet200ResponseAccessKeysInner
-     */
-    'isSession'?: boolean;
-}
-/**
- * 
- * @export
- * @interface ManagementAccessKeysPost201Response
- */
-export interface ManagementAccessKeysPost201Response {
-    /**
-     * 
-     * @type {ManagementAccessKeysGet200ResponseAccessKeysInner}
-     * @memberof ManagementAccessKeysPost201Response
-     */
-    'accessKey': ManagementAccessKeysGet200ResponseAccessKeysInner;
-}
-/**
- * 
- * @export
- * @interface ManagementAccessKeysPostRequest
- */
-export interface ManagementAccessKeysPostRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAccessKeysPostRequest
-     */
-    'friendlyName': string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAccessKeysPostRequest
-     */
-    'ttl'?: number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAccessKeysPostRequest
-     */
-    'createdBy'?: string;
-}
-/**
- * 
- * @export
- * @interface ManagementAccountGet200Response
- */
-export interface ManagementAccountGet200Response {
-    /**
-     * 
-     * @type {ManagementAccountGet200ResponseAccount}
-     * @memberof ManagementAccountGet200Response
-     */
-    'account': ManagementAccountGet200ResponseAccount;
-}
-/**
- * 
- * @export
- * @interface ManagementAccountGet200ResponseAccount
- */
-export interface ManagementAccountGet200ResponseAccount {
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAccountGet200ResponseAccount
-     */
-    'id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAccountGet200ResponseAccount
-     */
-    'email': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAccountGet200ResponseAccount
-     */
-    'name': string;
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof ManagementAccountGet200ResponseAccount
-     */
-    'linkedProviders': Array<string>;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAccountGet200ResponseAccount
-     */
-    'gitHubId'?: string;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAccountGet200ResponseAccount
-     */
-    'createdTime': number;
-}
-/**
- * 
- * @export
- * @interface ManagementAppsAppNameCollaboratorsGet200Response
- */
-export interface ManagementAppsAppNameCollaboratorsGet200Response {
-    /**
-     * 
-     * @type {{ [key: string]: ManagementAppsGet200ResponseAppsInnerCollaboratorsValue; }}
-     * @memberof ManagementAppsAppNameCollaboratorsGet200Response
-     */
-    'collaborators': { [key: string]: ManagementAppsGet200ResponseAppsInnerCollaboratorsValue; };
-}
-/**
- * 
- * @export
- * @interface ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200Response
- */
-export interface ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200Response {
-    /**
-     * 
-     * @type {{ [key: string]: ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue; }}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200Response
-     */
-    'metrics': { [key: string]: ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue; };
-}
-/**
- * 
- * @export
- * @interface ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue
- */
-export interface ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue {
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue
-     */
-    'active': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue
-     */
-    'downloads'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue
-     */
-    'installed'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetricsValue
-     */
-    'failed'?: number;
-}
-/**
- * 
- * @export
- * @interface ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201Response
- */
-export interface ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201Response {
-    /**
-     * 
-     * @type {ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201Response
-     */
-    'package': ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage;
-}
-/**
- * 
- * @export
- * @interface ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
- */
-export interface ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage {
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     * @memberof ReportStatusDeployPostRequest
      */
     'appVersion': string;
     /**
      * 
      * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     * @memberof ReportStatusDeployPostRequest
      */
-    'blobUrl': string;
+    'previousDeploymentKey'?: string;
     /**
      * 
      * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     * @memberof ReportStatusDeployPostRequest
      */
-    'description'?: string;
+    'previousLabelOrAppVersion'?: string;
     /**
      * 
-     * @type {{ [key: string]: ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue; }}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     * @type {string}
+     * @memberof ReportStatusDeployPostRequest
      */
-    'diffPackageMap'?: { [key: string]: ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue; };
+    'status'?: ReportStatusDeployPostRequestStatusEnum;
+}
+
+export const ReportStatusDeployPostRequestStatusEnum = {
+    DeploymentSucceeded: 'DeploymentSucceeded',
+    DeploymentFailed: 'DeploymentFailed'
+} as const;
+
+export type ReportStatusDeployPostRequestStatusEnum = typeof ReportStatusDeployPostRequestStatusEnum[keyof typeof ReportStatusDeployPostRequestStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface ReportStatusDownloadPostRequest
+ */
+export interface ReportStatusDownloadPostRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof ReportStatusDownloadPostRequest
+     */
+    'deploymentKey': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ReportStatusDownloadPostRequest
+     */
+    'label': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof ReportStatusDownloadPostRequest
+     */
+    'clientUniqueId': string;
+}
+/**
+ * 
+ * @export
+ * @interface UpdateCheckGet200Response
+ */
+export interface UpdateCheckGet200Response {
+    /**
+     * 
+     * @type {UpdateCheckGet200ResponseUpdateInfo}
+     * @memberof UpdateCheckGet200Response
+     */
+    'updateInfo': UpdateCheckGet200ResponseUpdateInfo;
+}
+/**
+ * 
+ * @export
+ * @interface UpdateCheckGet200ResponseUpdateInfo
+ */
+export interface UpdateCheckGet200ResponseUpdateInfo {
     /**
      * 
      * @type {boolean}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     * @memberof UpdateCheckGet200ResponseUpdateInfo
      */
-    'isDisabled': boolean;
+    'isAvailable': boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
+     * @memberof UpdateCheckGet200ResponseUpdateInfo
      */
     'isMandatory': boolean;
     /**
      * 
      * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
-     */
-    'label'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
-     */
-    'manifestBlobUrl': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
-     */
-    'originalDeployment'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
-     */
-    'originalLabel'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
-     */
-    'packageHash': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
-     */
-    'releasedBy'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
-     */
-    'releaseMethod'?: ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackageReleaseMethodEnum;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
-     */
-    'rollout'?: number | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
-     */
-    'size': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackage
-     */
-    'uploadTime': number;
-}
-
-export const ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackageReleaseMethodEnum = {
-    Upload: 'Upload',
-    Promote: 'Promote',
-    Rollback: 'Rollback'
-} as const;
-
-export type ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackageReleaseMethodEnum = typeof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackageReleaseMethodEnum[keyof typeof ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201ResponsePackageReleaseMethodEnum];
-
-/**
- * 
- * @export
- * @interface ManagementAppsAppNameDeploymentsGet200Response
- */
-export interface ManagementAppsAppNameDeploymentsGet200Response {
-    /**
-     * 
-     * @type {Array<ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInner>}
-     * @memberof ManagementAppsAppNameDeploymentsGet200Response
-     */
-    'deployments': Array<ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInner>;
-}
-/**
- * 
- * @export
- * @interface ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInner
- */
-export interface ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInner {
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInner
-     */
-    'id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInner
-     */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInner
-     */
-    'key'?: string;
-    /**
-     * 
-     * @type {ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInner
-     */
-    'package'?: ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInner
-     */
-    'createdTime': number;
-}
-/**
- * 
- * @export
- * @interface ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
- */
-export interface ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage {
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
+     * @memberof UpdateCheckGet200ResponseUpdateInfo
      */
     'appVersion': string;
     /**
      * 
      * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'blobUrl': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'description'?: string;
-    /**
-     * 
-     * @type {{ [key: string]: ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue; }}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'diffPackageMap'?: { [key: string]: ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue; };
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'isDisabled': boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'isMandatory': boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'label'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'manifestBlobUrl': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'originalDeployment'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'originalLabel'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'packageHash': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'releasedBy'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'releaseMethod'?: ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageReleaseMethodEnum;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'rollout'?: number | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'size': number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackage
-     */
-    'uploadTime': number;
-}
-
-export const ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageReleaseMethodEnum = {
-    Upload: 'Upload',
-    Promote: 'Promote',
-    Rollback: 'Rollback'
-} as const;
-
-export type ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageReleaseMethodEnum = typeof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageReleaseMethodEnum[keyof typeof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageReleaseMethodEnum];
-
-/**
- * 
- * @export
- * @interface ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue
- */
-export interface ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue {
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue
-     */
-    'size': number;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue
-     */
-    'url': string;
-}
-/**
- * 
- * @export
- * @interface ManagementAppsAppNameDeploymentsPost201Response
- */
-export interface ManagementAppsAppNameDeploymentsPost201Response {
-    /**
-     * 
-     * @type {ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInner}
-     * @memberof ManagementAppsAppNameDeploymentsPost201Response
-     */
-    'deployment': ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInner;
-}
-/**
- * 
- * @export
- * @interface ManagementAppsAppNameDeploymentsPostRequest
- */
-export interface ManagementAppsAppNameDeploymentsPostRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsPostRequest
-     */
-    'name': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsPostRequest
-     */
-    'key'?: string;
-}
-/**
- * 
- * @export
- * @interface ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest
- */
-export interface ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest {
-    /**
-     * 
-     * @type {ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest
-     */
-    'packageInfo'?: ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo;
-}
-/**
- * 
- * @export
- * @interface ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
- */
-export interface ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo {
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
-     */
-    'appVersion'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
-     */
-    'blobUrl'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
-     */
-    'description'?: string;
-    /**
-     * 
-     * @type {{ [key: string]: ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue; }}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
-     */
-    'diffPackageMap'?: { [key: string]: ManagementAppsAppNameDeploymentsGet200ResponseDeploymentsInnerPackageDiffPackageMapValue; };
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
-     */
-    'isDisabled'?: boolean;
-    /**
-     * 
-     * @type {boolean}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
-     */
-    'isMandatory'?: boolean;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
-     */
-    'label'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
-     */
-    'manifestBlobUrl'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
-     */
-    'originalDeployment'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
-     */
-    'originalLabel'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     * @memberof UpdateCheckGet200ResponseUpdateInfo
      */
     'packageHash'?: string;
     /**
      * 
      * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     * @memberof UpdateCheckGet200ResponseUpdateInfo
      */
-    'releasedBy'?: string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
-     */
-    'releaseMethod'?: ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfoReleaseMethodEnum;
+    'label'?: string;
     /**
      * 
      * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
+     * @memberof UpdateCheckGet200ResponseUpdateInfo
      */
-    'rollout'?: number | null;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
-     */
-    'size'?: number;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfo
-     */
-    'uploadTime'?: number;
-}
-
-export const ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfoReleaseMethodEnum = {
-    Upload: 'Upload',
-    Promote: 'Promote',
-    Rollback: 'Rollback'
-} as const;
-
-export type ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfoReleaseMethodEnum = typeof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfoReleaseMethodEnum[keyof typeof ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequestPackageInfoReleaseMethodEnum];
-
-/**
- * 
- * @export
- * @interface ManagementAppsAppNamePatchRequest
- */
-export interface ManagementAppsAppNamePatchRequest {
+    'packageSize'?: number;
     /**
      * 
      * @type {string}
-     * @memberof ManagementAppsAppNamePatchRequest
+     * @memberof UpdateCheckGet200ResponseUpdateInfo
      */
-    'name': string;
-}
-/**
- * 
- * @export
- * @interface ManagementAppsGet200Response
- */
-export interface ManagementAppsGet200Response {
-    /**
-     * 
-     * @type {Array<ManagementAppsGet200ResponseAppsInner>}
-     * @memberof ManagementAppsGet200Response
-     */
-    'apps': Array<ManagementAppsGet200ResponseAppsInner>;
-}
-/**
- * 
- * @export
- * @interface ManagementAppsGet200ResponseAppsInner
- */
-export interface ManagementAppsGet200ResponseAppsInner {
+    'description'?: string;
     /**
      * 
      * @type {string}
-     * @memberof ManagementAppsGet200ResponseAppsInner
+     * @memberof UpdateCheckGet200ResponseUpdateInfo
      */
-    'id': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsGet200ResponseAppsInner
-     */
-    'name': string;
-    /**
-     * 
-     * @type {{ [key: string]: ManagementAppsGet200ResponseAppsInnerCollaboratorsValue; }}
-     * @memberof ManagementAppsGet200ResponseAppsInner
-     */
-    'collaborators'?: { [key: string]: ManagementAppsGet200ResponseAppsInnerCollaboratorsValue; };
-    /**
-     * 
-     * @type {Array<string>}
-     * @memberof ManagementAppsGet200ResponseAppsInner
-     */
-    'deployments': Array<string>;
-    /**
-     * 
-     * @type {number}
-     * @memberof ManagementAppsGet200ResponseAppsInner
-     */
-    'createdTime': number;
-}
-/**
- * 
- * @export
- * @interface ManagementAppsGet200ResponseAppsInnerCollaboratorsValue
- */
-export interface ManagementAppsGet200ResponseAppsInnerCollaboratorsValue {
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsGet200ResponseAppsInnerCollaboratorsValue
-     */
-    'accountId': string;
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsGet200ResponseAppsInnerCollaboratorsValue
-     */
-    'permission': ManagementAppsGet200ResponseAppsInnerCollaboratorsValuePermissionEnum;
+    'downloadURL'?: string;
     /**
      * 
      * @type {boolean}
-     * @memberof ManagementAppsGet200ResponseAppsInnerCollaboratorsValue
+     * @memberof UpdateCheckGet200ResponseUpdateInfo
      */
-    'isCurrentAccount'?: boolean | null;
-}
-
-export const ManagementAppsGet200ResponseAppsInnerCollaboratorsValuePermissionEnum = {
-    Owner: 'Owner',
-    Collaborator: 'Collaborator'
-} as const;
-
-export type ManagementAppsGet200ResponseAppsInnerCollaboratorsValuePermissionEnum = typeof ManagementAppsGet200ResponseAppsInnerCollaboratorsValuePermissionEnum[keyof typeof ManagementAppsGet200ResponseAppsInnerCollaboratorsValuePermissionEnum];
-
-/**
- * 
- * @export
- * @interface ManagementAppsPost201Response
- */
-export interface ManagementAppsPost201Response {
-    /**
-     * 
-     * @type {ManagementAppsGet200ResponseAppsInner}
-     * @memberof ManagementAppsPost201Response
-     */
-    'app': ManagementAppsGet200ResponseAppsInner;
-}
-/**
- * 
- * @export
- * @interface ManagementAppsPostRequest
- */
-export interface ManagementAppsPostRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof ManagementAppsPostRequest
-     */
-    'name': string;
+    'shouldRunBinaryVersion'?: boolean;
     /**
      * 
      * @type {boolean}
-     * @memberof ManagementAppsPostRequest
+     * @memberof UpdateCheckGet200ResponseUpdateInfo
      */
-    'manuallyProvisionDeployments'?: boolean;
+    'updateAppVersion'?: boolean;
+}
+/**
+ * 
+ * @export
+ * @interface V01PublicCodepushReportStatusDeployPostRequest
+ */
+export interface V01PublicCodepushReportStatusDeployPostRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushReportStatusDeployPostRequest
+     */
+    'deployment_key': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushReportStatusDeployPostRequest
+     */
+    'client_unique_id': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushReportStatusDeployPostRequest
+     */
+    'label'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushReportStatusDeployPostRequest
+     */
+    'app_version': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushReportStatusDeployPostRequest
+     */
+    'previous_deployment_key'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushReportStatusDeployPostRequest
+     */
+    'previous_label_or_app_version'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushReportStatusDeployPostRequest
+     */
+    'status'?: V01PublicCodepushReportStatusDeployPostRequestStatusEnum;
+}
+
+export const V01PublicCodepushReportStatusDeployPostRequestStatusEnum = {
+    DeploymentSucceeded: 'DeploymentSucceeded',
+    DeploymentFailed: 'DeploymentFailed'
+} as const;
+
+export type V01PublicCodepushReportStatusDeployPostRequestStatusEnum = typeof V01PublicCodepushReportStatusDeployPostRequestStatusEnum[keyof typeof V01PublicCodepushReportStatusDeployPostRequestStatusEnum];
+
+/**
+ * 
+ * @export
+ * @interface V01PublicCodepushReportStatusDownloadPostRequest
+ */
+export interface V01PublicCodepushReportStatusDownloadPostRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushReportStatusDownloadPostRequest
+     */
+    'deployment_key': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushReportStatusDownloadPostRequest
+     */
+    'label': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushReportStatusDownloadPostRequest
+     */
+    'client_unique_id': string;
+}
+/**
+ * 
+ * @export
+ * @interface V01PublicCodepushUpdateCheckGet200Response
+ */
+export interface V01PublicCodepushUpdateCheckGet200Response {
+    /**
+     * 
+     * @type {V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo}
+     * @memberof V01PublicCodepushUpdateCheckGet200Response
+     */
+    'update_info': V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo;
+}
+/**
+ * 
+ * @export
+ * @interface V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+ */
+export interface V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo {
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     */
+    'is_available': boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     */
+    'is_mandatory': boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     */
+    'app_version': string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     */
+    'package_hash'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     */
+    'label'?: string;
+    /**
+     * 
+     * @type {number}
+     * @memberof V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     */
+    'package_size'?: number;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     */
+    'description'?: string;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     */
+    'download_url'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     */
+    'should_run_binary_version'?: boolean;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     */
+    'update_app_version'?: boolean;
+    /**
+     * 
+     * @type {string}
+     * @memberof V01PublicCodepushUpdateCheckGet200ResponseUpdateInfo
+     */
+    'target_binary_range'?: string;
 }
 
 /**
@@ -1142,12 +1274,15 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
     return {
         /**
          * 
-         * @param {AcquisitionReportStatusDeployPostRequest} [acquisitionReportStatusDeployPostRequest] 
+         * @param {string} accessKeyName 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        acquisitionReportStatusDeployPost: async (acquisitionReportStatusDeployPostRequest?: AcquisitionReportStatusDeployPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/acquisition/reportStatus/deploy`;
+        accessKeysAccessKeyNameDelete: async (accessKeyName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'accessKeyName' is not null or undefined
+            assertParamExists('accessKeysAccessKeyNameDelete', 'accessKeyName', accessKeyName)
+            const localVarPath = `/accessKeys/{accessKeyName}`
+                .replace(`{${"accessKeyName"}}`, encodeURIComponent(String(accessKeyName)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1155,18 +1290,15 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
 
     
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(acquisitionReportStatusDeployPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1175,55 +1307,15 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @param {AcquisitionReportStatusDownloadPostRequest} [acquisitionReportStatusDownloadPostRequest] 
+         * @param {string} accessKeyName 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        acquisitionReportStatusDownloadPost: async (acquisitionReportStatusDownloadPostRequest?: AcquisitionReportStatusDownloadPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/acquisition/reportStatus/download`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(acquisitionReportStatusDownloadPostRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} [deploymentKey] 
-         * @param {string} [deploymentKey2] 
-         * @param {string} [appVersion] 
-         * @param {string} [appVersion2] 
-         * @param {string} [packageHash] 
-         * @param {string} [packageHash2] 
-         * @param {string} [label] 
-         * @param {string} [clientUniqueId] 
-         * @param {string} [clientUniqueId2] 
-         * @param {boolean} [isCompanion] 
-         * @param {boolean} [isCompanion2] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        acquisitionUpdateCheckGet: async (deploymentKey?: string, deploymentKey2?: string, appVersion?: string, appVersion2?: string, packageHash?: string, packageHash2?: string, label?: string, clientUniqueId?: string, clientUniqueId2?: string, isCompanion?: boolean, isCompanion2?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/acquisition/updateCheck`;
+        accessKeysAccessKeyNameGet: async (accessKeyName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'accessKeyName' is not null or undefined
+            assertParamExists('accessKeysAccessKeyNameGet', 'accessKeyName', accessKeyName)
+            const localVarPath = `/accessKeys/{accessKeyName}`
+                .replace(`{${"accessKeyName"}}`, encodeURIComponent(String(accessKeyName)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1235,50 +1327,6 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            if (deploymentKey !== undefined) {
-                localVarQueryParameter['deploymentKey'] = deploymentKey;
-            }
-
-            if (deploymentKey2 !== undefined) {
-                localVarQueryParameter['deployment_key'] = deploymentKey2;
-            }
-
-            if (appVersion !== undefined) {
-                localVarQueryParameter['appVersion'] = appVersion;
-            }
-
-            if (appVersion2 !== undefined) {
-                localVarQueryParameter['app_version'] = appVersion2;
-            }
-
-            if (packageHash !== undefined) {
-                localVarQueryParameter['packageHash'] = packageHash;
-            }
-
-            if (packageHash2 !== undefined) {
-                localVarQueryParameter['package_hash'] = packageHash2;
-            }
-
-            if (label !== undefined) {
-                localVarQueryParameter['label'] = label;
-            }
-
-            if (clientUniqueId !== undefined) {
-                localVarQueryParameter['clientUniqueId'] = clientUniqueId;
-            }
-
-            if (clientUniqueId2 !== undefined) {
-                localVarQueryParameter['client_unique_id'] = clientUniqueId2;
-            }
-
-            if (isCompanion !== undefined) {
-                localVarQueryParameter['isCompanion'] = isCompanion;
-            }
-
-            if (isCompanion2 !== undefined) {
-                localVarQueryParameter['is_companion'] = isCompanion2;
-            }
-
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
@@ -1292,12 +1340,16 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @param {AcquisitionReportStatusDeployPostRequest} [acquisitionReportStatusDeployPostRequest] 
+         * @param {string} accessKeyName 
+         * @param {AccessKeysAccessKeyNamePatchRequest} [accessKeysAccessKeyNamePatchRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        acquisitionV01PublicCodepushReportStatusDeployPost: async (acquisitionReportStatusDeployPostRequest?: AcquisitionReportStatusDeployPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/acquisition/v0.1/public/codepush/report_status/deploy`;
+        accessKeysAccessKeyNamePatch: async (accessKeyName: string, accessKeysAccessKeyNamePatchRequest?: AccessKeysAccessKeyNamePatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'accessKeyName' is not null or undefined
+            assertParamExists('accessKeysAccessKeyNamePatch', 'accessKeyName', accessKeyName)
+            const localVarPath = `/accessKeys/{accessKeyName}`
+                .replace(`{${"accessKeyName"}}`, encodeURIComponent(String(accessKeyName)));
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1305,7 +1357,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -1316,7 +1368,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(acquisitionReportStatusDeployPostRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(accessKeysAccessKeyNamePatchRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1325,55 +1377,11 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @param {AcquisitionReportStatusDownloadPostRequest} [acquisitionReportStatusDownloadPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        acquisitionV01PublicCodepushReportStatusDownloadPost: async (acquisitionReportStatusDownloadPostRequest?: AcquisitionReportStatusDownloadPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/acquisition/v0.1/public/codepush/report_status/download`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(acquisitionReportStatusDownloadPostRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} [deploymentKey] 
-         * @param {string} [deploymentKey2] 
-         * @param {string} [appVersion] 
-         * @param {string} [appVersion2] 
-         * @param {string} [packageHash] 
-         * @param {string} [packageHash2] 
-         * @param {string} [label] 
-         * @param {string} [clientUniqueId] 
-         * @param {string} [clientUniqueId2] 
-         * @param {boolean} [isCompanion] 
-         * @param {boolean} [isCompanion2] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        acquisitionV01PublicCodepushUpdateCheckGet: async (deploymentKey?: string, deploymentKey2?: string, appVersion?: string, appVersion2?: string, packageHash?: string, packageHash2?: string, label?: string, clientUniqueId?: string, clientUniqueId2?: string, isCompanion?: boolean, isCompanion2?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/acquisition/v0.1/public/codepush/update_check`;
+        accessKeysGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/accessKeys`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1385,55 +1393,821 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            if (deploymentKey !== undefined) {
-                localVarQueryParameter['deploymentKey'] = deploymentKey;
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {AccessKeysPostRequest} [accessKeysPostRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        accessKeysPost: async (accessKeysPostRequest?: AccessKeysPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/accessKeys`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
             }
 
-            if (deploymentKey2 !== undefined) {
-                localVarQueryParameter['deployment_key'] = deploymentKey2;
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(accessKeysPostRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        accountGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/account`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
             }
 
-            if (appVersion !== undefined) {
-                localVarQueryParameter['appVersion'] = appVersion;
-            }
-
-            if (appVersion2 !== undefined) {
-                localVarQueryParameter['app_version'] = appVersion2;
-            }
-
-            if (packageHash !== undefined) {
-                localVarQueryParameter['packageHash'] = packageHash;
-            }
-
-            if (packageHash2 !== undefined) {
-                localVarQueryParameter['package_hash'] = packageHash2;
-            }
-
-            if (label !== undefined) {
-                localVarQueryParameter['label'] = label;
-            }
-
-            if (clientUniqueId !== undefined) {
-                localVarQueryParameter['clientUniqueId'] = clientUniqueId;
-            }
-
-            if (clientUniqueId2 !== undefined) {
-                localVarQueryParameter['client_unique_id'] = clientUniqueId2;
-            }
-
-            if (isCompanion !== undefined) {
-                localVarQueryParameter['isCompanion'] = isCompanion;
-            }
-
-            if (isCompanion2 !== undefined) {
-                localVarQueryParameter['is_companion'] = isCompanion2;
-            }
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
 
 
     
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Remove collaborator from app
+         * @param {string} appName 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameCollaboratorsEmailDelete: async (appName: string, email: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameCollaboratorsEmailDelete', 'appName', appName)
+            // verify required parameter 'email' is not null or undefined
+            assertParamExists('appsAppNameCollaboratorsEmailDelete', 'email', email)
+            const localVarPath = `/apps/{appName}/collaborators/{email}`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"email"}}`, encodeURIComponent(String(email)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Add collaborator to app
+         * @param {string} appName 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameCollaboratorsEmailPost: async (appName: string, email: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameCollaboratorsEmailPost', 'appName', appName)
+            // verify required parameter 'email' is not null or undefined
+            assertParamExists('appsAppNameCollaboratorsEmailPost', 'email', email)
+            const localVarPath = `/apps/{appName}/collaborators/{email}`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"email"}}`, encodeURIComponent(String(email)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * List app collaborators
+         * @param {string} appName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameCollaboratorsGet: async (appName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameCollaboratorsGet', 'appName', appName)
+            const localVarPath = `/apps/{appName}/collaborators`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Delete an app
+         * @param {string} appName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDelete: async (appName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDelete', 'appName', appName)
+            const localVarPath = `/apps/{appName}`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Remove deployment
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameDelete: async (appName: string, deploymentName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameDelete', 'appName', appName)
+            // verify required parameter 'deploymentName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameDelete', 'deploymentName', deploymentName)
+            const localVarPath = `/apps/{appName}/deployments/{deploymentName}`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get deployment details
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameGet: async (appName: string, deploymentName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameGet', 'appName', appName)
+            // verify required parameter 'deploymentName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameGet', 'deploymentName', deploymentName)
+            const localVarPath = `/apps/{appName}/deployments/{deploymentName}`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get deployment history
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameHistoryGet: async (appName: string, deploymentName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameHistoryGet', 'appName', appName)
+            // verify required parameter 'deploymentName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameHistoryGet', 'deploymentName', deploymentName)
+            const localVarPath = `/apps/{appName}/deployments/{deploymentName}/history`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get deployment metrics
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameMetricsGet: async (appName: string, deploymentName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameMetricsGet', 'appName', appName)
+            // verify required parameter 'deploymentName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameMetricsGet', 'deploymentName', deploymentName)
+            const localVarPath = `/apps/{appName}/deployments/{deploymentName}/metrics`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Update deployment
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {AppsAppNamePatchRequest} [appsAppNamePatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNamePatch: async (appName: string, deploymentName: string, appsAppNamePatchRequest?: AppsAppNamePatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNamePatch', 'appName', appName)
+            // verify required parameter 'deploymentName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNamePatch', 'deploymentName', deploymentName)
+            const localVarPath = `/apps/{appName}/deployments/{deploymentName}`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(appsAppNamePatchRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Update release
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {AppsAppNameDeploymentsDeploymentNameReleasePatchRequest} [appsAppNameDeploymentsDeploymentNameReleasePatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameReleasePatch: async (appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleasePatchRequest?: AppsAppNameDeploymentsDeploymentNameReleasePatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameReleasePatch', 'appName', appName)
+            // verify required parameter 'deploymentName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameReleasePatch', 'deploymentName', deploymentName)
+            const localVarPath = `/apps/{appName}/deployments/{deploymentName}/release`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(appsAppNameDeploymentsDeploymentNameReleasePatchRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Release new package version
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {any} _package 
+         * @param {string} packageInfo 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameReleasePost: async (appName: string, deploymentName: string, _package: any, packageInfo: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameReleasePost', 'appName', appName)
+            // verify required parameter 'deploymentName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameReleasePost', 'deploymentName', deploymentName)
+            // verify required parameter '_package' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameReleasePost', '_package', _package)
+            // verify required parameter 'packageInfo' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameReleasePost', 'packageInfo', packageInfo)
+            const localVarPath = `/apps/{appName}/deployments/{deploymentName}/release`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
+
+
+            if (_package !== undefined) { 
+                localVarFormParams.append('package', new Blob([JSON.stringify(_package)], { type: "application/json", }));
+            }
+    
+            if (packageInfo !== undefined) { 
+                localVarFormParams.append('packageInfo', packageInfo as any);
+            }
+    
+    
+            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = localVarFormParams;
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Rollback deployment to previous release
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {string} [targetRelease] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost: async (appName: string, deploymentName: string, targetRelease?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost', 'appName', appName)
+            // verify required parameter 'deploymentName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost', 'deploymentName', deploymentName)
+            const localVarPath = `/apps/{appName}/deployments/{deploymentName}/rollback/{targetRelease}`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)))
+                .replace(`{${"targetRelease"}}`, encodeURIComponent(String(targetRelease)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * List app deployments
+         * @param {string} appName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsGet: async (appName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsGet', 'appName', appName)
+            const localVarPath = `/apps/{appName}/deployments/`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Create new deployment
+         * @param {string} appName 
+         * @param {AppsAppNameDeploymentsPostRequest} [appsAppNameDeploymentsPostRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsPost: async (appName: string, appsAppNameDeploymentsPostRequest?: AppsAppNameDeploymentsPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsPost', 'appName', appName)
+            const localVarPath = `/apps/{appName}/deployments/`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(appsAppNameDeploymentsPostRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Promote deployment to another deployment
+         * @param {string} appName 
+         * @param {string} sourceDeploymentName 
+         * @param {string} destDeploymentName 
+         * @param {AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest} [appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost: async (appName: string, sourceDeploymentName: string, destDeploymentName: string, appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest?: AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost', 'appName', appName)
+            // verify required parameter 'sourceDeploymentName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost', 'sourceDeploymentName', sourceDeploymentName)
+            // verify required parameter 'destDeploymentName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost', 'destDeploymentName', destDeploymentName)
+            const localVarPath = `/apps/{appName}/deployments/{sourceDeploymentName}/promote/{destDeploymentName}`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"sourceDeploymentName"}}`, encodeURIComponent(String(sourceDeploymentName)))
+                .replace(`{${"destDeploymentName"}}`, encodeURIComponent(String(destDeploymentName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get app details
+         * @param {string} appName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameGet: async (appName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameGet', 'appName', appName)
+            const localVarPath = `/apps/{appName}`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Update app details
+         * @param {string} appName 
+         * @param {AppsAppNamePatchRequest} [appsAppNamePatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNamePatch: async (appName: string, appsAppNamePatchRequest?: AppsAppNamePatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNamePatch', 'appName', appName)
+            const localVarPath = `/apps/{appName}`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(appsAppNamePatchRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Transfer app ownership
+         * @param {string} appName 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameTransferEmailPost: async (appName: string, email: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameTransferEmailPost', 'appName', appName)
+            // verify required parameter 'email' is not null or undefined
+            assertParamExists('appsAppNameTransferEmailPost', 'email', email)
+            const localVarPath = `/apps/{appName}/transfer/{email}`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"email"}}`, encodeURIComponent(String(email)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/apps`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {AppsPostRequest} [appsPostRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsPost: async (appsPostRequest?: AppsPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/apps/`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(appsPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1486,8 +2260,8 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authGithubLoginGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/auth/github/login`;
+        authLoginGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/auth/login`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1541,144 +2315,12 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
-         * @param {string} accessKeyName 
+         * @param {ReportStatusDeployPostRequest} [reportStatusDeployPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        managementAccessKeysAccessKeyNameDelete: async (accessKeyName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'accessKeyName' is not null or undefined
-            assertParamExists('managementAccessKeysAccessKeyNameDelete', 'accessKeyName', accessKeyName)
-            const localVarPath = `/management/accessKeys/:accessKeyName`
-                .replace(`{${"accessKeyName"}}`, encodeURIComponent(String(accessKeyName)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} accessKeyName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAccessKeysAccessKeyNameGet: async (accessKeyName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'accessKeyName' is not null or undefined
-            assertParamExists('managementAccessKeysAccessKeyNameGet', 'accessKeyName', accessKeyName)
-            const localVarPath = `/management/accessKeys/:accessKeyName`
-                .replace(`{${"accessKeyName"}}`, encodeURIComponent(String(accessKeyName)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {string} accessKeyName 
-         * @param {ManagementAccessKeysAccessKeyNamePatchRequest} [managementAccessKeysAccessKeyNamePatchRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAccessKeysAccessKeyNamePatch: async (accessKeyName: string, managementAccessKeysAccessKeyNamePatchRequest?: ManagementAccessKeysAccessKeyNamePatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'accessKeyName' is not null or undefined
-            assertParamExists('managementAccessKeysAccessKeyNamePatch', 'accessKeyName', accessKeyName)
-            const localVarPath = `/management/accessKeys/:accessKeyName`
-                .replace(`{${"accessKeyName"}}`, encodeURIComponent(String(accessKeyName)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(managementAccessKeysAccessKeyNamePatchRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAccessKeysGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/management/accessKeys`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {ManagementAccessKeysPostRequest} [managementAccessKeysPostRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAccessKeysPost: async (managementAccessKeysPostRequest?: ManagementAccessKeysPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/management/accessKeys`;
+        reportStatusDeployPost: async (reportStatusDeployPostRequest?: ReportStatusDeployPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/reportStatus/deploy`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -1697,7 +2339,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(managementAccessKeysPostRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(reportStatusDeployPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -1706,464 +2348,12 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @param {ReportStatusDownloadPostRequest} [reportStatusDownloadPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        managementAccountGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/management/account`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Remove collaborator from app
-         * @param {string} appName 
-         * @param {string} email 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameCollaboratorsEmailDelete: async (appName: string, email: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameCollaboratorsEmailDelete', 'appName', appName)
-            // verify required parameter 'email' is not null or undefined
-            assertParamExists('managementAppsAppNameCollaboratorsEmailDelete', 'email', email)
-            const localVarPath = `/management/apps/:appName/collaborators/:email`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
-                .replace(`{${"email"}}`, encodeURIComponent(String(email)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Add collaborator to app
-         * @param {string} appName 
-         * @param {string} email 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameCollaboratorsEmailPost: async (appName: string, email: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameCollaboratorsEmailPost', 'appName', appName)
-            // verify required parameter 'email' is not null or undefined
-            assertParamExists('managementAppsAppNameCollaboratorsEmailPost', 'email', email)
-            const localVarPath = `/management/apps/:appName/collaborators/:email`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
-                .replace(`{${"email"}}`, encodeURIComponent(String(email)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * List app collaborators
-         * @param {string} appName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameCollaboratorsGet: async (appName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameCollaboratorsGet', 'appName', appName)
-            const localVarPath = `/management/apps/:appName/collaborators`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Delete an app
-         * @param {string} appName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDelete: async (appName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameDelete', 'appName', appName)
-            const localVarPath = `/management/apps/:appName`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Remove deployment
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsDeploymentNameDelete: async (appName: string, deploymentName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNameDelete', 'appName', appName)
-            // verify required parameter 'deploymentName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNameDelete', 'deploymentName', deploymentName)
-            const localVarPath = `/management/apps/:appName/deployments/:deploymentName`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
-                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Get deployment details
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsDeploymentNameGet: async (appName: string, deploymentName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNameGet', 'appName', appName)
-            // verify required parameter 'deploymentName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNameGet', 'deploymentName', deploymentName)
-            const localVarPath = `/management/apps/:appName/deployments/:deploymentName`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
-                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Get deployment metrics
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsDeploymentNameMetricsGet: async (appName: string, deploymentName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNameMetricsGet', 'appName', appName)
-            // verify required parameter 'deploymentName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNameMetricsGet', 'deploymentName', deploymentName)
-            const localVarPath = `/management/apps/:appName/deployments/:deploymentName/metrics`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
-                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Update deployment
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {ManagementAppsAppNamePatchRequest} [managementAppsAppNamePatchRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsDeploymentNamePatch: async (appName: string, deploymentName: string, managementAppsAppNamePatchRequest?: ManagementAppsAppNamePatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNamePatch', 'appName', appName)
-            // verify required parameter 'deploymentName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNamePatch', 'deploymentName', deploymentName)
-            const localVarPath = `/management/apps/:appName/deployments/:deploymentName`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
-                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(managementAppsAppNamePatchRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Release new package version
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {any} _package 
-         * @param {string} packageInfo 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsDeploymentNameReleasePost: async (appName: string, deploymentName: string, _package: any, packageInfo: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNameReleasePost', 'appName', appName)
-            // verify required parameter 'deploymentName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNameReleasePost', 'deploymentName', deploymentName)
-            // verify required parameter '_package' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNameReleasePost', '_package', _package)
-            // verify required parameter 'packageInfo' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNameReleasePost', 'packageInfo', packageInfo)
-            const localVarPath = `/management/apps/:appName/deployments/:deploymentName/release`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
-                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-            const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
-
-
-            if (_package !== undefined) { 
-                localVarFormParams.append('package', new Blob([JSON.stringify(_package)], { type: "application/json", }));
-            }
-    
-            if (packageInfo !== undefined) { 
-                localVarFormParams.append('packageInfo', packageInfo as any);
-            }
-    
-    
-            localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = localVarFormParams;
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Rollback deployment to previous release
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {string} [targetRelease] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost: async (appName: string, deploymentName: string, targetRelease?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost', 'appName', appName)
-            // verify required parameter 'deploymentName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost', 'deploymentName', deploymentName)
-            const localVarPath = `/management/apps/:appName/deployments/:deploymentName/rollback/:targetRelease?`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
-                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)))
-                .replace(`{${"targetRelease"}}`, encodeURIComponent(String(targetRelease)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * List app deployments
-         * @param {string} appName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsGet: async (appName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsGet', 'appName', appName)
-            const localVarPath = `/management/apps/:appName/deployments`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Create new deployment
-         * @param {string} appName 
-         * @param {ManagementAppsAppNameDeploymentsPostRequest} [managementAppsAppNameDeploymentsPostRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsPost: async (appName: string, managementAppsAppNameDeploymentsPostRequest?: ManagementAppsAppNameDeploymentsPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsPost', 'appName', appName)
-            const localVarPath = `/management/apps/:appName/deployments`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)));
+        reportStatusDownloadPost: async (reportStatusDownloadPostRequest?: ReportStatusDownloadPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/reportStatus/download`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2182,7 +2372,7 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(managementAppsAppNameDeploymentsPostRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(reportStatusDownloadPostRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -2190,61 +2380,22 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * Promote deployment to another deployment
-         * @param {string} appName 
-         * @param {string} sourceDeploymentName 
-         * @param {string} destDeploymentName 
-         * @param {ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest} [managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest] 
+         * 
+         * @param {string} appVersion 
+         * @param {string} deploymentKey 
+         * @param {string} [packageHash] 
+         * @param {string} [label] 
+         * @param {string} [clientUniqueId] 
+         * @param {boolean} [isCompanion] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost: async (appName: string, sourceDeploymentName: string, destDeploymentName: string, managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest?: ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost', 'appName', appName)
-            // verify required parameter 'sourceDeploymentName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost', 'sourceDeploymentName', sourceDeploymentName)
-            // verify required parameter 'destDeploymentName' is not null or undefined
-            assertParamExists('managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost', 'destDeploymentName', destDeploymentName)
-            const localVarPath = `/management/apps/:appName/deployments/:sourceDeploymentName/promote/:destDeploymentName`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
-                .replace(`{${"sourceDeploymentName"}}`, encodeURIComponent(String(sourceDeploymentName)))
-                .replace(`{${"destDeploymentName"}}`, encodeURIComponent(String(destDeploymentName)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Get app details
-         * @param {string} appName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameGet: async (appName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameGet', 'appName', appName)
-            const localVarPath = `/management/apps/:appName`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)));
+        updateCheckGet: async (appVersion: string, deploymentKey: string, packageHash?: string, label?: string, clientUniqueId?: string, isCompanion?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appVersion' is not null or undefined
+            assertParamExists('updateCheckGet', 'appVersion', appVersion)
+            // verify required parameter 'deploymentKey' is not null or undefined
+            assertParamExists('updateCheckGet', 'deploymentKey', deploymentKey)
+            const localVarPath = `/updateCheck`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2256,79 +2407,29 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Update app details
-         * @param {string} appName 
-         * @param {ManagementAppsAppNamePatchRequest} [managementAppsAppNamePatchRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNamePatch: async (appName: string, managementAppsAppNamePatchRequest?: ManagementAppsAppNamePatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNamePatch', 'appName', appName)
-            const localVarPath = `/management/apps/:appName`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
+            if (appVersion !== undefined) {
+                localVarQueryParameter['appVersion'] = appVersion;
             }
 
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(managementAppsAppNamePatchRequest, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Transfer app ownership
-         * @param {string} appName 
-         * @param {string} email 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameTransferEmailPost: async (appName: string, email: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'appName' is not null or undefined
-            assertParamExists('managementAppsAppNameTransferEmailPost', 'appName', appName)
-            // verify required parameter 'email' is not null or undefined
-            assertParamExists('managementAppsAppNameTransferEmailPost', 'email', email)
-            const localVarPath = `/management/apps/:appName/transfer/:email`
-                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
-                .replace(`{${"email"}}`, encodeURIComponent(String(email)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
+            if (deploymentKey !== undefined) {
+                localVarQueryParameter['deploymentKey'] = deploymentKey;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
+            if (packageHash !== undefined) {
+                localVarQueryParameter['packageHash'] = packageHash;
+            }
+
+            if (label !== undefined) {
+                localVarQueryParameter['label'] = label;
+            }
+
+            if (clientUniqueId !== undefined) {
+                localVarQueryParameter['clientUniqueId'] = clientUniqueId;
+            }
+
+            if (isCompanion !== undefined) {
+                localVarQueryParameter['isCompanion'] = isCompanion;
+            }
 
 
     
@@ -2343,41 +2444,12 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
         },
         /**
          * 
+         * @param {V01PublicCodepushReportStatusDeployPostRequest} [v01PublicCodepushReportStatusDeployPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        managementAppsGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/management/apps`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-    
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * 
-         * @param {ManagementAppsPostRequest} [managementAppsPostRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsPost: async (managementAppsPostRequest?: ManagementAppsPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/management/apps`;
+        v01PublicCodepushReportStatusDeployPost: async (v01PublicCodepushReportStatusDeployPostRequest?: V01PublicCodepushReportStatusDeployPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v0.1/public/codepush/report_status/deploy`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
             let baseOptions;
@@ -2396,7 +2468,103 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
-            localVarRequestOptions.data = serializeDataIfNeeded(managementAppsPostRequest, localVarRequestOptions, configuration)
+            localVarRequestOptions.data = serializeDataIfNeeded(v01PublicCodepushReportStatusDeployPostRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {V01PublicCodepushReportStatusDownloadPostRequest} [v01PublicCodepushReportStatusDownloadPostRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v01PublicCodepushReportStatusDownloadPost: async (v01PublicCodepushReportStatusDownloadPostRequest?: V01PublicCodepushReportStatusDownloadPostRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v0.1/public/codepush/report_status/download`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(v01PublicCodepushReportStatusDownloadPostRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @param {string} appVersion 
+         * @param {string} deploymentKey 
+         * @param {string} [packageHash] 
+         * @param {string} [label] 
+         * @param {string} [clientUniqueId] 
+         * @param {boolean} [isCompanion] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        v01PublicCodepushUpdateCheckGet: async (appVersion: string, deploymentKey: string, packageHash?: string, label?: string, clientUniqueId?: string, isCompanion?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appVersion' is not null or undefined
+            assertParamExists('v01PublicCodepushUpdateCheckGet', 'appVersion', appVersion)
+            // verify required parameter 'deploymentKey' is not null or undefined
+            assertParamExists('v01PublicCodepushUpdateCheckGet', 'deploymentKey', deploymentKey)
+            const localVarPath = `/v0.1/public/codepush/update_check`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (appVersion !== undefined) {
+                localVarQueryParameter['app_version'] = appVersion;
+            }
+
+            if (deploymentKey !== undefined) {
+                localVarQueryParameter['deployment_key'] = deploymentKey;
+            }
+
+            if (packageHash !== undefined) {
+                localVarQueryParameter['package_hash'] = packageHash;
+            }
+
+            if (label !== undefined) {
+                localVarQueryParameter['label'] = label;
+            }
+
+            if (clientUniqueId !== undefined) {
+                localVarQueryParameter['client_unique_id'] = clientUniqueId;
+            }
+
+            if (isCompanion !== undefined) {
+                localVarQueryParameter['is_companion'] = isCompanion;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -2415,94 +2583,333 @@ export const DefaultApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {AcquisitionReportStatusDeployPostRequest} [acquisitionReportStatusDeployPostRequest] 
+         * @param {string} accessKeyName 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async acquisitionReportStatusDeployPost(acquisitionReportStatusDeployPostRequest?: AcquisitionReportStatusDeployPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AcquisitionReportStatusDeployPost200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.acquisitionReportStatusDeployPost(acquisitionReportStatusDeployPostRequest, options);
+        async accessKeysAccessKeyNameDelete(accessKeyName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.accessKeysAccessKeyNameDelete(accessKeyName, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.acquisitionReportStatusDeployPost']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.accessKeysAccessKeyNameDelete']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {AcquisitionReportStatusDownloadPostRequest} [acquisitionReportStatusDownloadPostRequest] 
+         * @param {string} accessKeyName 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async acquisitionReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest?: AcquisitionReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AcquisitionReportStatusDeployPost200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.acquisitionReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest, options);
+        async accessKeysAccessKeyNameGet(accessKeyName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AccessKeysPost201Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.accessKeysAccessKeyNameGet(accessKeyName, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.acquisitionReportStatusDownloadPost']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.accessKeysAccessKeyNameGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {string} [deploymentKey] 
-         * @param {string} [deploymentKey2] 
-         * @param {string} [appVersion] 
-         * @param {string} [appVersion2] 
-         * @param {string} [packageHash] 
-         * @param {string} [packageHash2] 
-         * @param {string} [label] 
-         * @param {string} [clientUniqueId] 
-         * @param {string} [clientUniqueId2] 
-         * @param {boolean} [isCompanion] 
-         * @param {boolean} [isCompanion2] 
+         * @param {string} accessKeyName 
+         * @param {AccessKeysAccessKeyNamePatchRequest} [accessKeysAccessKeyNamePatchRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async acquisitionUpdateCheckGet(deploymentKey?: string, deploymentKey2?: string, appVersion?: string, appVersion2?: string, packageHash?: string, packageHash2?: string, label?: string, clientUniqueId?: string, clientUniqueId2?: string, isCompanion?: boolean, isCompanion2?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AcquisitionUpdateCheckGet200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.acquisitionUpdateCheckGet(deploymentKey, deploymentKey2, appVersion, appVersion2, packageHash, packageHash2, label, clientUniqueId, clientUniqueId2, isCompanion, isCompanion2, options);
+        async accessKeysAccessKeyNamePatch(accessKeyName: string, accessKeysAccessKeyNamePatchRequest?: AccessKeysAccessKeyNamePatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AccessKeysPost201Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.accessKeysAccessKeyNamePatch(accessKeyName, accessKeysAccessKeyNamePatchRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.acquisitionUpdateCheckGet']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.accessKeysAccessKeyNamePatch']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {AcquisitionReportStatusDeployPostRequest} [acquisitionReportStatusDeployPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async acquisitionV01PublicCodepushReportStatusDeployPost(acquisitionReportStatusDeployPostRequest?: AcquisitionReportStatusDeployPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AcquisitionReportStatusDeployPost200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.acquisitionV01PublicCodepushReportStatusDeployPost(acquisitionReportStatusDeployPostRequest, options);
+        async accessKeysGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AccessKeysGet200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.accessKeysGet(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.acquisitionV01PublicCodepushReportStatusDeployPost']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.accessKeysGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {AcquisitionReportStatusDownloadPostRequest} [acquisitionReportStatusDownloadPostRequest] 
+         * @param {AccessKeysPostRequest} [accessKeysPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async acquisitionV01PublicCodepushReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest?: AcquisitionReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AcquisitionReportStatusDeployPost200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.acquisitionV01PublicCodepushReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest, options);
+        async accessKeysPost(accessKeysPostRequest?: AccessKeysPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AccessKeysPost201Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.accessKeysPost(accessKeysPostRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.acquisitionV01PublicCodepushReportStatusDownloadPost']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.accessKeysPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {string} [deploymentKey] 
-         * @param {string} [deploymentKey2] 
-         * @param {string} [appVersion] 
-         * @param {string} [appVersion2] 
-         * @param {string} [packageHash] 
-         * @param {string} [packageHash2] 
-         * @param {string} [label] 
-         * @param {string} [clientUniqueId] 
-         * @param {string} [clientUniqueId2] 
-         * @param {boolean} [isCompanion] 
-         * @param {boolean} [isCompanion2] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async acquisitionV01PublicCodepushUpdateCheckGet(deploymentKey?: string, deploymentKey2?: string, appVersion?: string, appVersion2?: string, packageHash?: string, packageHash2?: string, label?: string, clientUniqueId?: string, clientUniqueId2?: string, isCompanion?: boolean, isCompanion2?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AcquisitionV01PublicCodepushUpdateCheckGet200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.acquisitionV01PublicCodepushUpdateCheckGet(deploymentKey, deploymentKey2, appVersion, appVersion2, packageHash, packageHash2, label, clientUniqueId, clientUniqueId2, isCompanion, isCompanion2, options);
+        async accountGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AccountGet200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.accountGet(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.acquisitionV01PublicCodepushUpdateCheckGet']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.accountGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Remove collaborator from app
+         * @param {string} appName 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameCollaboratorsEmailDelete(appName: string, email: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameCollaboratorsEmailDelete(appName, email, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameCollaboratorsEmailDelete']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Add collaborator to app
+         * @param {string} appName 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameCollaboratorsEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameCollaboratorsEmailPost(appName, email, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameCollaboratorsEmailPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * List app collaborators
+         * @param {string} appName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameCollaboratorsGet(appName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppsAppNameCollaboratorsGet200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameCollaboratorsGet(appName, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameCollaboratorsGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Delete an app
+         * @param {string} appName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDelete(appName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDelete(appName, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDelete']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Remove deployment
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDeploymentsDeploymentNameDelete(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsDeploymentNameDelete(appName, deploymentName, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsDeploymentNameDelete']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Get deployment details
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDeploymentsDeploymentNameGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppsAppNameDeploymentsPost201Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsDeploymentNameGet(appName, deploymentName, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsDeploymentNameGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Get deployment history
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDeploymentsDeploymentNameHistoryGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsDeploymentNameHistoryGet(appName, deploymentName, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsDeploymentNameHistoryGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Get deployment metrics
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDeploymentsDeploymentNameMetricsGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppsAppNameDeploymentsDeploymentNameMetricsGet200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsDeploymentNameMetricsGet(appName, deploymentName, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsDeploymentNameMetricsGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Update deployment
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {AppsAppNamePatchRequest} [appsAppNamePatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDeploymentsDeploymentNamePatch(appName: string, deploymentName: string, appsAppNamePatchRequest?: AppsAppNamePatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppsAppNameDeploymentsPost201Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsDeploymentNamePatch(appName, deploymentName, appsAppNamePatchRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsDeploymentNamePatch']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Update release
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {AppsAppNameDeploymentsDeploymentNameReleasePatchRequest} [appsAppNameDeploymentsDeploymentNameReleasePatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDeploymentsDeploymentNameReleasePatch(appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleasePatchRequest?: AppsAppNameDeploymentsDeploymentNameReleasePatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsDeploymentNameReleasePatch(appName, deploymentName, appsAppNameDeploymentsDeploymentNameReleasePatchRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsDeploymentNameReleasePatch']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Release new package version
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {any} _package 
+         * @param {string} packageInfo 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDeploymentsDeploymentNameReleasePost(appName: string, deploymentName: string, _package: any, packageInfo: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppsAppNameDeploymentsDeploymentNameReleasePost201Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsDeploymentNameReleasePost(appName, deploymentName, _package, packageInfo, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsDeploymentNameReleasePost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Rollback deployment to previous release
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {string} [targetRelease] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName: string, deploymentName: string, targetRelease?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppsAppNameDeploymentsDeploymentNameReleasePost201Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName, deploymentName, targetRelease, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * List app deployments
+         * @param {string} appName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDeploymentsGet(appName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppsAppNameDeploymentsGet200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsGet(appName, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Create new deployment
+         * @param {string} appName 
+         * @param {AppsAppNameDeploymentsPostRequest} [appsAppNameDeploymentsPostRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDeploymentsPost(appName: string, appsAppNameDeploymentsPostRequest?: AppsAppNameDeploymentsPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppsAppNameDeploymentsPost201Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsPost(appName, appsAppNameDeploymentsPostRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Promote deployment to another deployment
+         * @param {string} appName 
+         * @param {string} sourceDeploymentName 
+         * @param {string} destDeploymentName 
+         * @param {AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest} [appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName: string, sourceDeploymentName: string, destDeploymentName: string, appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest?: AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppsAppNameDeploymentsDeploymentNameReleasePost201Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName, sourceDeploymentName, destDeploymentName, appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Get app details
+         * @param {string} appName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameGet(appName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppsPost201Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameGet(appName, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Update app details
+         * @param {string} appName 
+         * @param {AppsAppNamePatchRequest} [appsAppNamePatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNamePatch(appName: string, appsAppNamePatchRequest?: AppsAppNamePatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppsPost201Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNamePatch(appName, appsAppNamePatchRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNamePatch']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Transfer app ownership
+         * @param {string} appName 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameTransferEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameTransferEmailPost(appName, email, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameTransferEmailPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppsGet200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsGet(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @param {AppsPostRequest} [appsPostRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsPost(appsPostRequest?: AppsPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AppsPost201Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsPost(appsPostRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -2523,10 +2930,10 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authGithubLoginGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.authGithubLoginGet(options);
+        async authLoginGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authLoginGet(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.authGithubLoginGet']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.authLoginGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -2542,306 +2949,84 @@ export const DefaultApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {string} accessKeyName 
+         * @param {ReportStatusDeployPostRequest} [reportStatusDeployPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async managementAccessKeysAccessKeyNameDelete(accessKeyName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAccessKeysAccessKeyNameDelete(accessKeyName, options);
+        async reportStatusDeployPost(reportStatusDeployPostRequest?: ReportStatusDeployPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ReportStatusDeployPost200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.reportStatusDeployPost(reportStatusDeployPostRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAccessKeysAccessKeyNameDelete']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.reportStatusDeployPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {string} accessKeyName 
+         * @param {ReportStatusDownloadPostRequest} [reportStatusDownloadPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async managementAccessKeysAccessKeyNameGet(accessKeyName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAccessKeysPost201Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAccessKeysAccessKeyNameGet(accessKeyName, options);
+        async reportStatusDownloadPost(reportStatusDownloadPostRequest?: ReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ReportStatusDeployPost200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.reportStatusDownloadPost(reportStatusDownloadPostRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAccessKeysAccessKeyNameGet']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.reportStatusDownloadPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {string} accessKeyName 
-         * @param {ManagementAccessKeysAccessKeyNamePatchRequest} [managementAccessKeysAccessKeyNamePatchRequest] 
+         * @param {string} appVersion 
+         * @param {string} deploymentKey 
+         * @param {string} [packageHash] 
+         * @param {string} [label] 
+         * @param {string} [clientUniqueId] 
+         * @param {boolean} [isCompanion] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async managementAccessKeysAccessKeyNamePatch(accessKeyName: string, managementAccessKeysAccessKeyNamePatchRequest?: ManagementAccessKeysAccessKeyNamePatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAccessKeysPost201Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAccessKeysAccessKeyNamePatch(accessKeyName, managementAccessKeysAccessKeyNamePatchRequest, options);
+        async updateCheckGet(appVersion: string, deploymentKey: string, packageHash?: string, label?: string, clientUniqueId?: string, isCompanion?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<UpdateCheckGet200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.updateCheckGet(appVersion, deploymentKey, packageHash, label, clientUniqueId, isCompanion, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAccessKeysAccessKeyNamePatch']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.updateCheckGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
+         * @param {V01PublicCodepushReportStatusDeployPostRequest} [v01PublicCodepushReportStatusDeployPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async managementAccessKeysGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAccessKeysGet200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAccessKeysGet(options);
+        async v01PublicCodepushReportStatusDeployPost(v01PublicCodepushReportStatusDeployPostRequest?: V01PublicCodepushReportStatusDeployPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ReportStatusDeployPost200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v01PublicCodepushReportStatusDeployPost(v01PublicCodepushReportStatusDeployPostRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAccessKeysGet']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.v01PublicCodepushReportStatusDeployPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {ManagementAccessKeysPostRequest} [managementAccessKeysPostRequest] 
+         * @param {V01PublicCodepushReportStatusDownloadPostRequest} [v01PublicCodepushReportStatusDownloadPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async managementAccessKeysPost(managementAccessKeysPostRequest?: ManagementAccessKeysPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAccessKeysPost201Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAccessKeysPost(managementAccessKeysPostRequest, options);
+        async v01PublicCodepushReportStatusDownloadPost(v01PublicCodepushReportStatusDownloadPostRequest?: V01PublicCodepushReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ReportStatusDeployPost200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v01PublicCodepushReportStatusDownloadPost(v01PublicCodepushReportStatusDownloadPostRequest, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAccessKeysPost']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.v01PublicCodepushReportStatusDownloadPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
+         * @param {string} appVersion 
+         * @param {string} deploymentKey 
+         * @param {string} [packageHash] 
+         * @param {string} [label] 
+         * @param {string} [clientUniqueId] 
+         * @param {boolean} [isCompanion] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async managementAccountGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAccountGet200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAccountGet(options);
+        async v01PublicCodepushUpdateCheckGet(appVersion: string, deploymentKey: string, packageHash?: string, label?: string, clientUniqueId?: string, isCompanion?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<V01PublicCodepushUpdateCheckGet200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.v01PublicCodepushUpdateCheckGet(appVersion, deploymentKey, packageHash, label, clientUniqueId, isCompanion, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAccountGet']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Remove collaborator from app
-         * @param {string} appName 
-         * @param {string} email 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameCollaboratorsEmailDelete(appName: string, email: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameCollaboratorsEmailDelete(appName, email, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameCollaboratorsEmailDelete']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Add collaborator to app
-         * @param {string} appName 
-         * @param {string} email 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameCollaboratorsEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameCollaboratorsEmailPost(appName, email, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameCollaboratorsEmailPost']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * List app collaborators
-         * @param {string} appName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameCollaboratorsGet(appName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAppsAppNameCollaboratorsGet200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameCollaboratorsGet(appName, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameCollaboratorsGet']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Delete an app
-         * @param {string} appName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameDelete(appName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameDelete(appName, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameDelete']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Remove deployment
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameDeploymentsDeploymentNameDelete(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameDeploymentsDeploymentNameDelete(appName, deploymentName, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameDeploymentsDeploymentNameDelete']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Get deployment details
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameDeploymentsDeploymentNameGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAppsAppNameDeploymentsPost201Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameDeploymentsDeploymentNameGet(appName, deploymentName, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameDeploymentsDeploymentNameGet']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Get deployment metrics
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameDeploymentsDeploymentNameMetricsGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameDeploymentsDeploymentNameMetricsGet(appName, deploymentName, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameDeploymentsDeploymentNameMetricsGet']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Update deployment
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {ManagementAppsAppNamePatchRequest} [managementAppsAppNamePatchRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameDeploymentsDeploymentNamePatch(appName: string, deploymentName: string, managementAppsAppNamePatchRequest?: ManagementAppsAppNamePatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAppsAppNameDeploymentsPost201Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameDeploymentsDeploymentNamePatch(appName, deploymentName, managementAppsAppNamePatchRequest, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameDeploymentsDeploymentNamePatch']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Release new package version
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {any} _package 
-         * @param {string} packageInfo 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameDeploymentsDeploymentNameReleasePost(appName: string, deploymentName: string, _package: any, packageInfo: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameDeploymentsDeploymentNameReleasePost(appName, deploymentName, _package, packageInfo, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameDeploymentsDeploymentNameReleasePost']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Rollback deployment to previous release
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {string} [targetRelease] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName: string, deploymentName: string, targetRelease?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName, deploymentName, targetRelease, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * List app deployments
-         * @param {string} appName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameDeploymentsGet(appName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAppsAppNameDeploymentsGet200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameDeploymentsGet(appName, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameDeploymentsGet']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Create new deployment
-         * @param {string} appName 
-         * @param {ManagementAppsAppNameDeploymentsPostRequest} [managementAppsAppNameDeploymentsPostRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameDeploymentsPost(appName: string, managementAppsAppNameDeploymentsPostRequest?: ManagementAppsAppNameDeploymentsPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAppsAppNameDeploymentsPost201Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameDeploymentsPost(appName, managementAppsAppNameDeploymentsPostRequest, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameDeploymentsPost']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Promote deployment to another deployment
-         * @param {string} appName 
-         * @param {string} sourceDeploymentName 
-         * @param {string} destDeploymentName 
-         * @param {ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest} [managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName: string, sourceDeploymentName: string, destDeploymentName: string, managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest?: ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName, sourceDeploymentName, destDeploymentName, managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Get app details
-         * @param {string} appName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameGet(appName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAppsPost201Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameGet(appName, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameGet']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Update app details
-         * @param {string} appName 
-         * @param {ManagementAppsAppNamePatchRequest} [managementAppsAppNamePatchRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNamePatch(appName: string, managementAppsAppNamePatchRequest?: ManagementAppsAppNamePatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAppsPost201Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNamePatch(appName, managementAppsAppNamePatchRequest, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNamePatch']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * Transfer app ownership
-         * @param {string} appName 
-         * @param {string} email 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsAppNameTransferEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsAppNameTransferEmailPost(appName, email, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsAppNameTransferEmailPost']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAppsGet200Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsGet(options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsGet']?.[localVarOperationServerIndex]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
-        },
-        /**
-         * 
-         * @param {ManagementAppsPostRequest} [managementAppsPostRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async managementAppsPost(managementAppsPostRequest?: ManagementAppsPostRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManagementAppsPost201Response>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.managementAppsPost(managementAppsPostRequest, options);
-            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
-            const localVarOperationServerBasePath = operationServerMap['DefaultApi.managementAppsPost']?.[localVarOperationServerIndex]?.url;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.v01PublicCodepushUpdateCheckGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
     }
@@ -2856,77 +3041,256 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
     return {
         /**
          * 
-         * @param {AcquisitionReportStatusDeployPostRequest} [acquisitionReportStatusDeployPostRequest] 
+         * @param {string} accessKeyName 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        acquisitionReportStatusDeployPost(acquisitionReportStatusDeployPostRequest?: AcquisitionReportStatusDeployPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AcquisitionReportStatusDeployPost200Response> {
-            return localVarFp.acquisitionReportStatusDeployPost(acquisitionReportStatusDeployPostRequest, options).then((request) => request(axios, basePath));
+        accessKeysAccessKeyNameDelete(accessKeyName: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.accessKeysAccessKeyNameDelete(accessKeyName, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {AcquisitionReportStatusDownloadPostRequest} [acquisitionReportStatusDownloadPostRequest] 
+         * @param {string} accessKeyName 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        acquisitionReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest?: AcquisitionReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AcquisitionReportStatusDeployPost200Response> {
-            return localVarFp.acquisitionReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest, options).then((request) => request(axios, basePath));
+        accessKeysAccessKeyNameGet(accessKeyName: string, options?: RawAxiosRequestConfig): AxiosPromise<AccessKeysPost201Response> {
+            return localVarFp.accessKeysAccessKeyNameGet(accessKeyName, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {string} [deploymentKey] 
-         * @param {string} [deploymentKey2] 
-         * @param {string} [appVersion] 
-         * @param {string} [appVersion2] 
-         * @param {string} [packageHash] 
-         * @param {string} [packageHash2] 
-         * @param {string} [label] 
-         * @param {string} [clientUniqueId] 
-         * @param {string} [clientUniqueId2] 
-         * @param {boolean} [isCompanion] 
-         * @param {boolean} [isCompanion2] 
+         * @param {string} accessKeyName 
+         * @param {AccessKeysAccessKeyNamePatchRequest} [accessKeysAccessKeyNamePatchRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        acquisitionUpdateCheckGet(deploymentKey?: string, deploymentKey2?: string, appVersion?: string, appVersion2?: string, packageHash?: string, packageHash2?: string, label?: string, clientUniqueId?: string, clientUniqueId2?: string, isCompanion?: boolean, isCompanion2?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<AcquisitionUpdateCheckGet200Response> {
-            return localVarFp.acquisitionUpdateCheckGet(deploymentKey, deploymentKey2, appVersion, appVersion2, packageHash, packageHash2, label, clientUniqueId, clientUniqueId2, isCompanion, isCompanion2, options).then((request) => request(axios, basePath));
+        accessKeysAccessKeyNamePatch(accessKeyName: string, accessKeysAccessKeyNamePatchRequest?: AccessKeysAccessKeyNamePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<AccessKeysPost201Response> {
+            return localVarFp.accessKeysAccessKeyNamePatch(accessKeyName, accessKeysAccessKeyNamePatchRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {AcquisitionReportStatusDeployPostRequest} [acquisitionReportStatusDeployPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        acquisitionV01PublicCodepushReportStatusDeployPost(acquisitionReportStatusDeployPostRequest?: AcquisitionReportStatusDeployPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AcquisitionReportStatusDeployPost200Response> {
-            return localVarFp.acquisitionV01PublicCodepushReportStatusDeployPost(acquisitionReportStatusDeployPostRequest, options).then((request) => request(axios, basePath));
+        accessKeysGet(options?: RawAxiosRequestConfig): AxiosPromise<AccessKeysGet200Response> {
+            return localVarFp.accessKeysGet(options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {AcquisitionReportStatusDownloadPostRequest} [acquisitionReportStatusDownloadPostRequest] 
+         * @param {AccessKeysPostRequest} [accessKeysPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        acquisitionV01PublicCodepushReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest?: AcquisitionReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AcquisitionReportStatusDeployPost200Response> {
-            return localVarFp.acquisitionV01PublicCodepushReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest, options).then((request) => request(axios, basePath));
+        accessKeysPost(accessKeysPostRequest?: AccessKeysPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AccessKeysPost201Response> {
+            return localVarFp.accessKeysPost(accessKeysPostRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {string} [deploymentKey] 
-         * @param {string} [deploymentKey2] 
-         * @param {string} [appVersion] 
-         * @param {string} [appVersion2] 
-         * @param {string} [packageHash] 
-         * @param {string} [packageHash2] 
-         * @param {string} [label] 
-         * @param {string} [clientUniqueId] 
-         * @param {string} [clientUniqueId2] 
-         * @param {boolean} [isCompanion] 
-         * @param {boolean} [isCompanion2] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        acquisitionV01PublicCodepushUpdateCheckGet(deploymentKey?: string, deploymentKey2?: string, appVersion?: string, appVersion2?: string, packageHash?: string, packageHash2?: string, label?: string, clientUniqueId?: string, clientUniqueId2?: string, isCompanion?: boolean, isCompanion2?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<AcquisitionV01PublicCodepushUpdateCheckGet200Response> {
-            return localVarFp.acquisitionV01PublicCodepushUpdateCheckGet(deploymentKey, deploymentKey2, appVersion, appVersion2, packageHash, packageHash2, label, clientUniqueId, clientUniqueId2, isCompanion, isCompanion2, options).then((request) => request(axios, basePath));
+        accountGet(options?: RawAxiosRequestConfig): AxiosPromise<AccountGet200Response> {
+            return localVarFp.accountGet(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Remove collaborator from app
+         * @param {string} appName 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameCollaboratorsEmailDelete(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.appsAppNameCollaboratorsEmailDelete(appName, email, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Add collaborator to app
+         * @param {string} appName 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameCollaboratorsEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.appsAppNameCollaboratorsEmailPost(appName, email, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * List app collaborators
+         * @param {string} appName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameCollaboratorsGet(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameCollaboratorsGet200Response> {
+            return localVarFp.appsAppNameCollaboratorsGet(appName, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Delete an app
+         * @param {string} appName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDelete(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.appsAppNameDelete(appName, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Remove deployment
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameDelete(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.appsAppNameDeploymentsDeploymentNameDelete(appName, deploymentName, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get deployment details
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsPost201Response> {
+            return localVarFp.appsAppNameDeploymentsDeploymentNameGet(appName, deploymentName, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get deployment history
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameHistoryGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.appsAppNameDeploymentsDeploymentNameHistoryGet(appName, deploymentName, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get deployment metrics
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameMetricsGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsDeploymentNameMetricsGet200Response> {
+            return localVarFp.appsAppNameDeploymentsDeploymentNameMetricsGet(appName, deploymentName, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update deployment
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {AppsAppNamePatchRequest} [appsAppNamePatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNamePatch(appName: string, deploymentName: string, appsAppNamePatchRequest?: AppsAppNamePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsPost201Response> {
+            return localVarFp.appsAppNameDeploymentsDeploymentNamePatch(appName, deploymentName, appsAppNamePatchRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update release
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {AppsAppNameDeploymentsDeploymentNameReleasePatchRequest} [appsAppNameDeploymentsDeploymentNameReleasePatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameReleasePatch(appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleasePatchRequest?: AppsAppNameDeploymentsDeploymentNameReleasePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.appsAppNameDeploymentsDeploymentNameReleasePatch(appName, deploymentName, appsAppNameDeploymentsDeploymentNameReleasePatchRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Release new package version
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {any} _package 
+         * @param {string} packageInfo 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameReleasePost(appName: string, deploymentName: string, _package: any, packageInfo: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsDeploymentNameReleasePost201Response> {
+            return localVarFp.appsAppNameDeploymentsDeploymentNameReleasePost(appName, deploymentName, _package, packageInfo, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Rollback deployment to previous release
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {string} [targetRelease] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName: string, deploymentName: string, targetRelease?: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsDeploymentNameReleasePost201Response> {
+            return localVarFp.appsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName, deploymentName, targetRelease, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * List app deployments
+         * @param {string} appName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsGet(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsGet200Response> {
+            return localVarFp.appsAppNameDeploymentsGet(appName, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Create new deployment
+         * @param {string} appName 
+         * @param {AppsAppNameDeploymentsPostRequest} [appsAppNameDeploymentsPostRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsPost(appName: string, appsAppNameDeploymentsPostRequest?: AppsAppNameDeploymentsPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsPost201Response> {
+            return localVarFp.appsAppNameDeploymentsPost(appName, appsAppNameDeploymentsPostRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Promote deployment to another deployment
+         * @param {string} appName 
+         * @param {string} sourceDeploymentName 
+         * @param {string} destDeploymentName 
+         * @param {AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest} [appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName: string, sourceDeploymentName: string, destDeploymentName: string, appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest?: AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsDeploymentNameReleasePost201Response> {
+            return localVarFp.appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName, sourceDeploymentName, destDeploymentName, appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get app details
+         * @param {string} appName 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameGet(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsPost201Response> {
+            return localVarFp.appsAppNameGet(appName, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update app details
+         * @param {string} appName 
+         * @param {AppsAppNamePatchRequest} [appsAppNamePatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNamePatch(appName: string, appsAppNamePatchRequest?: AppsAppNamePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<AppsPost201Response> {
+            return localVarFp.appsAppNamePatch(appName, appsAppNamePatchRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Transfer app ownership
+         * @param {string} appName 
+         * @param {string} email 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameTransferEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.appsAppNameTransferEmailPost(appName, email, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsGet(options?: RawAxiosRequestConfig): AxiosPromise<AppsGet200Response> {
+            return localVarFp.appsGet(options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @param {AppsPostRequest} [appsPostRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsPost(appsPostRequest?: AppsPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AppsPost201Response> {
+            return localVarFp.appsPost(appsPostRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -2943,8 +3307,8 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authGithubLoginGet(options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.authGithubLoginGet(options).then((request) => request(axios, basePath));
+        authLoginGet(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.authLoginGet(options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -2956,235 +3320,67 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
         },
         /**
          * 
-         * @param {string} accessKeyName 
+         * @param {ReportStatusDeployPostRequest} [reportStatusDeployPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        managementAccessKeysAccessKeyNameDelete(accessKeyName: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.managementAccessKeysAccessKeyNameDelete(accessKeyName, options).then((request) => request(axios, basePath));
+        reportStatusDeployPost(reportStatusDeployPostRequest?: ReportStatusDeployPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ReportStatusDeployPost200Response> {
+            return localVarFp.reportStatusDeployPost(reportStatusDeployPostRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {string} accessKeyName 
+         * @param {ReportStatusDownloadPostRequest} [reportStatusDownloadPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        managementAccessKeysAccessKeyNameGet(accessKeyName: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAccessKeysPost201Response> {
-            return localVarFp.managementAccessKeysAccessKeyNameGet(accessKeyName, options).then((request) => request(axios, basePath));
+        reportStatusDownloadPost(reportStatusDownloadPostRequest?: ReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ReportStatusDeployPost200Response> {
+            return localVarFp.reportStatusDownloadPost(reportStatusDownloadPostRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {string} accessKeyName 
-         * @param {ManagementAccessKeysAccessKeyNamePatchRequest} [managementAccessKeysAccessKeyNamePatchRequest] 
+         * @param {string} appVersion 
+         * @param {string} deploymentKey 
+         * @param {string} [packageHash] 
+         * @param {string} [label] 
+         * @param {string} [clientUniqueId] 
+         * @param {boolean} [isCompanion] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        managementAccessKeysAccessKeyNamePatch(accessKeyName: string, managementAccessKeysAccessKeyNamePatchRequest?: ManagementAccessKeysAccessKeyNamePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAccessKeysPost201Response> {
-            return localVarFp.managementAccessKeysAccessKeyNamePatch(accessKeyName, managementAccessKeysAccessKeyNamePatchRequest, options).then((request) => request(axios, basePath));
+        updateCheckGet(appVersion: string, deploymentKey: string, packageHash?: string, label?: string, clientUniqueId?: string, isCompanion?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<UpdateCheckGet200Response> {
+            return localVarFp.updateCheckGet(appVersion, deploymentKey, packageHash, label, clientUniqueId, isCompanion, options).then((request) => request(axios, basePath));
         },
         /**
          * 
+         * @param {V01PublicCodepushReportStatusDeployPostRequest} [v01PublicCodepushReportStatusDeployPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        managementAccessKeysGet(options?: RawAxiosRequestConfig): AxiosPromise<ManagementAccessKeysGet200Response> {
-            return localVarFp.managementAccessKeysGet(options).then((request) => request(axios, basePath));
+        v01PublicCodepushReportStatusDeployPost(v01PublicCodepushReportStatusDeployPostRequest?: V01PublicCodepushReportStatusDeployPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ReportStatusDeployPost200Response> {
+            return localVarFp.v01PublicCodepushReportStatusDeployPost(v01PublicCodepushReportStatusDeployPostRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {ManagementAccessKeysPostRequest} [managementAccessKeysPostRequest] 
+         * @param {V01PublicCodepushReportStatusDownloadPostRequest} [v01PublicCodepushReportStatusDownloadPostRequest] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        managementAccessKeysPost(managementAccessKeysPostRequest?: ManagementAccessKeysPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAccessKeysPost201Response> {
-            return localVarFp.managementAccessKeysPost(managementAccessKeysPostRequest, options).then((request) => request(axios, basePath));
+        v01PublicCodepushReportStatusDownloadPost(v01PublicCodepushReportStatusDownloadPostRequest?: V01PublicCodepushReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ReportStatusDeployPost200Response> {
+            return localVarFp.v01PublicCodepushReportStatusDownloadPost(v01PublicCodepushReportStatusDownloadPostRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * 
+         * @param {string} appVersion 
+         * @param {string} deploymentKey 
+         * @param {string} [packageHash] 
+         * @param {string} [label] 
+         * @param {string} [clientUniqueId] 
+         * @param {boolean} [isCompanion] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        managementAccountGet(options?: RawAxiosRequestConfig): AxiosPromise<ManagementAccountGet200Response> {
-            return localVarFp.managementAccountGet(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Remove collaborator from app
-         * @param {string} appName 
-         * @param {string} email 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameCollaboratorsEmailDelete(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.managementAppsAppNameCollaboratorsEmailDelete(appName, email, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Add collaborator to app
-         * @param {string} appName 
-         * @param {string} email 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameCollaboratorsEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.managementAppsAppNameCollaboratorsEmailPost(appName, email, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * List app collaborators
-         * @param {string} appName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameCollaboratorsGet(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameCollaboratorsGet200Response> {
-            return localVarFp.managementAppsAppNameCollaboratorsGet(appName, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Delete an app
-         * @param {string} appName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDelete(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.managementAppsAppNameDelete(appName, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Remove deployment
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsDeploymentNameDelete(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.managementAppsAppNameDeploymentsDeploymentNameDelete(appName, deploymentName, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Get deployment details
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsDeploymentNameGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsPost201Response> {
-            return localVarFp.managementAppsAppNameDeploymentsDeploymentNameGet(appName, deploymentName, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Get deployment metrics
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsDeploymentNameMetricsGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200Response> {
-            return localVarFp.managementAppsAppNameDeploymentsDeploymentNameMetricsGet(appName, deploymentName, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Update deployment
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {ManagementAppsAppNamePatchRequest} [managementAppsAppNamePatchRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsDeploymentNamePatch(appName: string, deploymentName: string, managementAppsAppNamePatchRequest?: ManagementAppsAppNamePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsPost201Response> {
-            return localVarFp.managementAppsAppNameDeploymentsDeploymentNamePatch(appName, deploymentName, managementAppsAppNamePatchRequest, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Release new package version
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {any} _package 
-         * @param {string} packageInfo 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsDeploymentNameReleasePost(appName: string, deploymentName: string, _package: any, packageInfo: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201Response> {
-            return localVarFp.managementAppsAppNameDeploymentsDeploymentNameReleasePost(appName, deploymentName, _package, packageInfo, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Rollback deployment to previous release
-         * @param {string} appName 
-         * @param {string} deploymentName 
-         * @param {string} [targetRelease] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName: string, deploymentName: string, targetRelease?: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201Response> {
-            return localVarFp.managementAppsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName, deploymentName, targetRelease, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * List app deployments
-         * @param {string} appName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsGet(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsGet200Response> {
-            return localVarFp.managementAppsAppNameDeploymentsGet(appName, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Create new deployment
-         * @param {string} appName 
-         * @param {ManagementAppsAppNameDeploymentsPostRequest} [managementAppsAppNameDeploymentsPostRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsPost(appName: string, managementAppsAppNameDeploymentsPostRequest?: ManagementAppsAppNameDeploymentsPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsPost201Response> {
-            return localVarFp.managementAppsAppNameDeploymentsPost(appName, managementAppsAppNameDeploymentsPostRequest, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Promote deployment to another deployment
-         * @param {string} appName 
-         * @param {string} sourceDeploymentName 
-         * @param {string} destDeploymentName 
-         * @param {ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest} [managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName: string, sourceDeploymentName: string, destDeploymentName: string, managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest?: ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201Response> {
-            return localVarFp.managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName, sourceDeploymentName, destDeploymentName, managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Get app details
-         * @param {string} appName 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameGet(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsPost201Response> {
-            return localVarFp.managementAppsAppNameGet(appName, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Update app details
-         * @param {string} appName 
-         * @param {ManagementAppsAppNamePatchRequest} [managementAppsAppNamePatchRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNamePatch(appName: string, managementAppsAppNamePatchRequest?: ManagementAppsAppNamePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsPost201Response> {
-            return localVarFp.managementAppsAppNamePatch(appName, managementAppsAppNamePatchRequest, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Transfer app ownership
-         * @param {string} appName 
-         * @param {string} email 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsAppNameTransferEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.managementAppsAppNameTransferEmailPost(appName, email, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsGet(options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsGet200Response> {
-            return localVarFp.managementAppsGet(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * 
-         * @param {ManagementAppsPostRequest} [managementAppsPostRequest] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        managementAppsPost(managementAppsPostRequest?: ManagementAppsPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsPost201Response> {
-            return localVarFp.managementAppsPost(managementAppsPostRequest, options).then((request) => request(axios, basePath));
+        v01PublicCodepushUpdateCheckGet(appVersion: string, deploymentKey: string, packageHash?: string, label?: string, clientUniqueId?: string, isCompanion?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<V01PublicCodepushUpdateCheckGet200Response> {
+            return localVarFp.v01PublicCodepushUpdateCheckGet(appVersion, deploymentKey, packageHash, label, clientUniqueId, isCompanion, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -3197,77 +3393,256 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
 export interface DefaultApiInterface {
     /**
      * 
-     * @param {AcquisitionReportStatusDeployPostRequest} [acquisitionReportStatusDeployPostRequest] 
+     * @param {string} accessKeyName 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    acquisitionReportStatusDeployPost(acquisitionReportStatusDeployPostRequest?: AcquisitionReportStatusDeployPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AcquisitionReportStatusDeployPost200Response>;
+    accessKeysAccessKeyNameDelete(accessKeyName: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
 
     /**
      * 
-     * @param {AcquisitionReportStatusDownloadPostRequest} [acquisitionReportStatusDownloadPostRequest] 
+     * @param {string} accessKeyName 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    acquisitionReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest?: AcquisitionReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AcquisitionReportStatusDeployPost200Response>;
+    accessKeysAccessKeyNameGet(accessKeyName: string, options?: RawAxiosRequestConfig): AxiosPromise<AccessKeysPost201Response>;
 
     /**
      * 
-     * @param {string} [deploymentKey] 
-     * @param {string} [deploymentKey2] 
-     * @param {string} [appVersion] 
-     * @param {string} [appVersion2] 
-     * @param {string} [packageHash] 
-     * @param {string} [packageHash2] 
-     * @param {string} [label] 
-     * @param {string} [clientUniqueId] 
-     * @param {string} [clientUniqueId2] 
-     * @param {boolean} [isCompanion] 
-     * @param {boolean} [isCompanion2] 
+     * @param {string} accessKeyName 
+     * @param {AccessKeysAccessKeyNamePatchRequest} [accessKeysAccessKeyNamePatchRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    acquisitionUpdateCheckGet(deploymentKey?: string, deploymentKey2?: string, appVersion?: string, appVersion2?: string, packageHash?: string, packageHash2?: string, label?: string, clientUniqueId?: string, clientUniqueId2?: string, isCompanion?: boolean, isCompanion2?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<AcquisitionUpdateCheckGet200Response>;
+    accessKeysAccessKeyNamePatch(accessKeyName: string, accessKeysAccessKeyNamePatchRequest?: AccessKeysAccessKeyNamePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<AccessKeysPost201Response>;
 
     /**
      * 
-     * @param {AcquisitionReportStatusDeployPostRequest} [acquisitionReportStatusDeployPostRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    acquisitionV01PublicCodepushReportStatusDeployPost(acquisitionReportStatusDeployPostRequest?: AcquisitionReportStatusDeployPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AcquisitionReportStatusDeployPost200Response>;
+    accessKeysGet(options?: RawAxiosRequestConfig): AxiosPromise<AccessKeysGet200Response>;
 
     /**
      * 
-     * @param {AcquisitionReportStatusDownloadPostRequest} [acquisitionReportStatusDownloadPostRequest] 
+     * @param {AccessKeysPostRequest} [accessKeysPostRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    acquisitionV01PublicCodepushReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest?: AcquisitionReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AcquisitionReportStatusDeployPost200Response>;
+    accessKeysPost(accessKeysPostRequest?: AccessKeysPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AccessKeysPost201Response>;
 
     /**
      * 
-     * @param {string} [deploymentKey] 
-     * @param {string} [deploymentKey2] 
-     * @param {string} [appVersion] 
-     * @param {string} [appVersion2] 
-     * @param {string} [packageHash] 
-     * @param {string} [packageHash2] 
-     * @param {string} [label] 
-     * @param {string} [clientUniqueId] 
-     * @param {string} [clientUniqueId2] 
-     * @param {boolean} [isCompanion] 
-     * @param {boolean} [isCompanion2] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    acquisitionV01PublicCodepushUpdateCheckGet(deploymentKey?: string, deploymentKey2?: string, appVersion?: string, appVersion2?: string, packageHash?: string, packageHash2?: string, label?: string, clientUniqueId?: string, clientUniqueId2?: string, isCompanion?: boolean, isCompanion2?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<AcquisitionV01PublicCodepushUpdateCheckGet200Response>;
+    accountGet(options?: RawAxiosRequestConfig): AxiosPromise<AccountGet200Response>;
+
+    /**
+     * Remove collaborator from app
+     * @param {string} appName 
+     * @param {string} email 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameCollaboratorsEmailDelete(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Add collaborator to app
+     * @param {string} appName 
+     * @param {string} email 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameCollaboratorsEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * List app collaborators
+     * @param {string} appName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameCollaboratorsGet(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameCollaboratorsGet200Response>;
+
+    /**
+     * Delete an app
+     * @param {string} appName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDelete(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Remove deployment
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDeploymentsDeploymentNameDelete(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Get deployment details
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDeploymentsDeploymentNameGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsPost201Response>;
+
+    /**
+     * Get deployment history
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDeploymentsDeploymentNameHistoryGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Get deployment metrics
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDeploymentsDeploymentNameMetricsGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsDeploymentNameMetricsGet200Response>;
+
+    /**
+     * Update deployment
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {AppsAppNamePatchRequest} [appsAppNamePatchRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDeploymentsDeploymentNamePatch(appName: string, deploymentName: string, appsAppNamePatchRequest?: AppsAppNamePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsPost201Response>;
+
+    /**
+     * Update release
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {AppsAppNameDeploymentsDeploymentNameReleasePatchRequest} [appsAppNameDeploymentsDeploymentNameReleasePatchRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDeploymentsDeploymentNameReleasePatch(appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleasePatchRequest?: AppsAppNameDeploymentsDeploymentNameReleasePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Release new package version
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {any} _package 
+     * @param {string} packageInfo 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDeploymentsDeploymentNameReleasePost(appName: string, deploymentName: string, _package: any, packageInfo: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsDeploymentNameReleasePost201Response>;
+
+    /**
+     * Rollback deployment to previous release
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {string} [targetRelease] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName: string, deploymentName: string, targetRelease?: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsDeploymentNameReleasePost201Response>;
+
+    /**
+     * List app deployments
+     * @param {string} appName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDeploymentsGet(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsGet200Response>;
+
+    /**
+     * Create new deployment
+     * @param {string} appName 
+     * @param {AppsAppNameDeploymentsPostRequest} [appsAppNameDeploymentsPostRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDeploymentsPost(appName: string, appsAppNameDeploymentsPostRequest?: AppsAppNameDeploymentsPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsPost201Response>;
+
+    /**
+     * Promote deployment to another deployment
+     * @param {string} appName 
+     * @param {string} sourceDeploymentName 
+     * @param {string} destDeploymentName 
+     * @param {AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest} [appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName: string, sourceDeploymentName: string, destDeploymentName: string, appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest?: AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsDeploymentNameReleasePost201Response>;
+
+    /**
+     * Get app details
+     * @param {string} appName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameGet(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<AppsPost201Response>;
+
+    /**
+     * Update app details
+     * @param {string} appName 
+     * @param {AppsAppNamePatchRequest} [appsAppNamePatchRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNamePatch(appName: string, appsAppNamePatchRequest?: AppsAppNamePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<AppsPost201Response>;
+
+    /**
+     * Transfer app ownership
+     * @param {string} appName 
+     * @param {string} email 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameTransferEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsGet(options?: RawAxiosRequestConfig): AxiosPromise<AppsGet200Response>;
+
+    /**
+     * 
+     * @param {AppsPostRequest} [appsPostRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsPost(appsPostRequest?: AppsPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<AppsPost201Response>;
 
     /**
      * 
@@ -3285,7 +3660,7 @@ export interface DefaultApiInterface {
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    authGithubLoginGet(options?: RawAxiosRequestConfig): AxiosPromise<void>;
+    authLoginGet(options?: RawAxiosRequestConfig): AxiosPromise<void>;
 
     /**
      * 
@@ -3297,235 +3672,67 @@ export interface DefaultApiInterface {
 
     /**
      * 
-     * @param {string} accessKeyName 
+     * @param {ReportStatusDeployPostRequest} [reportStatusDeployPostRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    managementAccessKeysAccessKeyNameDelete(accessKeyName: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+    reportStatusDeployPost(reportStatusDeployPostRequest?: ReportStatusDeployPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ReportStatusDeployPost200Response>;
 
     /**
      * 
-     * @param {string} accessKeyName 
+     * @param {ReportStatusDownloadPostRequest} [reportStatusDownloadPostRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    managementAccessKeysAccessKeyNameGet(accessKeyName: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAccessKeysPost201Response>;
+    reportStatusDownloadPost(reportStatusDownloadPostRequest?: ReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ReportStatusDeployPost200Response>;
 
     /**
      * 
-     * @param {string} accessKeyName 
-     * @param {ManagementAccessKeysAccessKeyNamePatchRequest} [managementAccessKeysAccessKeyNamePatchRequest] 
+     * @param {string} appVersion 
+     * @param {string} deploymentKey 
+     * @param {string} [packageHash] 
+     * @param {string} [label] 
+     * @param {string} [clientUniqueId] 
+     * @param {boolean} [isCompanion] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    managementAccessKeysAccessKeyNamePatch(accessKeyName: string, managementAccessKeysAccessKeyNamePatchRequest?: ManagementAccessKeysAccessKeyNamePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAccessKeysPost201Response>;
+    updateCheckGet(appVersion: string, deploymentKey: string, packageHash?: string, label?: string, clientUniqueId?: string, isCompanion?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<UpdateCheckGet200Response>;
 
     /**
      * 
+     * @param {V01PublicCodepushReportStatusDeployPostRequest} [v01PublicCodepushReportStatusDeployPostRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    managementAccessKeysGet(options?: RawAxiosRequestConfig): AxiosPromise<ManagementAccessKeysGet200Response>;
+    v01PublicCodepushReportStatusDeployPost(v01PublicCodepushReportStatusDeployPostRequest?: V01PublicCodepushReportStatusDeployPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ReportStatusDeployPost200Response>;
 
     /**
      * 
-     * @param {ManagementAccessKeysPostRequest} [managementAccessKeysPostRequest] 
+     * @param {V01PublicCodepushReportStatusDownloadPostRequest} [v01PublicCodepushReportStatusDownloadPostRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    managementAccessKeysPost(managementAccessKeysPostRequest?: ManagementAccessKeysPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAccessKeysPost201Response>;
+    v01PublicCodepushReportStatusDownloadPost(v01PublicCodepushReportStatusDownloadPostRequest?: V01PublicCodepushReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ReportStatusDeployPost200Response>;
 
     /**
      * 
+     * @param {string} appVersion 
+     * @param {string} deploymentKey 
+     * @param {string} [packageHash] 
+     * @param {string} [label] 
+     * @param {string} [clientUniqueId] 
+     * @param {boolean} [isCompanion] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    managementAccountGet(options?: RawAxiosRequestConfig): AxiosPromise<ManagementAccountGet200Response>;
-
-    /**
-     * Remove collaborator from app
-     * @param {string} appName 
-     * @param {string} email 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameCollaboratorsEmailDelete(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
-
-    /**
-     * Add collaborator to app
-     * @param {string} appName 
-     * @param {string} email 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameCollaboratorsEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
-
-    /**
-     * List app collaborators
-     * @param {string} appName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameCollaboratorsGet(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameCollaboratorsGet200Response>;
-
-    /**
-     * Delete an app
-     * @param {string} appName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameDelete(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
-
-    /**
-     * Remove deployment
-     * @param {string} appName 
-     * @param {string} deploymentName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameDeploymentsDeploymentNameDelete(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
-
-    /**
-     * Get deployment details
-     * @param {string} appName 
-     * @param {string} deploymentName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameDeploymentsDeploymentNameGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsPost201Response>;
-
-    /**
-     * Get deployment metrics
-     * @param {string} appName 
-     * @param {string} deploymentName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameDeploymentsDeploymentNameMetricsGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsDeploymentNameMetricsGet200Response>;
-
-    /**
-     * Update deployment
-     * @param {string} appName 
-     * @param {string} deploymentName 
-     * @param {ManagementAppsAppNamePatchRequest} [managementAppsAppNamePatchRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameDeploymentsDeploymentNamePatch(appName: string, deploymentName: string, managementAppsAppNamePatchRequest?: ManagementAppsAppNamePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsPost201Response>;
-
-    /**
-     * Release new package version
-     * @param {string} appName 
-     * @param {string} deploymentName 
-     * @param {any} _package 
-     * @param {string} packageInfo 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameDeploymentsDeploymentNameReleasePost(appName: string, deploymentName: string, _package: any, packageInfo: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201Response>;
-
-    /**
-     * Rollback deployment to previous release
-     * @param {string} appName 
-     * @param {string} deploymentName 
-     * @param {string} [targetRelease] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName: string, deploymentName: string, targetRelease?: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201Response>;
-
-    /**
-     * List app deployments
-     * @param {string} appName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameDeploymentsGet(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsGet200Response>;
-
-    /**
-     * Create new deployment
-     * @param {string} appName 
-     * @param {ManagementAppsAppNameDeploymentsPostRequest} [managementAppsAppNameDeploymentsPostRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameDeploymentsPost(appName: string, managementAppsAppNameDeploymentsPostRequest?: ManagementAppsAppNameDeploymentsPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsPost201Response>;
-
-    /**
-     * Promote deployment to another deployment
-     * @param {string} appName 
-     * @param {string} sourceDeploymentName 
-     * @param {string} destDeploymentName 
-     * @param {ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest} [managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName: string, sourceDeploymentName: string, destDeploymentName: string, managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest?: ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsAppNameDeploymentsDeploymentNameReleasePost201Response>;
-
-    /**
-     * Get app details
-     * @param {string} appName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameGet(appName: string, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsPost201Response>;
-
-    /**
-     * Update app details
-     * @param {string} appName 
-     * @param {ManagementAppsAppNamePatchRequest} [managementAppsAppNamePatchRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNamePatch(appName: string, managementAppsAppNamePatchRequest?: ManagementAppsAppNamePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsPost201Response>;
-
-    /**
-     * Transfer app ownership
-     * @param {string} appName 
-     * @param {string} email 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsAppNameTransferEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
-
-    /**
-     * 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsGet(options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsGet200Response>;
-
-    /**
-     * 
-     * @param {ManagementAppsPostRequest} [managementAppsPostRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApiInterface
-     */
-    managementAppsPost(managementAppsPostRequest?: ManagementAppsPostRequest, options?: RawAxiosRequestConfig): AxiosPromise<ManagementAppsPost201Response>;
+    v01PublicCodepushUpdateCheckGet(appVersion: string, deploymentKey: string, packageHash?: string, label?: string, clientUniqueId?: string, isCompanion?: boolean, options?: RawAxiosRequestConfig): AxiosPromise<V01PublicCodepushUpdateCheckGet200Response>;
 
 }
 
@@ -3538,88 +3745,307 @@ export interface DefaultApiInterface {
 export class DefaultApi extends BaseAPI implements DefaultApiInterface {
     /**
      * 
-     * @param {AcquisitionReportStatusDeployPostRequest} [acquisitionReportStatusDeployPostRequest] 
+     * @param {string} accessKeyName 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public acquisitionReportStatusDeployPost(acquisitionReportStatusDeployPostRequest?: AcquisitionReportStatusDeployPostRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).acquisitionReportStatusDeployPost(acquisitionReportStatusDeployPostRequest, options).then((request) => request(this.axios, this.basePath));
+    public accessKeysAccessKeyNameDelete(accessKeyName: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).accessKeysAccessKeyNameDelete(accessKeyName, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {AcquisitionReportStatusDownloadPostRequest} [acquisitionReportStatusDownloadPostRequest] 
+     * @param {string} accessKeyName 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public acquisitionReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest?: AcquisitionReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).acquisitionReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest, options).then((request) => request(this.axios, this.basePath));
+    public accessKeysAccessKeyNameGet(accessKeyName: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).accessKeysAccessKeyNameGet(accessKeyName, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {string} [deploymentKey] 
-     * @param {string} [deploymentKey2] 
-     * @param {string} [appVersion] 
-     * @param {string} [appVersion2] 
-     * @param {string} [packageHash] 
-     * @param {string} [packageHash2] 
-     * @param {string} [label] 
-     * @param {string} [clientUniqueId] 
-     * @param {string} [clientUniqueId2] 
-     * @param {boolean} [isCompanion] 
-     * @param {boolean} [isCompanion2] 
+     * @param {string} accessKeyName 
+     * @param {AccessKeysAccessKeyNamePatchRequest} [accessKeysAccessKeyNamePatchRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public acquisitionUpdateCheckGet(deploymentKey?: string, deploymentKey2?: string, appVersion?: string, appVersion2?: string, packageHash?: string, packageHash2?: string, label?: string, clientUniqueId?: string, clientUniqueId2?: string, isCompanion?: boolean, isCompanion2?: boolean, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).acquisitionUpdateCheckGet(deploymentKey, deploymentKey2, appVersion, appVersion2, packageHash, packageHash2, label, clientUniqueId, clientUniqueId2, isCompanion, isCompanion2, options).then((request) => request(this.axios, this.basePath));
+    public accessKeysAccessKeyNamePatch(accessKeyName: string, accessKeysAccessKeyNamePatchRequest?: AccessKeysAccessKeyNamePatchRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).accessKeysAccessKeyNamePatch(accessKeyName, accessKeysAccessKeyNamePatchRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {AcquisitionReportStatusDeployPostRequest} [acquisitionReportStatusDeployPostRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public acquisitionV01PublicCodepushReportStatusDeployPost(acquisitionReportStatusDeployPostRequest?: AcquisitionReportStatusDeployPostRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).acquisitionV01PublicCodepushReportStatusDeployPost(acquisitionReportStatusDeployPostRequest, options).then((request) => request(this.axios, this.basePath));
+    public accessKeysGet(options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).accessKeysGet(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {AcquisitionReportStatusDownloadPostRequest} [acquisitionReportStatusDownloadPostRequest] 
+     * @param {AccessKeysPostRequest} [accessKeysPostRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public acquisitionV01PublicCodepushReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest?: AcquisitionReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).acquisitionV01PublicCodepushReportStatusDownloadPost(acquisitionReportStatusDownloadPostRequest, options).then((request) => request(this.axios, this.basePath));
+    public accessKeysPost(accessKeysPostRequest?: AccessKeysPostRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).accessKeysPost(accessKeysPostRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {string} [deploymentKey] 
-     * @param {string} [deploymentKey2] 
-     * @param {string} [appVersion] 
-     * @param {string} [appVersion2] 
-     * @param {string} [packageHash] 
-     * @param {string} [packageHash2] 
-     * @param {string} [label] 
-     * @param {string} [clientUniqueId] 
-     * @param {string} [clientUniqueId2] 
-     * @param {boolean} [isCompanion] 
-     * @param {boolean} [isCompanion2] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public acquisitionV01PublicCodepushUpdateCheckGet(deploymentKey?: string, deploymentKey2?: string, appVersion?: string, appVersion2?: string, packageHash?: string, packageHash2?: string, label?: string, clientUniqueId?: string, clientUniqueId2?: string, isCompanion?: boolean, isCompanion2?: boolean, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).acquisitionV01PublicCodepushUpdateCheckGet(deploymentKey, deploymentKey2, appVersion, appVersion2, packageHash, packageHash2, label, clientUniqueId, clientUniqueId2, isCompanion, isCompanion2, options).then((request) => request(this.axios, this.basePath));
+    public accountGet(options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).accountGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Remove collaborator from app
+     * @param {string} appName 
+     * @param {string} email 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameCollaboratorsEmailDelete(appName: string, email: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameCollaboratorsEmailDelete(appName, email, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Add collaborator to app
+     * @param {string} appName 
+     * @param {string} email 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameCollaboratorsEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameCollaboratorsEmailPost(appName, email, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * List app collaborators
+     * @param {string} appName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameCollaboratorsGet(appName: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameCollaboratorsGet(appName, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Delete an app
+     * @param {string} appName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDelete(appName: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDelete(appName, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Remove deployment
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDeploymentsDeploymentNameDelete(appName: string, deploymentName: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsDeploymentNameDelete(appName, deploymentName, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get deployment details
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDeploymentsDeploymentNameGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsDeploymentNameGet(appName, deploymentName, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get deployment history
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDeploymentsDeploymentNameHistoryGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsDeploymentNameHistoryGet(appName, deploymentName, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get deployment metrics
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDeploymentsDeploymentNameMetricsGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsDeploymentNameMetricsGet(appName, deploymentName, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update deployment
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {AppsAppNamePatchRequest} [appsAppNamePatchRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDeploymentsDeploymentNamePatch(appName: string, deploymentName: string, appsAppNamePatchRequest?: AppsAppNamePatchRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsDeploymentNamePatch(appName, deploymentName, appsAppNamePatchRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update release
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {AppsAppNameDeploymentsDeploymentNameReleasePatchRequest} [appsAppNameDeploymentsDeploymentNameReleasePatchRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDeploymentsDeploymentNameReleasePatch(appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleasePatchRequest?: AppsAppNameDeploymentsDeploymentNameReleasePatchRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsDeploymentNameReleasePatch(appName, deploymentName, appsAppNameDeploymentsDeploymentNameReleasePatchRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Release new package version
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {any} _package 
+     * @param {string} packageInfo 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDeploymentsDeploymentNameReleasePost(appName: string, deploymentName: string, _package: any, packageInfo: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsDeploymentNameReleasePost(appName, deploymentName, _package, packageInfo, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Rollback deployment to previous release
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {string} [targetRelease] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName: string, deploymentName: string, targetRelease?: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName, deploymentName, targetRelease, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * List app deployments
+     * @param {string} appName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDeploymentsGet(appName: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsGet(appName, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Create new deployment
+     * @param {string} appName 
+     * @param {AppsAppNameDeploymentsPostRequest} [appsAppNameDeploymentsPostRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDeploymentsPost(appName: string, appsAppNameDeploymentsPostRequest?: AppsAppNameDeploymentsPostRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsPost(appName, appsAppNameDeploymentsPostRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Promote deployment to another deployment
+     * @param {string} appName 
+     * @param {string} sourceDeploymentName 
+     * @param {string} destDeploymentName 
+     * @param {AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest} [appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName: string, sourceDeploymentName: string, destDeploymentName: string, appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest?: AppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName, sourceDeploymentName, destDeploymentName, appsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get app details
+     * @param {string} appName 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameGet(appName: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameGet(appName, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update app details
+     * @param {string} appName 
+     * @param {AppsAppNamePatchRequest} [appsAppNamePatchRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNamePatch(appName: string, appsAppNamePatchRequest?: AppsAppNamePatchRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNamePatch(appName, appsAppNamePatchRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Transfer app ownership
+     * @param {string} appName 
+     * @param {string} email 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameTransferEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameTransferEmailPost(appName, email, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsGet(options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @param {AppsPostRequest} [appsPostRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsPost(appsPostRequest?: AppsPostRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsPost(appsPostRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3640,8 +4066,8 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public authGithubLoginGet(options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).authGithubLoginGet(options).then((request) => request(this.axios, this.basePath));
+    public authLoginGet(options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).authLoginGet(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -3656,282 +4082,78 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
 
     /**
      * 
-     * @param {string} accessKeyName 
+     * @param {ReportStatusDeployPostRequest} [reportStatusDeployPostRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public managementAccessKeysAccessKeyNameDelete(accessKeyName: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAccessKeysAccessKeyNameDelete(accessKeyName, options).then((request) => request(this.axios, this.basePath));
+    public reportStatusDeployPost(reportStatusDeployPostRequest?: ReportStatusDeployPostRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).reportStatusDeployPost(reportStatusDeployPostRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {string} accessKeyName 
+     * @param {ReportStatusDownloadPostRequest} [reportStatusDownloadPostRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public managementAccessKeysAccessKeyNameGet(accessKeyName: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAccessKeysAccessKeyNameGet(accessKeyName, options).then((request) => request(this.axios, this.basePath));
+    public reportStatusDownloadPost(reportStatusDownloadPostRequest?: ReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).reportStatusDownloadPost(reportStatusDownloadPostRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {string} accessKeyName 
-     * @param {ManagementAccessKeysAccessKeyNamePatchRequest} [managementAccessKeysAccessKeyNamePatchRequest] 
+     * @param {string} appVersion 
+     * @param {string} deploymentKey 
+     * @param {string} [packageHash] 
+     * @param {string} [label] 
+     * @param {string} [clientUniqueId] 
+     * @param {boolean} [isCompanion] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public managementAccessKeysAccessKeyNamePatch(accessKeyName: string, managementAccessKeysAccessKeyNamePatchRequest?: ManagementAccessKeysAccessKeyNamePatchRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAccessKeysAccessKeyNamePatch(accessKeyName, managementAccessKeysAccessKeyNamePatchRequest, options).then((request) => request(this.axios, this.basePath));
+    public updateCheckGet(appVersion: string, deploymentKey: string, packageHash?: string, label?: string, clientUniqueId?: string, isCompanion?: boolean, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).updateCheckGet(appVersion, deploymentKey, packageHash, label, clientUniqueId, isCompanion, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
+     * @param {V01PublicCodepushReportStatusDeployPostRequest} [v01PublicCodepushReportStatusDeployPostRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public managementAccessKeysGet(options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAccessKeysGet(options).then((request) => request(this.axios, this.basePath));
+    public v01PublicCodepushReportStatusDeployPost(v01PublicCodepushReportStatusDeployPostRequest?: V01PublicCodepushReportStatusDeployPostRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).v01PublicCodepushReportStatusDeployPost(v01PublicCodepushReportStatusDeployPostRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {ManagementAccessKeysPostRequest} [managementAccessKeysPostRequest] 
+     * @param {V01PublicCodepushReportStatusDownloadPostRequest} [v01PublicCodepushReportStatusDownloadPostRequest] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public managementAccessKeysPost(managementAccessKeysPostRequest?: ManagementAccessKeysPostRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAccessKeysPost(managementAccessKeysPostRequest, options).then((request) => request(this.axios, this.basePath));
+    public v01PublicCodepushReportStatusDownloadPost(v01PublicCodepushReportStatusDownloadPostRequest?: V01PublicCodepushReportStatusDownloadPostRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).v01PublicCodepushReportStatusDownloadPost(v01PublicCodepushReportStatusDownloadPostRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
+     * @param {string} appVersion 
+     * @param {string} deploymentKey 
+     * @param {string} [packageHash] 
+     * @param {string} [label] 
+     * @param {string} [clientUniqueId] 
+     * @param {boolean} [isCompanion] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public managementAccountGet(options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAccountGet(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Remove collaborator from app
-     * @param {string} appName 
-     * @param {string} email 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameCollaboratorsEmailDelete(appName: string, email: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameCollaboratorsEmailDelete(appName, email, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Add collaborator to app
-     * @param {string} appName 
-     * @param {string} email 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameCollaboratorsEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameCollaboratorsEmailPost(appName, email, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * List app collaborators
-     * @param {string} appName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameCollaboratorsGet(appName: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameCollaboratorsGet(appName, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Delete an app
-     * @param {string} appName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameDelete(appName: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameDelete(appName, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Remove deployment
-     * @param {string} appName 
-     * @param {string} deploymentName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameDeploymentsDeploymentNameDelete(appName: string, deploymentName: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameDeploymentsDeploymentNameDelete(appName, deploymentName, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Get deployment details
-     * @param {string} appName 
-     * @param {string} deploymentName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameDeploymentsDeploymentNameGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameDeploymentsDeploymentNameGet(appName, deploymentName, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Get deployment metrics
-     * @param {string} appName 
-     * @param {string} deploymentName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameDeploymentsDeploymentNameMetricsGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameDeploymentsDeploymentNameMetricsGet(appName, deploymentName, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Update deployment
-     * @param {string} appName 
-     * @param {string} deploymentName 
-     * @param {ManagementAppsAppNamePatchRequest} [managementAppsAppNamePatchRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameDeploymentsDeploymentNamePatch(appName: string, deploymentName: string, managementAppsAppNamePatchRequest?: ManagementAppsAppNamePatchRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameDeploymentsDeploymentNamePatch(appName, deploymentName, managementAppsAppNamePatchRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Release new package version
-     * @param {string} appName 
-     * @param {string} deploymentName 
-     * @param {any} _package 
-     * @param {string} packageInfo 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameDeploymentsDeploymentNameReleasePost(appName: string, deploymentName: string, _package: any, packageInfo: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameDeploymentsDeploymentNameReleasePost(appName, deploymentName, _package, packageInfo, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Rollback deployment to previous release
-     * @param {string} appName 
-     * @param {string} deploymentName 
-     * @param {string} [targetRelease] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName: string, deploymentName: string, targetRelease?: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameDeploymentsDeploymentNameRollbackTargetReleasePost(appName, deploymentName, targetRelease, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * List app deployments
-     * @param {string} appName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameDeploymentsGet(appName: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameDeploymentsGet(appName, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Create new deployment
-     * @param {string} appName 
-     * @param {ManagementAppsAppNameDeploymentsPostRequest} [managementAppsAppNameDeploymentsPostRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameDeploymentsPost(appName: string, managementAppsAppNameDeploymentsPostRequest?: ManagementAppsAppNameDeploymentsPostRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameDeploymentsPost(appName, managementAppsAppNameDeploymentsPostRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Promote deployment to another deployment
-     * @param {string} appName 
-     * @param {string} sourceDeploymentName 
-     * @param {string} destDeploymentName 
-     * @param {ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest} [managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName: string, sourceDeploymentName: string, destDeploymentName: string, managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest?: ManagementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePost(appName, sourceDeploymentName, destDeploymentName, managementAppsAppNameDeploymentsSourceDeploymentNamePromoteDestDeploymentNamePostRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Get app details
-     * @param {string} appName 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameGet(appName: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameGet(appName, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Update app details
-     * @param {string} appName 
-     * @param {ManagementAppsAppNamePatchRequest} [managementAppsAppNamePatchRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNamePatch(appName: string, managementAppsAppNamePatchRequest?: ManagementAppsAppNamePatchRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNamePatch(appName, managementAppsAppNamePatchRequest, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Transfer app ownership
-     * @param {string} appName 
-     * @param {string} email 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsAppNameTransferEmailPost(appName: string, email: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsAppNameTransferEmailPost(appName, email, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsGet(options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsGet(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * 
-     * @param {ManagementAppsPostRequest} [managementAppsPostRequest] 
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof DefaultApi
-     */
-    public managementAppsPost(managementAppsPostRequest?: ManagementAppsPostRequest, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).managementAppsPost(managementAppsPostRequest, options).then((request) => request(this.axios, this.basePath));
+    public v01PublicCodepushUpdateCheckGet(appVersion: string, deploymentKey: string, packageHash?: string, label?: string, clientUniqueId?: string, isCompanion?: boolean, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).v01PublicCodepushUpdateCheckGet(appVersion, deploymentKey, packageHash, label, clientUniqueId, isCompanion, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
