@@ -4,7 +4,7 @@ import { Link } from "@tanstack/react-router";
 import { Box as BoxIcon, LayoutGrid, Settings } from "lucide-react";
 
 const navigation = [
-  { name: "Dashboard", to: "/", icon: LayoutGrid },
+  { name: "History", to: "/", icon: LayoutGrid },
   { name: "Apps", to: "/apps", icon: BoxIcon },
   { name: "Settings", to: "/settings", icon: Settings },
 ];

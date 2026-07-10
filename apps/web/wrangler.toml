@@ -1,0 +1,10 @@
+# 웹 SPA를 서버와 같은 계정 서브도메인(*.yplabs.workers.dev)의 정적 자산 Worker로 배포.
+# 서버(code-push-server-preview)와 same-site가 되어 세션 쿠키(Domain=yplabs.workers.dev)를 공유한다.
+# 배포: pnpm --filter @code-push-cloudflare-workers/web deploy
+name = "codepush-web"
+compatibility_date = "2024-12-30"
+
+[assets]
+directory = "./dist"
+# 클라이언트 라우팅 딥링크가 index.html로 폴백되도록(SPA)
+not_found_handling = "single-page-application"

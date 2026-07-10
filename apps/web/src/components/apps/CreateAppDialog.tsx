@@ -45,7 +45,7 @@ export const CreateAppDialog = ({
 
   const createMutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
-      const response = await api.managementAppsPost(values);
+      const response = await api.appsPost(values);
       return response.data;
     },
     onSuccess: (data) => {

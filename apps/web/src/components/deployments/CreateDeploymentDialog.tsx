@@ -53,7 +53,7 @@ export const CreateDeploymentDialog = ({
 
   const createMutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
-      const response = await api.managementAppsAppNameDeploymentsPost(
+      const response = await api.appsAppNameDeploymentsPost(
         appName,
         {
           name: values.name,

@@ -3,8 +3,8 @@ import { AuthProvider } from "@/components/auth/AuthProvider";
 import { AppDetailPage } from "@/pages/apps/AppDetailPage";
 import { AppsPage } from "@/pages/apps/AppsPage";
 import { LoginPage } from "@/pages/auth/LoginPage";
-import { DashboardPage } from "@/pages/dashboard/DashboardPage";
 import { DeploymentDetailPage } from "@/pages/deployments/DeploymentDetailPage";
+import { HistoryPage } from "@/pages/history/HistoryPage";
 import { SettingsPage } from "@/pages/settings/SettingsPage";
 import { useAuthStore } from "@/stores/auth";
 import {
@@ -17,8 +17,8 @@ import {
 
 // Auth guard
 const authGuard = () => {
-  const isAuthenticated = useAuthStore.getState().isAuthenticated;
-  if (!isAuthenticated) {
+  const status = useAuthStore.getState().status;
+  if (status === "unauthenticated") {
     throw redirect({
       to: "/login",
       search: {
@@ -49,14 +49,18 @@ const protectedRoute = createRoute({
   getParentRoute: () => rootRoute,
   id: "protected",
   beforeLoad: authGuard,
-  component: ({ children }) => <Layout>{children}</Layout>,
+  component: () => (
+    <Layout>
+      <Outlet />
+    </Layout>
+  ),
 });
 
 // Protected routes
 const indexRoute = createRoute({
   getParentRoute: () => protectedRoute,
   path: "/",
-  component: DashboardPage,
+  component: HistoryPage,
 });
 
 const appsRoute = createRoute({

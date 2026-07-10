@@ -48,14 +48,12 @@ export const CreateAccessKeyDialog = ({
 
   const createMutation = useMutation({
     mutationFn: async (values: z.infer<typeof formSchema>) => {
-      const response = await api.managementAccessKeysPost({
-        managementAccessKeysPostRequest: values,
-      });
+      const response = await api.accessKeysPost(values);
       return response.data;
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["access-keys"] });
-      setCreatedKey(data.accessKey.name);
+      setCreatedKey(data.accessKey.name ?? null);
       form.reset();
     },
   });

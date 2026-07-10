@@ -32,7 +32,8 @@ r2_buckets = [
 [env.production.vars]
 SERVER_URL="https://code-push-server-preview.yplabs.workers.dev"
 ENABLE_ACCOUNT_REGISTRATION = "true"
-CORS_ORIGINS = "http://localhost:3000"
+CORS_ORIGINS = "http://localhost:3000,https://codepush-web.yplabs.workers.dev"
+COOKIE_DOMAIN = "yplabs.workers.dev"
 ENABLE_PACKAGE_DIFFING = "true"
 GITHUB_CLIENT_ID="Ov23liyNc4o1iJYk03YU"
 R2_BUCKET_NAME="code-push-storage"

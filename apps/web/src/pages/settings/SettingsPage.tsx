@@ -22,7 +22,7 @@ export const SettingsPage = () => {
   const { data: accountData } = useQuery({
     queryKey: ["account"],
     queryFn: async () => {
-      const response = await api.managementAccountGet();
+      const response = await api.accountGet();
       return response.data;
     },
   });
@@ -30,7 +30,7 @@ export const SettingsPage = () => {
   const { data: keysData } = useQuery({
     queryKey: ["access-keys"],
     queryFn: async () => {
-      const response = await api.managementAccessKeysGet();
+      const response = await api.accessKeysGet();
       return response.data;
     },
   });
@@ -137,7 +137,7 @@ export const SettingsPage = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => handleCopyKey(key.name)}
+                      onClick={() => handleCopyKey(key.name ?? "")}
                     >
                       {copiedKey === key.name ? (
                         <Check className="h-4 w-4" />

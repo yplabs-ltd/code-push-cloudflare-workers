@@ -12,13 +12,12 @@ import {
   Download,
   RotateCcw,
   Upload,
-  Users,
 } from "lucide-react";
 import { useState } from "react";
 
 export const DeploymentDetailPage = () => {
   const { appName, deploymentName } = useParams({
-    from: "/apps/$appName/deployments/$deploymentName",
+    from: "/protected/apps/$appName/deployments/$deploymentName",
   });
   const [isReleaseOpen, setIsReleaseOpen] = useState(false);
 
@@ -26,7 +25,7 @@ export const DeploymentDetailPage = () => {
     queryKey: ["deployment", appName, deploymentName],
     queryFn: async () => {
       const response =
-        await api.managementAppsAppNameDeploymentsDeploymentNameGet(
+        await api.appsAppNameDeploymentsDeploymentNameGet(
           appName,
           deploymentName,
         );
@@ -38,7 +37,7 @@ export const DeploymentDetailPage = () => {
     queryKey: ["metrics", appName, deploymentName],
     queryFn: async () => {
       const response =
-        await api.managementAppsAppNameDeploymentsDeploymentNameMetricsGet(
+        await api.appsAppNameDeploymentsDeploymentNameMetricsGet(
           appName,
           deploymentName,
         );

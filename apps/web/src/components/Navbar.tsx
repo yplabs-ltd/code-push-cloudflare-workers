@@ -5,9 +5,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { config } from "@/lib/config";
 import { useAuthStore } from "@/stores/auth";
 import { useNavigate } from "@tanstack/react-router";
-import { LogOut, Settings, User } from "lucide-react";
+import { LogOut, Settings } from "lucide-react";
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -15,7 +16,8 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate({ to: "/login" });
+    // 서버가 세션 쿠키를 만료시키고 /login으로 리다이렉트한다.
+    window.location.href = config.logoutUrl;
   };
 
   return (

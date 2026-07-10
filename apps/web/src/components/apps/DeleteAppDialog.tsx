@@ -26,7 +26,7 @@ export const DeleteAppDialog = ({ app, open, onOpenChange }: DeleteAppDialogProp
 
   const deleteMutation = useMutation({
     mutationFn: async () => {
-      await api.managementAppsAppNameDelete(app.name);
+      await api.appsAppNameDelete(app.name);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["apps"] });
