@@ -62,10 +62,17 @@ const routes = {
 
 // OAuth login
 router.openapi(routes.login, async (c) => {
+  // 웹 로그인은 ?client=web[&redirect_to=]을 state로 전달 → 콜백이 리다이렉트로 응답.
+  // 미지정(=CLI)이면 콜백은 기존 JSON 토큰을 반환한다.
+  const state = JSON.stringify({
+    client: c.req.query("client") ?? "cli",
+    redirectTo: c.req.query("redirect_to") ?? "/",
+  });
   const params = new URLSearchParams({
     client_id: c.env.GITHUB_CLIENT_ID,
     redirect_uri: `${c.env.SERVER_URL}/auth/github/callback`,
     scope: "user:email",
+    state,
   });
 
   return c.redirect(
@@ -146,6 +153,7 @@ router.openapi(routes.callback, async (c) => {
       secure: true,
       sameSite: "Lax",
       path: "/",
+      domain: c.env.COOKIE_DOMAIN || undefined,
       maxAge: 60 * 60 * 24, // 1 day
     });
 
@@ -155,11 +163,20 @@ router.openapi(routes.callback, async (c) => {
       return c.redirect(`/login?error=${error}`);
     }
 
-    const redirectTo = c.req.query("redirect_to");
+    // 웹: 세션 쿠키로 대시보드 리다이렉트 / CLI: 기존 JSON 토큰 유지
+    let client = "cli";
+    let redirectTo = "/";
+    try {
+      const parsed = JSON.parse(c.req.valid("query").state ?? "{}");
+      client = parsed.client ?? "cli";
+      redirectTo = parsed.redirectTo ?? "/";
+    } catch {}
+    if (client === "web") {
+      return c.redirect(redirectTo);
+    }
     return c.json({
       accessKeyName,
       token,
-      redirectTo,
     });
   } catch (error) {
     console.error("Auth error:", error);
@@ -182,6 +199,7 @@ router.openapi(routes.logout, async (c) => {
     secure: true,
     sameSite: "Lax",
     path: "/",
+    domain: c.env.COOKIE_DOMAIN || undefined,
     maxAge: 0,
   });
 

@@ -8,6 +8,8 @@ export interface Env {
     JWT_SECRET: string;
     ENABLE_ACCOUNT_REGISTRATION: string;
     CORS_ORIGINS: string;
+    // 세션 쿠키를 서브도메인 간 공유하기 위한 상위 도메인(예: yplabs.workers.dev). 로컬은 미설정.
+    COOKIE_DOMAIN?: string;
     ACCOUNT_ID: string;
     R2_BUCKET_NAME: string;
     R2_ACCESS_KEY_ID: string;
