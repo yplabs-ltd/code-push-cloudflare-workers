@@ -49,7 +49,11 @@ const protectedRoute = createRoute({
   getParentRoute: () => rootRoute,
   id: "protected",
   beforeLoad: authGuard,
-  component: ({ children }) => <Layout>{children}</Layout>,
+  component: () => (
+    <Layout>
+      <Outlet />
+    </Layout>
+  ),
 });
 
 // Protected routes
