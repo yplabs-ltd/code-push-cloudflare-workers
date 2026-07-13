@@ -1684,10 +1684,12 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
          * Get deployment history
          * @param {string} appName 
          * @param {string} deploymentName 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        appsAppNameDeploymentsDeploymentNameHistoryGet: async (appName: string, deploymentName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        appsAppNameDeploymentsDeploymentNameHistoryGet: async (appName: string, deploymentName: string, page?: number, pageSize?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'appName' is not null or undefined
             assertParamExists('appsAppNameDeploymentsDeploymentNameHistoryGet', 'appName', appName)
             // verify required parameter 'deploymentName' is not null or undefined
@@ -1705,6 +1707,14 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
+
+            if (page !== undefined) {
+                localVarQueryParameter['page'] = page;
+            }
+
+            if (pageSize !== undefined) {
+                localVarQueryParameter['pageSize'] = pageSize;
+            }
 
 
     
@@ -2732,11 +2742,13 @@ export const DefaultApiFp = function(configuration?: Configuration) {
          * Get deployment history
          * @param {string} appName 
          * @param {string} deploymentName 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async appsAppNameDeploymentsDeploymentNameHistoryGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsDeploymentNameHistoryGet(appName, deploymentName, options);
+        async appsAppNameDeploymentsDeploymentNameHistoryGet(appName: string, deploymentName: string, page?: number, pageSize?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsDeploymentNameHistoryGet(appName, deploymentName, page, pageSize, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsDeploymentNameHistoryGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -3154,11 +3166,13 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          * Get deployment history
          * @param {string} appName 
          * @param {string} deploymentName 
+         * @param {number} [page] 
+         * @param {number} [pageSize] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        appsAppNameDeploymentsDeploymentNameHistoryGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.appsAppNameDeploymentsDeploymentNameHistoryGet(appName, deploymentName, options).then((request) => request(axios, basePath));
+        appsAppNameDeploymentsDeploymentNameHistoryGet(appName: string, deploymentName: string, page?: number, pageSize?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.appsAppNameDeploymentsDeploymentNameHistoryGet(appName, deploymentName, page, pageSize, options).then((request) => request(axios, basePath));
         },
         /**
          * Get deployment metrics
@@ -3506,11 +3520,13 @@ export interface DefaultApiInterface {
      * Get deployment history
      * @param {string} appName 
      * @param {string} deploymentName 
+     * @param {number} [page] 
+     * @param {number} [pageSize] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApiInterface
      */
-    appsAppNameDeploymentsDeploymentNameHistoryGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+    appsAppNameDeploymentsDeploymentNameHistoryGet(appName: string, deploymentName: string, page?: number, pageSize?: number, options?: RawAxiosRequestConfig): AxiosPromise<void>;
 
     /**
      * Get deployment metrics
@@ -3882,12 +3898,14 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      * Get deployment history
      * @param {string} appName 
      * @param {string} deploymentName 
+     * @param {number} [page] 
+     * @param {number} [pageSize] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof DefaultApi
      */
-    public appsAppNameDeploymentsDeploymentNameHistoryGet(appName: string, deploymentName: string, options?: RawAxiosRequestConfig) {
-        return DefaultApiFp(this.configuration).appsAppNameDeploymentsDeploymentNameHistoryGet(appName, deploymentName, options).then((request) => request(this.axios, this.basePath));
+    public appsAppNameDeploymentsDeploymentNameHistoryGet(appName: string, deploymentName: string, page?: number, pageSize?: number, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsDeploymentNameHistoryGet(appName, deploymentName, page, pageSize, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

@@ -524,6 +524,10 @@ const routes = {
           appName: z.string(),
           deploymentName: z.string(),
         }),
+        query: z.object({
+          page: z.coerce.number().int().min(1).default(1),
+          pageSize: z.coerce.number().int().min(1).max(100).default(20),
+        }),
       },
       responses: {
         200: {
@@ -1624,6 +1628,7 @@ router.openapi(routes.deployments.history, async (c) => {
   const storage = getStorageProvider(c);
   const accountId = c.var.auth.accountId;
   const { appName, deploymentName } = c.req.valid("param");
+  const { page, pageSize } = c.req.valid("query");
 
   const app = await storage.getApp(accountId, { appName });
   if (!app) {
@@ -1643,13 +1648,22 @@ router.openapi(routes.deployments.history, async (c) => {
     });
   }
 
-  const history = await storage.getPackageHistory(
+  // getPackageHistory는 uploadTime 오름차순 전체 배열을 반환한다(OTA·롤백·중복검사 등이
+  // 공유하는 계약이므로 그대로 둔다). 페이지네이션은 이 핸들러에서만 최신순으로 뒤집어
+  // 슬라이스한다. 파라미터가 없으면 page=1/pageSize=20 → 최신 페이지가 기본.
+  const fullHistory = await storage.getPackageHistory(
     accountId,
     app.id,
     deployment.id,
   );
+  const totalCount = fullHistory.length;
+  const start = (page - 1) * pageSize;
+  const history = fullHistory
+    .slice()
+    .reverse()
+    .slice(start, start + pageSize);
 
-  return c.json({ history });
+  return c.json({ history, totalCount, page, pageSize });
 });
 
 export { router as managementRouter };
