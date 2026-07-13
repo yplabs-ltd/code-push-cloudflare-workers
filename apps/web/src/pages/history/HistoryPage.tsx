@@ -17,7 +17,13 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  RefreshCw,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
 const PAGE_SIZE = 20;
@@ -371,6 +377,14 @@ export const HistoryPage = () => {
                 variant="outline"
                 size="sm"
                 disabled={page <= 1 || isFetching}
+                onClick={() => setPage(1)}
+              >
+                <ChevronsLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page <= 1 || isFetching}
                 onClick={() => setPage((prev) => Math.max(1, prev - 1))}
               >
                 <ChevronLeft className="mr-1 h-4 w-4" />
@@ -384,6 +398,14 @@ export const HistoryPage = () => {
               >
                 다음
                 <ChevronRight className="ml-1 h-4 w-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page >= totalPages || isFetching}
+                onClick={() => setPage(totalPages)}
+              >
+                <ChevronsRight className="h-4 w-4" />
               </Button>
             </div>
           </div>
