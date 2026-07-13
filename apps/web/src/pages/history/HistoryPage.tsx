@@ -1,28 +1,28 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/lib/api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, RefreshCw, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
+const PAGE_SIZE = 20;
+
 // history 라우트는 서버 OpenAPI 응답 스키마가 비어 있어 api-client가 void로 생성한다.
-// 실제 응답은 { history: Package[] } 이므로 여기서 형태를 명시한다.
+// 실제 응답은 { history, totalCount, page, pageSize } 이므로 여기서 형태를 명시한다.
 interface ReleaseHistoryItem {
   label?: string;
   appVersion?: string;
@@ -36,6 +36,9 @@ interface ReleaseHistoryItem {
 }
 interface HistoryResponse {
   history: ReleaseHistoryItem[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
 }
 interface MetricEntry {
   active?: number;
@@ -44,19 +47,6 @@ interface MetricEntry {
   failed?: number;
 }
 type MergedItem = ReleaseHistoryItem & MetricEntry;
-
-function formatBytes(bytes?: number): string {
-  if (bytes == null || !Number.isFinite(bytes) || bytes < 0) return "-";
-  if (bytes < 1024) return `${bytes} B`;
-  const units = ["KB", "MB", "GB", "TB"] as const;
-  let value = bytes / 1024;
-  let unitIndex = 0;
-  while (value >= 1024 && unitIndex < units.length - 1) {
-    value /= 1024;
-    unitIndex += 1;
-  }
-  return `${value.toFixed(1)} ${units[unitIndex]}`;
-}
 
 function formatTime(ts?: number): string {
   if (ts == null || !Number.isFinite(ts) || ts <= 0) return "-";
@@ -74,6 +64,7 @@ export const HistoryPage = () => {
   const queryClient = useQueryClient();
   const [appName, setAppName] = useState<string>("");
   const [deploymentName, setDeploymentName] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
 
   const { data: appsData } = useQuery({
     queryKey: ["apps"],
@@ -103,6 +94,11 @@ export const HistoryPage = () => {
     setDeploymentName(names.includes("Production") ? "Production" : names[0]);
   }, [deployments, deploymentName]);
 
+  // 앱·배포를 바꾸면 첫 페이지로 되돌린다.
+  useEffect(() => {
+    setPage(1);
+  }, [appName, deploymentName]);
+
   const historyEnabled = !!appName && !!deploymentName;
 
   const {
@@ -111,11 +107,13 @@ export const HistoryPage = () => {
     isError: isHistoryError,
     isFetching,
   } = useQuery({
-    queryKey: ["history", appName, deploymentName],
+    queryKey: ["history", appName, deploymentName, page],
     queryFn: async () => {
       const response = await api.appsAppNameDeploymentsDeploymentNameHistoryGet(
         appName,
         deploymentName,
+        page,
+        PAGE_SIZE,
       );
       // 위 주석 참조: 서버 실제 응답 형태로 해석
       return response.data as unknown as HistoryResponse;
@@ -135,17 +133,18 @@ export const HistoryPage = () => {
     enabled: historyEnabled,
   });
 
+  // 서버가 최신순 페이지를 내려주므로 정렬은 서버에 맡기고 지표만 병합한다.
   const rows: MergedItem[] = useMemo(() => {
     const history = historyData?.history ?? [];
     const metrics = (metricsData?.metrics ?? {}) as Record<string, MetricEntry>;
-    return history
-      .slice()
-      .sort((a, b) => (b.uploadTime ?? 0) - (a.uploadTime ?? 0))
-      .map((item) => ({
-        ...item,
-        ...(item.label ? metrics[item.label] : {}),
-      }));
+    return history.map((item) => ({
+      ...item,
+      ...(item.label ? metrics[item.label] : {}),
+    }));
   }, [historyData, metricsData]);
+
+  const totalCount = historyData?.totalCount ?? 0;
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
 
   const disableMutation = useMutation({
     mutationFn: async ({
@@ -248,84 +247,93 @@ export const HistoryPage = () => {
         </Button>
       </div>
 
-      <div className="rounded-lg border">
-        {isHistoryLoading ? (
-          <div className="p-8 text-center text-sm text-muted-foreground">
-            데이터를 불러오는 중입니다...
-          </div>
-        ) : isHistoryError ? (
-          <div className="p-8 text-center text-sm text-destructive">
-            이력을 불러오지 못했습니다. 새로고침하거나 다시 로그인해 주세요.
-          </div>
-        ) : rows.length === 0 ? (
-          <div className="p-8 text-center text-sm text-muted-foreground">
-            릴리즈 이력이 없습니다.
-          </div>
-        ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Label</TableHead>
-                <TableHead>App Version</TableHead>
-                <TableHead className="text-center">Mandatory</TableHead>
-                <TableHead className="text-center">Disabled</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead className="text-center">Installed</TableHead>
-                <TableHead className="text-center">Active</TableHead>
-                <TableHead className="text-center">Size</TableHead>
-                <TableHead>Uploaded</TableHead>
-                <TableHead className="text-right">Action</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {rows.map((item) => (
-                <TableRow key={item.label}>
-                  <TableCell className="font-medium">{item.label}</TableCell>
-                  <TableCell>{item.appVersion}</TableCell>
-                  <TableCell className="text-center">
-                    {item.isMandatory ? (
-                      <Check className="mx-auto h-4 w-4 text-emerald-600" />
-                    ) : (
-                      <X className="mx-auto h-4 w-4 text-muted-foreground" />
-                    )}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item.isDisabled ? (
-                      <Badge variant="destructive">Disabled</Badge>
-                    ) : (
-                      <Badge variant="secondary">Active</Badge>
-                    )}
-                  </TableCell>
-                  <TableCell className="max-w-[240px] truncate">
+      {isHistoryLoading ? (
+        <div className="rounded-lg border p-8 text-center text-sm text-muted-foreground">
+          데이터를 불러오는 중입니다...
+        </div>
+      ) : isHistoryError ? (
+        <div className="rounded-lg border p-8 text-center text-sm text-destructive">
+          이력을 불러오지 못했습니다. 새로고침하거나 다시 로그인해 주세요.
+        </div>
+      ) : rows.length === 0 ? (
+        <div className="rounded-lg border p-8 text-center text-sm text-muted-foreground">
+          릴리즈 이력이 없습니다.
+        </div>
+      ) : (
+        <>
+          <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+            {rows.map((item) => (
+              <Card
+                key={item.label}
+                className={item.isDisabled ? "opacity-60" : undefined}
+              >
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="min-w-0">
+                      <CardTitle className="text-base">{item.label}</CardTitle>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        v{item.appVersion ?? "-"} · {formatTime(item.uploadTime)}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-1.5">
+                      {item.isMandatory && (
+                        <Badge variant="outline">Mandatory</Badge>
+                      )}
+                      {item.isDisabled ? (
+                        <Badge variant="destructive">Disabled</Badge>
+                      ) : (
+                        <Badge variant="secondary">Active</Badge>
+                      )}
+                    </div>
+                  </div>
+                  <p className="mt-2 min-h-[1.25rem] truncate text-sm text-muted-foreground">
                     {item.description || "-"}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item.installed ?? 0}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {item.active ?? 0}
-                  </TableCell>
-                  <TableCell className="text-center">
-                    {formatBytes(item.size)}
-                  </TableCell>
-                  <TableCell>{formatTime(item.uploadTime)}</TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant={item.isDisabled ? "outline" : "destructive"}
-                      size="sm"
-                      className="min-w-[84px]"
-                      disabled={disableMutation.isPending}
-                      onClick={() => onToggleDisable(item)}
-                    >
-                      {item.isDisabled ? "Enable" : "Disable"}
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        )}
-      </div>
+                  </p>
+                </CardHeader>
+                <CardContent className="flex items-center justify-between gap-2 pb-4">
+                  <span className="text-sm text-muted-foreground">
+                    설치 {item.installed ?? 0} · 활성 {item.active ?? 0}
+                  </span>
+                  <Button
+                    variant={item.isDisabled ? "outline" : "destructive"}
+                    size="sm"
+                    disabled={disableMutation.isPending}
+                    onClick={() => onToggleDisable(item)}
+                  >
+                    {item.isDisabled ? "Enable" : "Disable"}
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          <div className="flex items-center justify-between">
+            <p className="text-sm text-muted-foreground">
+              전체 {totalCount}개 · {page}/{totalPages} 페이지
+            </p>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page <= 1 || isFetching}
+                onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+              >
+                <ChevronLeft className="mr-1 h-4 w-4" />
+                이전
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={page >= totalPages || isFetching}
+                onClick={() => setPage((prev) => prev + 1)}
+              >
+                다음
+                <ChevronRight className="ml-1 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
