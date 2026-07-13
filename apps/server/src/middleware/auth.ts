@@ -143,6 +143,31 @@ export async function getGitHubAccessToken(
   return data.access_token;
 }
 
+// 지정한 org의 활성 멤버인지 확인. read:org 스코프 토큰 필요.
+// 멤버가 아니거나 확인 실패(404/403 등) 시 false → 비멤버로 간주해 로그인 거부.
+export async function isGitHubOrgMember(
+  accessToken: string,
+  org: string,
+): Promise<boolean> {
+  const response = await fetch(
+    `https://api.github.com/user/memberships/orgs/${org}`,
+    {
+      headers: {
+        authorization: `Bearer ${accessToken}`,
+        accept: "application/vnd.github.v3+json",
+        "user-agent": "code-push-cloudflare-workers/0.0",
+      },
+    },
+  );
+
+  if (!response.ok) {
+    return false;
+  }
+
+  const membership = (await response.json()) as { state?: string };
+  return membership.state === "active";
+}
+
 export async function getGitHubUser(accessToken: string): Promise<GitHubUser> {
   const [userResponse, emailsResponse] = await Promise.all([
     fetch("https://api.github.com/user", {
