@@ -82,7 +82,7 @@ export interface StorageProvider {
     pkg: Omit<Package, "label">,
   ): Promise<Package>;
 
-  updatePackage(pkg: Package): Promise<Package>;
+  updatePackage(pkg: Package, deploymentId: string): Promise<Package>;
 
   getPackageHistory(
     accountId: string,

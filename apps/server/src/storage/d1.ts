@@ -23,8 +23,10 @@ import { type StorageProvider, createStorageError } from "./storage";
 export class D1StorageProvider implements StorageProvider {
   private readonly db: DrizzleD1Database<typeof schema>;
   private readonly cacheKeys = {
-    package: (accountId: string, appId: string, deploymentId: string) =>
-      `package:${accountId}:${appId}:${deploymentId}`,
+    // 패키지 히스토리는 deploymentId만으로 결정된다(getPackageHistory 쿼리가 accountId/appId를
+    // 쓰지 않음). accountId/appId를 키에 넣으면 같은 배포가 호출부별로 다중 캐시되어
+    // 무효화가 누락되므로 deploymentId 단일 키로 통일한다.
+    package: (deploymentId: string) => `package:${deploymentId}`,
     deployment: (accountId: string, appId: string, deploymentId: string) =>
       `deployment:${accountId}:${appId}:${deploymentId}`,
   };
@@ -778,7 +780,7 @@ export class D1StorageProvider implements StorageProvider {
       uploadTime: pkg.uploadTime,
     });
 
-    const cacheKey = this.cacheKeys.package(accountId, appId, deploymentId);
+    const cacheKey = this.cacheKeys.package(deploymentId);
     await this.cache.del(cacheKey);
 
     return {
@@ -790,7 +792,7 @@ export class D1StorageProvider implements StorageProvider {
     };
   }
 
-  async updatePackage(pkg: Package): Promise<Package> {
+  async updatePackage(pkg: Package, deploymentId: string): Promise<Package> {
     await this.db
       .update(schema.packages)
       .set({
@@ -799,6 +801,9 @@ export class D1StorageProvider implements StorageProvider {
         isDisabled: pkg.isDisabled,
       })
       .where(eq(schema.packages.packageHash, pkg.packageHash));
+    // isDisabled 등 상태 변경 후 히스토리 캐시를 무효화한다. 그렇지 않으면 getPackageHistory가
+    // 최대 5분간 stale 값을 반환해 enable/disable 반영이 지연되고 OTA 업데이트 결정도 어긋난다.
+    await this.cache.del(this.cacheKeys.package(deploymentId));
     return pkg;
   }
 
@@ -807,7 +812,7 @@ export class D1StorageProvider implements StorageProvider {
     appId: string,
     deploymentId: string,
   ): Promise<Package[]> {
-    const cacheKey = this.cacheKeys.package(accountId, appId, deploymentId);
+    const cacheKey = this.cacheKeys.package(deploymentId);
     const cachedPackages = await this.cache.get(cacheKey);
     if (cachedPackages) {
       return JSON.parse(cachedPackages);
@@ -870,7 +875,7 @@ export class D1StorageProvider implements StorageProvider {
       .set({ deletedAt: Date.now() })
       .where(eq(schema.packages.deploymentId, deploymentId));
 
-    const cacheKey = this.cacheKeys.package(accountId, appId, deploymentId);
+    const cacheKey = this.cacheKeys.package(deploymentId);
     await this.cache.del(cacheKey);
 
     // Insert new history
@@ -920,7 +925,7 @@ export class D1StorageProvider implements StorageProvider {
       .set(schema.packages)
       .where(eq(schema.packages.deploymentId, deploymentId));
 
-    const cacheKey = this.cacheKeys.package(accountId, appId, deploymentId);
+    const cacheKey = this.cacheKeys.package(deploymentId);
     await this.cache.del(cacheKey);
 
     // Delete all package blobs
