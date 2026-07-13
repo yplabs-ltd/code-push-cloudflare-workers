@@ -27,6 +27,7 @@ import {
   generateDeploymentKey,
   generateKey,
 } from "../utils/security";
+import { sendReleaseNotification } from "../utils/slack";
 import { urlEncode } from "../utils/urlencode";
 
 const router = new OpenAPIHono<Env>();
@@ -1329,6 +1330,24 @@ router.openapi(routes.deployments.release.create, async (c) => {
     "Location",
     urlEncode`/apps/${appName}/deployments/${deploymentName}`,
   );
+
+  const account = await storage.getAccount(accountId);
+  if (c.executionCtx) {
+    c.executionCtx.waitUntil(
+      sendReleaseNotification(c.env, {
+        appName: app.name,
+        deploymentName,
+        label: releasedPackage.label,
+        appVersion: releasedPackage.appVersion,
+        description: releasedPackage.description,
+        isMandatory: releasedPackage.isMandatory,
+        isDisabled: releasedPackage.isDisabled,
+        action: "Uploaded",
+        releasedBy: account.name || account.email,
+      }),
+    );
+  }
+
   return c.json({ package: releasedPackage }, 201);
 });
 
@@ -1385,6 +1404,25 @@ router.openapi(routes.deployments.release.update, async (c) => {
   }
 
   await storage.updatePackage(updatedRelease, deployment.id);
+
+  // isDisabled 토글이 포함된 요청일 때만 Slack 알림(rollout/version 등 다른 수정은 제외)
+  if (packageInfo.isDisabled != null && c.executionCtx) {
+    const account = await storage.getAccount(accountId);
+    c.executionCtx.waitUntil(
+      sendReleaseNotification(c.env, {
+        appName: app.name,
+        deploymentName,
+        label: updatedRelease.label,
+        appVersion: updatedRelease.appVersion,
+        description: updatedRelease.description,
+        isMandatory: updatedRelease.isMandatory,
+        isDisabled: updatedRelease.isDisabled,
+        action: updatedRelease.isDisabled ? "Disabled" : "Enabled",
+        releasedBy: account.name || account.email,
+      }),
+    );
+  }
+
   return c.json({ release: updatedRelease });
 });
 
