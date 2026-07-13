@@ -175,13 +175,10 @@ export const HistoryPage = () => {
   const onToggleDisable = (item: MergedItem) => {
     if (!item.label) return;
     const willDisable = !item.isDisabled;
-    const enableWarning = willDisable
-      ? ""
-      : "\n\n⚠️ 서버가 재활성화(isDisabled:false)를 무시하는 상태일 수 있습니다. 반영되지 않으면 서버 수정이 필요합니다.";
     const confirmed = window.confirm(
       `Label: ${item.label}\nDescription: ${item.description ?? "-"}\n\n이 버전을 ${
         willDisable ? "비활성화" : "활성화"
-      }하시겠습니까?${enableWarning}`,
+      }하시겠습니까?`,
     );
     if (!confirmed) return;
     disableMutation.mutate({ label: item.label, isDisabled: willDisable });

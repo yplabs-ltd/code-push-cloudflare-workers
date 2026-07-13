@@ -96,7 +96,7 @@ describe("D1StorageProvider Cache", () => {
 
     expect(result.length).toBe(1);
     expect(
-      await mockCache.get(`package:${account.id}:${app.id}:${deployment.id}`),
+      await mockCache.get(`package:${deployment.id}`),
     ).toBe(JSON.stringify(result));
   });
 
@@ -109,7 +109,7 @@ describe("D1StorageProvider Cache", () => {
     // First get to populate cache
     await storage.getPackageHistory(account.id, app.id, deployment.id);
     expect(
-      await mockCache.get(`package:${account.id}:${app.id}:${deployment.id}`),
+      await mockCache.get(`package:${deployment.id}`),
     ).toBeDefined();
 
     // Create test blob data
@@ -136,7 +136,7 @@ describe("D1StorageProvider Cache", () => {
 
     // Cache should be invalidated
     expect(
-      await mockCache.get(`package:${account.id}:${app.id}:${deployment.id}`),
+      await mockCache.get(`package:${deployment.id}`),
     ).toBeNull();
   });
 
@@ -155,7 +155,7 @@ describe("D1StorageProvider Cache", () => {
 
     expect(result.length).toBe(1);
     expect(
-      await mockCache.get(`package:${account.id}:${app.id}:${deployment.id}`),
+      await mockCache.get(`package:${deployment.id}`),
     ).toBe(JSON.stringify(result));
   });
 });

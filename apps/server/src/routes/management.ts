@@ -1328,11 +1328,11 @@ router.openapi(routes.deployments.release.update, async (c) => {
   if (packageInfo.description) {
     updatedRelease.description = packageInfo.description;
   }
-  if (packageInfo.isDisabled) {
+  if (packageInfo.isDisabled != null) {
     updatedRelease.isDisabled = packageInfo.isDisabled;
   }
 
-  await storage.updatePackage(updatedRelease);
+  await storage.updatePackage(updatedRelease, deployment.id);
   return c.json({ release: updatedRelease });
 });
 
