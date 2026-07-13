@@ -26,6 +26,7 @@ export default defineWorkersProject(async () => {
               TEST_MIGRATIONS: migrations,
               GITHUB_CLIENT_ID: "xxx",
               GITHUB_CLIENT_SECRET: "xxx",
+              GITHUB_ORG: "test-org",
               JWT_SECRET: "test",
               ACCOUNT_ID: "test",
               R2_BUCKET_NAME: "test",
