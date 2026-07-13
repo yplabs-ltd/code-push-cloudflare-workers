@@ -91,7 +91,7 @@ describe("Auth Routes", () => {
     // 멤버십 응답만 케이스별로 바꿔 콜백 게이트 동작을 검증한다.
     const mockGitHubFlow = (membership: {
       status: number;
-      body: unknown;
+      body: object;
     }) => {
       const github = fetchMock.get("https://github.com");
       github
