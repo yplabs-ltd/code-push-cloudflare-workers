@@ -4,6 +4,8 @@ export interface Env {
     STORAGE_BUCKET: R2Bucket;
     GITHUB_CLIENT_ID: string;
     GITHUB_CLIENT_SECRET: string;
+    // 로그인 허용 GitHub 조직(org) slug. 콜백에서 이 org 멤버만 로그인/가입 허용.
+    GITHUB_ORG: string;
     SERVER_URL: string;
     JWT_SECRET: string;
     ENABLE_ACCOUNT_REGISTRATION: string;

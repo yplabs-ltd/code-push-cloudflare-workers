@@ -7,12 +7,14 @@ import type {
   Deployment,
   DeploymentInfo,
   Package,
+  Permission,
 } from "../types/schemas";
 
 export interface StorageProvider {
   // Account operations
   addAccount(account: Omit<Account, "id">): Promise<string>;
   getAccount(accountId: string): Promise<Account>;
+  getAccounts(): Promise<Account[]>;
   getAccountByEmail(email: string): Promise<Account>;
   getAccountIdFromAccessKey(accessKey: string): Promise<string>;
   updateAccount(email: string, updates: Partial<Account>): Promise<void>;
@@ -48,6 +50,12 @@ export interface StorageProvider {
     accountId: string,
     appId: string,
     email: string,
+  ): Promise<void>;
+  updateCollaborator(
+    accountId: string,
+    appId: string,
+    email: string,
+    permission: Permission,
   ): Promise<void>;
 
   // Deployment operations

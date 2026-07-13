@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { api } from "@/lib/api";
+import { cn } from "@/lib/utils";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -47,6 +48,19 @@ interface MetricEntry {
   failed?: number;
 }
 type MergedItem = ReleaseHistoryItem & MetricEntry;
+
+function formatBytes(bytes?: number): string {
+  if (bytes == null || !Number.isFinite(bytes) || bytes < 0) return "-";
+  if (bytes < 1024) return `${bytes} B`;
+  const units = ["KB", "MB", "GB", "TB"] as const;
+  let value = bytes / 1024;
+  let unitIndex = 0;
+  while (value >= 1024 && unitIndex < units.length - 1) {
+    value /= 1024;
+    unitIndex += 1;
+  }
+  return `${value.toFixed(1)} ${units[unitIndex]}`;
+}
 
 function formatTime(ts?: number): string {
   if (ts == null || !Number.isFinite(ts) || ts <= 0) return "-";
@@ -262,24 +276,40 @@ export const HistoryPage = () => {
             {rows.map((item) => (
               <Card
                 key={item.label}
-                className={item.isDisabled ? "opacity-60" : undefined}
+                className={cn(
+                  (item.installed ?? 0) > 50 &&
+                    "border-l-4 border-l-emerald-500",
+                )}
               >
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <CardTitle className="text-base">{item.label}</CardTitle>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        v{item.appVersion ?? "-"} · {formatTime(item.uploadTime)}
-                      </p>
+                    <div className="flex min-w-0 items-baseline gap-2">
+                      <CardTitle className="font-mono text-base">
+                        {item.label}
+                      </CardTitle>
+                      <span className="font-mono text-xs text-muted-foreground">
+                        App {item.appVersion ?? "-"}
+                      </span>
                     </div>
                     <div className="flex shrink-0 items-center gap-1.5">
                       {item.isMandatory && (
-                        <Badge variant="outline">Mandatory</Badge>
+                        <Badge
+                          variant="outline"
+                          className="border-amber-300 bg-amber-50 text-amber-700"
+                        >
+                          Mandatory
+                        </Badge>
                       )}
                       {item.isDisabled ? (
-                        <Badge variant="destructive">Disabled</Badge>
+                        <Badge className="gap-1 border-transparent bg-red-50 text-red-700 hover:bg-red-50">
+                          <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                          Disabled
+                        </Badge>
                       ) : (
-                        <Badge variant="secondary">Active</Badge>
+                        <Badge className="gap-1 border-transparent bg-emerald-50 text-emerald-700 hover:bg-emerald-50">
+                          <span className="h-1.5 w-1.5 rounded-full bg-current" />
+                          Active
+                        </Badge>
                       )}
                     </div>
                   </div>
@@ -287,18 +317,46 @@ export const HistoryPage = () => {
                     {item.description || "-"}
                   </p>
                 </CardHeader>
-                <CardContent className="flex items-center justify-between gap-2 pb-4">
-                  <span className="text-sm text-muted-foreground">
-                    설치 {item.installed ?? 0} · 활성 {item.active ?? 0}
-                  </span>
-                  <Button
-                    variant={item.isDisabled ? "outline" : "destructive"}
-                    size="sm"
-                    disabled={disableMutation.isPending}
-                    onClick={() => onToggleDisable(item)}
-                  >
-                    {item.isDisabled ? "Enable" : "Disable"}
-                  </Button>
+                <CardContent className="flex flex-col gap-4 pb-4">
+                  <div className="flex">
+                    <div className="flex-1 pr-3.5">
+                      <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Installed
+                      </div>
+                      <div className="mt-0.5 text-sm font-semibold tabular-nums">
+                        {(item.installed ?? 0).toLocaleString()}
+                      </div>
+                    </div>
+                    <div className="flex-1 border-l pl-3.5">
+                      <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Active
+                      </div>
+                      <div className="mt-0.5 text-sm font-semibold tabular-nums">
+                        {(item.active ?? 0).toLocaleString()}
+                      </div>
+                    </div>
+                    <div className="flex-1 border-l pl-3.5">
+                      <div className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                        Size
+                      </div>
+                      <div className="mt-0.5 text-sm font-semibold tabular-nums">
+                        {formatBytes(item.size)}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs tabular-nums text-muted-foreground">
+                      {formatTime(item.uploadTime)}
+                    </span>
+                    <Button
+                      variant={item.isDisabled ? "outline" : "destructive"}
+                      size="sm"
+                      disabled={disableMutation.isPending}
+                      onClick={() => onToggleDisable(item)}
+                    >
+                      {item.isDisabled ? "Enable" : "Disable"}
+                    </Button>
+                  </div>
                 </CardContent>
               </Card>
             ))}

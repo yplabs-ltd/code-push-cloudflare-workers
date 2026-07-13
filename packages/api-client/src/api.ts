@@ -207,6 +207,40 @@ export interface AccountGet200ResponseAccount {
 /**
  * 
  * @export
+ * @interface AccountsGet200Response
+ */
+export interface AccountsGet200Response {
+    /**
+     * 
+     * @type {Array<AccountGet200ResponseAccount>}
+     * @memberof AccountsGet200Response
+     */
+    'accounts': Array<AccountGet200ResponseAccount>;
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameCollaboratorsEmailPatchRequest
+ */
+export interface AppsAppNameCollaboratorsEmailPatchRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameCollaboratorsEmailPatchRequest
+     */
+    'permission': AppsAppNameCollaboratorsEmailPatchRequestPermissionEnum;
+}
+
+export const AppsAppNameCollaboratorsEmailPatchRequestPermissionEnum = {
+    Owner: 'Owner',
+    Collaborator: 'Collaborator'
+} as const;
+
+export type AppsAppNameCollaboratorsEmailPatchRequestPermissionEnum = typeof AppsAppNameCollaboratorsEmailPatchRequestPermissionEnum[keyof typeof AppsAppNameCollaboratorsEmailPatchRequestPermissionEnum];
+
+/**
+ * 
+ * @export
  * @interface AppsAppNameCollaboratorsGet200Response
  */
 export interface AppsAppNameCollaboratorsGet200Response {
@@ -1467,6 +1501,35 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * List all accounts
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        accountsGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/accounts`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Remove collaborator from app
          * @param {string} appName 
          * @param {string} email 
@@ -1497,6 +1560,47 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Update collaborator permission
+         * @param {string} appName 
+         * @param {string} email 
+         * @param {AppsAppNameCollaboratorsEmailPatchRequest} [appsAppNameCollaboratorsEmailPatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameCollaboratorsEmailPatch: async (appName: string, email: string, appsAppNameCollaboratorsEmailPatchRequest?: AppsAppNameCollaboratorsEmailPatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameCollaboratorsEmailPatch', 'appName', appName)
+            // verify required parameter 'email' is not null or undefined
+            assertParamExists('appsAppNameCollaboratorsEmailPatch', 'email', email)
+            const localVarPath = `/apps/{appName}/collaborators/{email}`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"email"}}`, encodeURIComponent(String(email)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(appsAppNameCollaboratorsEmailPatchRequest, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -2663,6 +2767,17 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * List all accounts
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async accountsGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AccountsGet200Response>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.accountsGet(options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.accountsGet']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Remove collaborator from app
          * @param {string} appName 
          * @param {string} email 
@@ -2673,6 +2788,20 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameCollaboratorsEmailDelete(appName, email, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameCollaboratorsEmailDelete']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Update collaborator permission
+         * @param {string} appName 
+         * @param {string} email 
+         * @param {AppsAppNameCollaboratorsEmailPatchRequest} [appsAppNameCollaboratorsEmailPatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameCollaboratorsEmailPatch(appName: string, email: string, appsAppNameCollaboratorsEmailPatchRequest?: AppsAppNameCollaboratorsEmailPatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameCollaboratorsEmailPatch(appName, email, appsAppNameCollaboratorsEmailPatchRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameCollaboratorsEmailPatch']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
@@ -3105,6 +3234,14 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.accountGet(options).then((request) => request(axios, basePath));
         },
         /**
+         * List all accounts
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        accountsGet(options?: RawAxiosRequestConfig): AxiosPromise<AccountsGet200Response> {
+            return localVarFp.accountsGet(options).then((request) => request(axios, basePath));
+        },
+        /**
          * Remove collaborator from app
          * @param {string} appName 
          * @param {string} email 
@@ -3113,6 +3250,17 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
          */
         appsAppNameCollaboratorsEmailDelete(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
             return localVarFp.appsAppNameCollaboratorsEmailDelete(appName, email, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update collaborator permission
+         * @param {string} appName 
+         * @param {string} email 
+         * @param {AppsAppNameCollaboratorsEmailPatchRequest} [appsAppNameCollaboratorsEmailPatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameCollaboratorsEmailPatch(appName: string, email: string, appsAppNameCollaboratorsEmailPatchRequest?: AppsAppNameCollaboratorsEmailPatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.appsAppNameCollaboratorsEmailPatch(appName, email, appsAppNameCollaboratorsEmailPatchRequest, options).then((request) => request(axios, basePath));
         },
         /**
          * Add collaborator to app
@@ -3459,6 +3607,14 @@ export interface DefaultApiInterface {
     accountGet(options?: RawAxiosRequestConfig): AxiosPromise<AccountGet200Response>;
 
     /**
+     * List all accounts
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    accountsGet(options?: RawAxiosRequestConfig): AxiosPromise<AccountsGet200Response>;
+
+    /**
      * Remove collaborator from app
      * @param {string} appName 
      * @param {string} email 
@@ -3467,6 +3623,17 @@ export interface DefaultApiInterface {
      * @memberof DefaultApiInterface
      */
     appsAppNameCollaboratorsEmailDelete(appName: string, email: string, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Update collaborator permission
+     * @param {string} appName 
+     * @param {string} email 
+     * @param {AppsAppNameCollaboratorsEmailPatchRequest} [appsAppNameCollaboratorsEmailPatchRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameCollaboratorsEmailPatch(appName: string, email: string, appsAppNameCollaboratorsEmailPatchRequest?: AppsAppNameCollaboratorsEmailPatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<void>;
 
     /**
      * Add collaborator to app
@@ -3825,6 +3992,16 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
     }
 
     /**
+     * List all accounts
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public accountsGet(options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).accountsGet(options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
      * Remove collaborator from app
      * @param {string} appName 
      * @param {string} email 
@@ -3834,6 +4011,19 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      */
     public appsAppNameCollaboratorsEmailDelete(appName: string, email: string, options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).appsAppNameCollaboratorsEmailDelete(appName, email, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update collaborator permission
+     * @param {string} appName 
+     * @param {string} email 
+     * @param {AppsAppNameCollaboratorsEmailPatchRequest} [appsAppNameCollaboratorsEmailPatchRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameCollaboratorsEmailPatch(appName: string, email: string, appsAppNameCollaboratorsEmailPatchRequest?: AppsAppNameCollaboratorsEmailPatchRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameCollaboratorsEmailPatch(appName, email, appsAppNameCollaboratorsEmailPatchRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

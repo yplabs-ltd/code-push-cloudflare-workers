@@ -18,6 +18,7 @@ import {
   type PackageInfo,
   PackageInfoUpdateSchema,
   PackageSchema,
+  Permission,
 } from "../types/schemas";
 import { MetricsManager } from "../utils/metrics";
 import { createPackageDiffer } from "../utils/package-differ";
@@ -31,6 +32,7 @@ import { urlEncode } from "../utils/urlencode";
 const router = new OpenAPIHono<Env>();
 
 router.use("/account/*", authMiddleware());
+router.use("/accounts", authMiddleware());
 router.use("/apps/*", authMiddleware());
 router.use("/accessKeys/*", authMiddleware());
 router.use("/collaborators/*", authMiddleware());
@@ -52,6 +54,23 @@ const routes = {
             "application/json": {
               schema: z.object({
                 account: AccountSchema,
+              }),
+            },
+          },
+        },
+      },
+    }),
+    list: createRoute({
+      method: "get",
+      path: "/accounts",
+      description: "List all accounts",
+      responses: {
+        200: {
+          description: "Accounts retrieved successfully",
+          content: {
+            "application/json": {
+              schema: z.object({
+                accounts: z.array(AccountSchema),
               }),
             },
           },
@@ -654,6 +673,32 @@ const routes = {
         },
       },
     }),
+
+    update: createRoute({
+      method: "patch",
+      path: "/apps/:appName/collaborators/:email",
+      description: "Update collaborator permission",
+      request: {
+        params: z.object({
+          appName: z.string(),
+          email: z.string().email(),
+        }),
+        body: {
+          content: {
+            "application/json": {
+              schema: z.object({
+                permission: Permission,
+              }),
+            },
+          },
+        },
+      },
+      responses: {
+        200: {
+          description: "Collaborator permission updated successfully",
+        },
+      },
+    }),
   },
 
   // Metrics routes
@@ -718,6 +763,13 @@ router.openapi(routes.account.get, async (c) => {
   return c.json({
     account,
   });
+});
+
+// 전체 가입 계정 목록 — 로그인한 유저면 누구나 조회 가능(별도 권한 게이트 없음).
+router.openapi(routes.account.list, async (c) => {
+  const storage = getStorageProvider(c);
+  const accounts = await storage.getAccounts();
+  return c.json({ accounts });
 });
 
 // Access Key routes
@@ -1585,13 +1637,46 @@ router.openapi(routes.collaborators.remove, async (c) => {
   }
 
   if (collaborator.permission === "Owner") {
-    throw new HTTPException(409, {
-      message: "Cannot remove the owner of the app from collaborator list",
-    });
+    const ownerCount = Object.values(collaborators).filter(
+      (col) => col.permission === "Owner",
+    ).length;
+    if (ownerCount <= 1) {
+      throw new HTTPException(409, {
+        message: "Cannot remove the last owner of the app",
+      });
+    }
   }
 
   await storage.removeCollaborator(accountId, app.id, email);
   return new Response(null, { status: 204 });
+});
+
+router.openapi(routes.collaborators.update, async (c) => {
+  const storage = getStorageProvider(c);
+  const accountId = c.var.auth.accountId;
+  const { appName, email } = c.req.valid("param");
+  const { permission } = c.req.valid("json");
+
+  const app = await storage.getApp(accountId, { appName });
+  if (!app) {
+    throw new HTTPException(404, {
+      message: `App "${appName}" not found`,
+    });
+  }
+
+  throwIfInvalidPermissions(app, "Owner");
+
+  try {
+    await storage.updateCollaborator(accountId, app.id, email, permission);
+    return c.json({ ok: true });
+  } catch (error) {
+    if (isStorageError(error) || error instanceof HTTPException) {
+      throw error;
+    }
+    throw new HTTPException(400, {
+      message: "Failed to update collaborator permission",
+    });
+  }
 });
 
 // Metrics handler

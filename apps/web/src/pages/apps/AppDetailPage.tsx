@@ -1,3 +1,4 @@
+import { AppCollaborators } from "@/pages/apps/AppCollaborators";
 import { CreateDeploymentDialog } from "@/components/deployments/CreateDeploymentDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -101,6 +102,7 @@ export const AppDetailPage = () => {
           <TabsList>
             <TabsTrigger value="deployments">Deployments</TabsTrigger>
             <TabsTrigger value="releases">Release History</TabsTrigger>
+            <TabsTrigger value="collaborators">Collaborators</TabsTrigger>
           </TabsList>
           <Button onClick={() => setIsCreateDeploymentOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
@@ -211,6 +213,10 @@ export const AppDetailPage = () => {
               )
             ))}
           </div>
+        </TabsContent>
+
+        <TabsContent value="collaborators" className="mt-4">
+          <AppCollaborators appName={appName} />
         </TabsContent>
       </Tabs>
 

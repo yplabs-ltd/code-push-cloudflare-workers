@@ -19,6 +19,7 @@ ENABLE_ACCOUNT_REGISTRATION = "true"
 CORS_ORIGINS = "http://localhost:5173"
 ENABLE_PACKAGE_DIFFING = "true"
 GITHUB_CLIENT_ID="Ov23liuoVBhHRJ02UweV"
+GITHUB_ORG="yplabs-ltd"
 
 
 [env.production]
@@ -36,6 +37,7 @@ CORS_ORIGINS = "http://localhost:3000,https://codepush-web.yplabs.workers.dev"
 COOKIE_DOMAIN = "yplabs.workers.dev"
 ENABLE_PACKAGE_DIFFING = "true"
 GITHUB_CLIENT_ID="Ov23liyNc4o1iJYk03YU"
+GITHUB_ORG="yplabs-ltd"
 R2_BUCKET_NAME="code-push-storage"
 ACCOUNT_ID="3ed9862a49fe75464126e11a462fd26e"
 AWS_REGION = "ap-northeast-2"

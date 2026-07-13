@@ -14,6 +14,7 @@ import type {
   DeploymentInfo,
   Package,
   PackageHashToBlobInfoMap,
+  Permission,
 } from "../types/schemas";
 import { generateKey } from "../utils/security";
 import type { IBlobStorageProvider } from "./blob";
@@ -116,6 +117,21 @@ export class D1StorageProvider implements StorageProvider {
       createdTime: account.createdTime,
       linkedProviders: account.githubId ? ["GitHub"] : [],
     };
+  }
+
+  async getAccounts(): Promise<Account[]> {
+    const accounts = await this.db.query.account.findMany({
+      where: isNull(schema.account.deletedAt),
+    });
+
+    return accounts.map((account) => ({
+      id: account.id,
+      email: account.email,
+      name: account.name,
+      gitHubId: account.githubId ?? undefined,
+      createdTime: account.createdTime,
+      linkedProviders: account.githubId ? ["GitHub"] : [],
+    }));
   }
 
   async getAccountByEmail(email: string): Promise<Account> {
@@ -505,9 +521,17 @@ export class D1StorageProvider implements StorageProvider {
       throw createStorageError(ErrorCode.Invalid, "Insufficient permissions");
     }
 
-    // Can't remove owner
+    // 마지막 Owner만 제거 차단 (Owner 수 > 1이면 Owner도 제거 가능)
     if (app.collaborators[email]?.permission === "Owner") {
-      throw createStorageError(ErrorCode.Invalid, "Cannot remove owner");
+      const ownerCount = Object.values(app.collaborators).filter(
+        (c) => c.permission === "Owner",
+      ).length;
+      if (ownerCount <= 1) {
+        throw createStorageError(
+          ErrorCode.Invalid,
+          "Cannot remove the last owner of the app",
+        );
+      }
     }
 
     await this.db
@@ -516,6 +540,55 @@ export class D1StorageProvider implements StorageProvider {
         and(
           eq(schema.collaborator.appId, appId),
           eq(schema.collaborator.accountId, collaborator.id),
+        ),
+      );
+  }
+
+  async updateCollaborator(
+    accountId: string,
+    appId: string,
+    email: string,
+    permission: Permission,
+  ): Promise<void> {
+    const app = await this.getApp(accountId, { appId });
+    const target = await this.getAccountByEmail(email);
+
+    // Verify ownership
+    const isOwner = Object.values(app.collaborators).some(
+      (c) => c.accountId === accountId && c.permission === "Owner",
+    );
+    if (!isOwner) {
+      throw createStorageError(
+        ErrorCode.Invalid,
+        "Only owners can update collaborators",
+      );
+    }
+
+    const targetCollaborator = app.collaborators[email];
+    if (!targetCollaborator) {
+      throw createStorageError(ErrorCode.NotFound, "Collaborator not found");
+    }
+
+    // 마지막 Owner 강등 차단 (Owner 수 > 1일 때만 강등 허용)
+    if (targetCollaborator.permission === "Owner" && permission !== "Owner") {
+      const ownerCount = Object.values(app.collaborators).filter(
+        (c) => c.permission === "Owner",
+      ).length;
+      if (ownerCount <= 1) {
+        throw createStorageError(
+          ErrorCode.Invalid,
+          "Cannot demote the last owner of the app",
+        );
+      }
+    }
+
+    await this.db
+      .update(schema.collaborator)
+      .set({ permission })
+      .where(
+        and(
+          eq(schema.collaborator.appId, appId),
+          eq(schema.collaborator.accountId, target.id),
         ),
       );
   }

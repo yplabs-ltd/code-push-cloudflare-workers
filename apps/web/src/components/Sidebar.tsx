@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link } from "@tanstack/react-router";
-import { Box as BoxIcon, LayoutGrid, Settings } from "lucide-react";
+import { Box as BoxIcon, LayoutGrid, Settings, Users } from "lucide-react";
 
 const navigation = [
   { name: "History", to: "/", icon: LayoutGrid },
   { name: "Apps", to: "/apps", icon: BoxIcon },
+  { name: "Members", to: "/members", icon: Users },
   { name: "Settings", to: "/settings", icon: Settings },
 ];
 

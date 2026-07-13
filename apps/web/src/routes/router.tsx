@@ -5,6 +5,7 @@ import { AppsPage } from "@/pages/apps/AppsPage";
 import { LoginPage } from "@/pages/auth/LoginPage";
 import { DeploymentDetailPage } from "@/pages/deployments/DeploymentDetailPage";
 import { HistoryPage } from "@/pages/history/HistoryPage";
+import { MembersPage } from "@/pages/members/MembersPage";
 import { SettingsPage } from "@/pages/settings/SettingsPage";
 import { useAuthStore } from "@/stores/auth";
 import {
@@ -81,6 +82,12 @@ const deploymentDetailRoute = createRoute({
   component: DeploymentDetailPage,
 });
 
+const membersRoute = createRoute({
+  getParentRoute: () => protectedRoute,
+  path: "/members",
+  component: MembersPage,
+});
+
 const settingsRoute = createRoute({
   getParentRoute: () => protectedRoute,
   path: "/settings",
@@ -95,6 +102,7 @@ const routeTree = rootRoute.addChildren([
     appsRoute,
     appDetailRoute,
     deploymentDetailRoute,
+    membersRoute,
     settingsRoute,
   ]),
 ]);

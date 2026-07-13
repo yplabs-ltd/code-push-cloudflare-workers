@@ -1,7 +1,11 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
 import { setCookie } from "hono/cookie";
 import { z } from "zod";
-import { getGitHubAccessToken, getGitHubUser } from "../middleware/auth";
+import {
+  getGitHubAccessToken,
+  getGitHubUser,
+  isGitHubOrgMember,
+} from "../middleware/auth";
 import { getStorageProvider } from "../storage/factory";
 import type { Env } from "../types/env";
 import { sign } from "../utils/jwt";
@@ -71,7 +75,8 @@ router.openapi(routes.login, async (c) => {
   const params = new URLSearchParams({
     client_id: c.env.GITHUB_CLIENT_ID,
     redirect_uri: `${c.env.SERVER_URL}/auth/github/callback`,
-    scope: "user:email",
+    // read:org — 콜백에서 org 멤버십 확인에 필요
+    scope: "user:email read:org",
     state,
   });
 
@@ -83,7 +88,7 @@ router.openapi(routes.login, async (c) => {
 // OAuth callback
 router.openapi(routes.callback, async (c) => {
   try {
-    const { code } = c.req.valid("query");
+    const { code, state } = c.req.valid("query");
     if (!code) {
       return c.json(
         {
@@ -94,9 +99,33 @@ router.openapi(routes.callback, async (c) => {
       );
     }
 
+    // state에서 client/redirectTo를 미리 파싱 → 에러 리다이렉트도 웹 오리진으로 되돌린다.
+    let client = "cli";
+    let redirectTo = "/";
+    try {
+      const parsed = JSON.parse(state ?? "{}");
+      client = parsed.client ?? "cli";
+      redirectTo = parsed.redirectTo ?? "/";
+    } catch {}
+    // 웹은 절대 URL(웹 오리진 기준), CLI는 상대경로로 로그인 에러 페이지 리다이렉트.
+    // (상대 "/login"이면 서버 도메인에 갇히므로 웹은 redirectTo 기준 절대 URL로.)
+    const loginErrorRedirect = (errorCode: string) =>
+      client === "web"
+        ? c.redirect(
+            new URL(`/login?error=${errorCode}`, redirectTo).toString(),
+          )
+        : c.redirect(`/login?error=${errorCode}`);
+
     // Exchange code for access token
     const accessToken = await getGitHubAccessToken(code, c.env);
     const githubUser = await getGitHubUser(accessToken);
+
+    // 기관(org) 멤버십 검사 — 비멤버는 로그인/가입 모두 거부
+    const isOrgMember = await isGitHubOrgMember(accessToken, c.env.GITHUB_ORG);
+    if (!isOrgMember) {
+      return loginErrorRedirect("not_org_member");
+    }
+
     const storage = getStorageProvider(c);
 
     // Find or create account
@@ -116,7 +145,7 @@ router.openapi(routes.callback, async (c) => {
     } catch {
       // Create new account if registration is enabled
       if (c.env.ENABLE_ACCOUNT_REGISTRATION !== "true") {
-        return c.redirect("/login?error=registration_disabled");
+        return loginErrorRedirect("registration_disabled");
       }
 
       accountId = await storage.addAccount({
@@ -160,17 +189,10 @@ router.openapi(routes.callback, async (c) => {
     // Handle post-login redirect
     const error = c.req.query("error");
     if (error) {
-      return c.redirect(`/login?error=${error}`);
+      return loginErrorRedirect(error);
     }
 
     // 웹: 세션 쿠키로 대시보드 리다이렉트 / CLI: 기존 JSON 토큰 유지
-    let client = "cli";
-    let redirectTo = "/";
-    try {
-      const parsed = JSON.parse(c.req.valid("query").state ?? "{}");
-      client = parsed.client ?? "cli";
-      redirectTo = parsed.redirectTo ?? "/";
-    } catch {}
     if (client === "web") {
       return c.redirect(redirectTo);
     }

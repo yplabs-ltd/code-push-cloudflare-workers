@@ -37,7 +37,9 @@ export const LoginPage = () => {
             <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive">
               {error === "registration_disabled"
                 ? "가입이 비활성화되어 있습니다."
-                : "인증 중 오류가 발생했습니다."}
+                : error === "not_org_member"
+                  ? "기관(GitHub 조직) 소속 유저만 로그인할 수 있습니다."
+                  : "인증 중 오류가 발생했습니다."}
             </div>
           )}
           <Button className="w-full" asChild>
