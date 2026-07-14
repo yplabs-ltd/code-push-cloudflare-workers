@@ -22,7 +22,9 @@ import {
   ChevronRight,
   ChevronsLeft,
   ChevronsRight,
+  Power,
   RefreshCw,
+  Zap,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 
@@ -403,6 +405,14 @@ export const HistoryPage = () => {
                         disabled={mandatoryMutation.isPending}
                         onClick={() => onToggleMandatory(item)}
                       >
+                        <Zap
+                          className={cn(
+                            "mr-1 h-3 w-3",
+                            item.isMandatory
+                              ? "text-muted-foreground"
+                              : "text-amber-600",
+                          )}
+                        />
                         {item.isMandatory ? "Optional" : "Mandatory"}
                       </Button>
                       <Button
@@ -411,6 +421,14 @@ export const HistoryPage = () => {
                         disabled={disableMutation.isPending}
                         onClick={() => onToggleDisable(item)}
                       >
+                        <Power
+                          className={cn(
+                            "mr-1 h-3 w-3",
+                            item.isDisabled
+                              ? "text-emerald-600"
+                              : "text-red-600",
+                          )}
+                        />
                         {item.isDisabled ? "Enable" : "Disable"}
                       </Button>
                     </div>
