@@ -11,10 +11,10 @@ const SLACK_WEBHOOK_BASE = "https://hooks.slack.com/services";
 
 const ACTION_HEADER: Record<ReleaseActionType, string> = {
   Uploaded: "새 릴리즈 업로드",
-  Enabled: "릴리즈 활성화",
-  Disabled: "릴리즈 비활성화",
-  MandatoryOn: "Mandatory 설정",
-  MandatoryOff: "Mandatory 해제",
+  Enabled: "Disabled false",
+  Disabled: "Disabled true",
+  MandatoryOn: "Mandatory true",
+  MandatoryOff: "Mandatory false",
 };
 
 // 헤더 블록에서 이모지는 크게 렌더링되므로 상태 토글류는 플레인 문자(✓/✕)를 쓴다.
