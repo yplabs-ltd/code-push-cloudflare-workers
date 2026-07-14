@@ -398,36 +398,34 @@ export const HistoryPage = () => {
                     <span className="text-xs tabular-nums text-muted-foreground">
                       {formatTime(item.uploadTime)}
                     </span>
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1">
                       <Button
                         variant="outline"
                         size="sm"
+                        className="h-7 gap-1 px-2 text-xs [&_svg]:size-3"
                         disabled={mandatoryMutation.isPending}
                         onClick={() => onToggleMandatory(item)}
                       >
                         <Zap
-                          className={cn(
-                            "mr-1 h-3 w-3",
+                          className={
                             item.isMandatory
                               ? "text-muted-foreground"
-                              : "text-amber-600",
-                          )}
+                              : "text-amber-600"
+                          }
                         />
                         {item.isMandatory ? "Optional" : "Mandatory"}
                       </Button>
                       <Button
                         variant="outline"
                         size="sm"
+                        className="h-7 gap-1 px-2 text-xs [&_svg]:size-3"
                         disabled={disableMutation.isPending}
                         onClick={() => onToggleDisable(item)}
                       >
                         <Power
-                          className={cn(
-                            "mr-1 h-3 w-3",
-                            item.isDisabled
-                              ? "text-emerald-600"
-                              : "text-red-600",
-                          )}
+                          className={
+                            item.isDisabled ? "text-emerald-600" : "text-red-600"
+                          }
                         />
                         {item.isDisabled ? "Enable" : "Disable"}
                       </Button>
