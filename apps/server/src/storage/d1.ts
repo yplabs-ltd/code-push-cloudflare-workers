@@ -880,6 +880,27 @@ export class D1StorageProvider implements StorageProvider {
     return pkg;
   }
 
+  // disabled/mandatory 토글 전용 부분 UPDATE. updatePackage(여러 필드 통째 SET)와 달리
+  // 대상 컬럼만 갱신한다 — 히스토리 캐시가 isolate별 메모리라 stale 캐시 기반으로 전체 필드를
+  // 쓰면 다른 isolate에서 방금 바꾼 필드를 되돌릴 수 있어(lost update), 토글은 이 경로를 쓴다.
+  async updatePackageMetadata(
+    deploymentId: string,
+    label: string,
+    updates: { isDisabled?: boolean; isMandatory?: boolean },
+  ): Promise<void> {
+    await this.db
+      .update(schema.packages)
+      .set(updates)
+      .where(
+        and(
+          eq(schema.packages.deploymentId, deploymentId),
+          eq(schema.packages.label, label),
+          isNull(schema.packages.deletedAt),
+        ),
+      );
+    await this.cache.del(this.cacheKeys.package(deploymentId));
+  }
+
   async getPackageHistory(
     accountId: string,
     appId: string,

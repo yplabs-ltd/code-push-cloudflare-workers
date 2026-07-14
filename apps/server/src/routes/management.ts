@@ -534,6 +534,58 @@ const routes = {
           },
         },
       }),
+      updateDisabled: createRoute({
+        method: "patch",
+        path: "/apps/:appName/deployments/:deploymentName/release/disabled",
+        description: "Update release disabled state",
+        request: {
+          params: z.object({
+            appName: z.string(),
+            deploymentName: z.string(),
+          }),
+          body: {
+            content: {
+              "application/json": {
+                schema: z.object({
+                  label: z.string().optional(),
+                  isDisabled: z.boolean(),
+                }),
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: "Release disabled state updated successfully",
+          },
+        },
+      }),
+      updateMandatory: createRoute({
+        method: "patch",
+        path: "/apps/:appName/deployments/:deploymentName/release/mandatory",
+        description: "Update release mandatory state",
+        request: {
+          params: z.object({
+            appName: z.string(),
+            deploymentName: z.string(),
+          }),
+          body: {
+            content: {
+              "application/json": {
+                schema: z.object({
+                  label: z.string().optional(),
+                  isMandatory: z.boolean(),
+                }),
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: "Release mandatory state updated successfully",
+          },
+        },
+      }),
     },
     history: createRoute({
       method: "get",
@@ -1416,6 +1468,134 @@ router.openapi(routes.deployments.release.update, async (c) => {
         isMandatory: updatedRelease.isMandatory,
         isDisabled: updatedRelease.isDisabled,
         action: updatedRelease.isDisabled ? "Disabled" : "Enabled",
+        releasedBy: account.name || account.email,
+      }),
+    );
+  }
+
+  return c.json({ release: updatedRelease });
+});
+
+router.openapi(routes.deployments.release.updateDisabled, async (c) => {
+  const storage = getStorageProvider(c);
+  const accountId = c.var.auth.accountId;
+  const { appName, deploymentName } = c.req.valid("param");
+  const { label, isDisabled } = c.req.valid("json");
+
+  const app = await storage.getApp(accountId, { appName });
+  if (!app) {
+    throw new HTTPException(404, {
+      message: `App "${appName}" not found`,
+    });
+  }
+
+  throwIfInvalidPermissions(app, "Collaborator");
+
+  const deployments = await storage.getDeployments(accountId, app.id);
+  const deployment = deployments.find((d) => d.name === deploymentName);
+
+  if (!deployment) {
+    throw new HTTPException(404, {
+      message: `Deployment "${deploymentName}" not found`,
+    });
+  }
+
+  const packageHistory = await storage.getPackageHistory(
+    accountId,
+    app.id,
+    deployment.id,
+  );
+
+  const release = label
+    ? packageHistory.find((p) => p.label === label)
+    : packageHistory[packageHistory.length - 1];
+
+  if (!release?.label) {
+    throw new HTTPException(404, {
+      message: "Release package not found",
+    });
+  }
+
+  const updatedRelease = { ...release, isDisabled };
+  await storage.updatePackageMetadata(deployment.id, release.label, {
+    isDisabled,
+  });
+
+  if (c.executionCtx) {
+    const account = await storage.getAccount(accountId);
+    c.executionCtx.waitUntil(
+      sendReleaseNotification(c.env, {
+        appName: app.name,
+        label: updatedRelease.label,
+        appVersion: updatedRelease.appVersion,
+        description: updatedRelease.description,
+        isMandatory: updatedRelease.isMandatory,
+        isDisabled: updatedRelease.isDisabled,
+        action: isDisabled ? "Disabled" : "Enabled",
+        releasedBy: account.name || account.email,
+      }),
+    );
+  }
+
+  return c.json({ release: updatedRelease });
+});
+
+router.openapi(routes.deployments.release.updateMandatory, async (c) => {
+  const storage = getStorageProvider(c);
+  const accountId = c.var.auth.accountId;
+  const { appName, deploymentName } = c.req.valid("param");
+  const { label, isMandatory } = c.req.valid("json");
+
+  const app = await storage.getApp(accountId, { appName });
+  if (!app) {
+    throw new HTTPException(404, {
+      message: `App "${appName}" not found`,
+    });
+  }
+
+  throwIfInvalidPermissions(app, "Collaborator");
+
+  const deployments = await storage.getDeployments(accountId, app.id);
+  const deployment = deployments.find((d) => d.name === deploymentName);
+
+  if (!deployment) {
+    throw new HTTPException(404, {
+      message: `Deployment "${deploymentName}" not found`,
+    });
+  }
+
+  const packageHistory = await storage.getPackageHistory(
+    accountId,
+    app.id,
+    deployment.id,
+  );
+
+  const release = label
+    ? packageHistory.find((p) => p.label === label)
+    : packageHistory[packageHistory.length - 1];
+
+  if (!release?.label) {
+    throw new HTTPException(404, {
+      message: "Release package not found",
+    });
+  }
+
+  const updatedRelease = { ...release, isMandatory };
+  await storage.updatePackageMetadata(deployment.id, release.label, {
+    isMandatory,
+  });
+
+  if (c.executionCtx) {
+    const account = await storage.getAccount(accountId);
+    c.executionCtx.waitUntil(
+      sendReleaseNotification(c.env, {
+        appName: app.name,
+        label: updatedRelease.label,
+        appVersion: updatedRelease.appVersion,
+        description: updatedRelease.description,
+        isMandatory: updatedRelease.isMandatory,
+        isDisabled: updatedRelease.isDisabled,
+        action: isMandatory ? "MandatoryOn" : "MandatoryOff",
         releasedBy: account.name || account.email,
       }),
     );
