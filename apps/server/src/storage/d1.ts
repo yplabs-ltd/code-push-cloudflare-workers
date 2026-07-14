@@ -91,6 +91,7 @@ export class D1StorageProvider implements StorageProvider {
       email: account.email.toLowerCase(),
       name: account.name,
       githubId: account.gitHubId,
+      googleId: account.googleId,
       createdTime: account.createdTime,
     });
 
@@ -109,14 +110,7 @@ export class D1StorageProvider implements StorageProvider {
       throw createStorageError(ErrorCode.NotFound, "Account not found");
     }
 
-    return {
-      id: account.id,
-      email: account.email,
-      name: account.name,
-      gitHubId: account.githubId ?? undefined,
-      createdTime: account.createdTime,
-      linkedProviders: account.githubId ? ["GitHub"] : [],
-    };
+    return this.mapAccountFromDB(account);
   }
 
   async getAccounts(): Promise<Account[]> {
@@ -124,14 +118,24 @@ export class D1StorageProvider implements StorageProvider {
       where: isNull(schema.account.deletedAt),
     });
 
-    return accounts.map((account) => ({
+    return accounts.map((account) => this.mapAccountFromDB(account));
+  }
+
+  private mapAccountFromDB(
+    account: typeof schema.account.$inferSelect,
+  ): Account {
+    return {
       id: account.id,
       email: account.email,
       name: account.name,
       gitHubId: account.githubId ?? undefined,
+      googleId: account.googleId ?? undefined,
       createdTime: account.createdTime,
-      linkedProviders: account.githubId ? ["GitHub"] : [],
-    }));
+      linkedProviders: [
+        ...(account.githubId ? ["GitHub"] : []),
+        ...(account.googleId ? ["Google"] : []),
+      ],
+    };
   }
 
   async getAccountByEmail(email: string): Promise<Account> {
@@ -146,14 +150,7 @@ export class D1StorageProvider implements StorageProvider {
       throw createStorageError(ErrorCode.NotFound, "Account not found");
     }
 
-    return {
-      id: account.id,
-      email: account.email,
-      name: account.name,
-      gitHubId: account.githubId ?? undefined,
-      createdTime: account.createdTime,
-      linkedProviders: account.githubId ? ["GitHub"] : [],
-    };
+    return this.mapAccountFromDB(account);
   }
 
   async updateAccount(email: string, updates: Partial<Account>): Promise<void> {
@@ -172,6 +169,7 @@ export class D1StorageProvider implements StorageProvider {
       .update(schema.account)
       .set({
         githubId: updates.gitHubId,
+        googleId: updates.googleId,
         name: updates.name,
       })
       .where(eq(schema.account.id, account.id));

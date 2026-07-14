@@ -4,6 +4,8 @@ import { z } from "zod";
 import {
   getGitHubAccessToken,
   getGitHubUser,
+  getGoogleAccessToken,
+  getGoogleUser,
   isGitHubOrgMember,
 } from "../middleware/auth";
 import { getStorageProvider } from "../storage/factory";
@@ -32,6 +34,40 @@ const routes = {
   callback: createRoute({
     method: "get",
     path: "/github/callback",
+    request: {
+      query: z.object({
+        code: z.string(),
+        state: z.string().optional(),
+      }),
+    },
+    responses: {
+      302: {
+        description: "Redirect to dashboard with session",
+      },
+      400: {
+        content: {
+          "application/json": {
+            schema: LoginErrorResponse,
+          },
+        },
+        description: "Login error",
+      },
+    },
+  }),
+
+  googleLogin: createRoute({
+    method: "get",
+    path: "/google/login",
+    responses: {
+      302: {
+        description: "Redirect to Google OAuth",
+      },
+    },
+  }),
+
+  googleCallback: createRoute({
+    method: "get",
+    path: "/google/callback",
     request: {
       query: z.object({
         code: z.string(),
@@ -191,6 +227,157 @@ router.openapi(routes.callback, async (c) => {
     if (error) {
       return loginErrorRedirect(error);
     }
+
+    // 웹: 세션 쿠키로 대시보드 리다이렉트 / CLI: 기존 JSON 토큰 유지
+    if (client === "web") {
+      return c.redirect(redirectTo);
+    }
+    return c.json({
+      accessKeyName,
+      token,
+    });
+  } catch (error) {
+    console.error("Auth error:", error);
+
+    return c.json(
+      {
+        error: "auth_failed",
+        error_description: "Authentication failed",
+      },
+      400,
+    );
+  }
+});
+
+// Google OAuth login
+router.openapi(routes.googleLogin, async (c) => {
+  if (!c.env.GOOGLE_CLIENT_ID) {
+    return c.json(
+      {
+        error: "google_not_configured",
+        error_description: "Google OAuth is not configured",
+      },
+      400,
+    );
+  }
+
+  const state = JSON.stringify({
+    client: c.req.query("client") ?? "cli",
+    redirectTo: c.req.query("redirect_to") ?? "/",
+  });
+  const params = new URLSearchParams({
+    client_id: c.env.GOOGLE_CLIENT_ID,
+    redirect_uri: `${c.env.SERVER_URL}/auth/google/callback`,
+    response_type: "code",
+    scope: "openid email profile",
+    state,
+  });
+
+  return c.redirect(
+    `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`,
+  );
+});
+
+// Google OAuth callback
+router.openapi(routes.googleCallback, async (c) => {
+  try {
+    const { code, state } = c.req.valid("query");
+    if (!code) {
+      return c.json(
+        {
+          error: "invalid_request",
+          error_description: "No code provided",
+        },
+        400,
+      );
+    }
+
+    let client = "cli";
+    let redirectTo = "/";
+    try {
+      const parsed = JSON.parse(state ?? "{}");
+      client = parsed.client ?? "cli";
+      redirectTo = parsed.redirectTo ?? "/";
+    } catch {}
+    const loginErrorRedirect = (errorCode: string) =>
+      client === "web"
+        ? c.redirect(
+            new URL(`/login?error=${errorCode}`, redirectTo).toString(),
+          )
+        : c.redirect(`/login?error=${errorCode}`);
+
+    const accessToken = await getGoogleAccessToken(code, c.env);
+    const googleUser = await getGoogleUser(accessToken);
+
+    // 허용 도메인 게이트 — GOOGLE_ALLOWED_DOMAIN(콤마 구분) 미설정 시 전부 거부
+    const emailDomain = googleUser.email.split("@")[1]?.toLowerCase() ?? "";
+    const allowedDomains = (c.env.GOOGLE_ALLOWED_DOMAIN ?? "")
+      .split(",")
+      .map((domain) => domain.trim().toLowerCase())
+      .filter(Boolean);
+    if (!allowedDomains.includes(emailDomain)) {
+      return loginErrorRedirect("google_domain_not_allowed");
+    }
+
+    const storage = getStorageProvider(c);
+
+    // Find or create account
+    let accountId: string;
+    try {
+      const account = await storage.getAccountByEmail(googleUser.email);
+
+      // Update Google ID if not set
+      if (!account.googleId) {
+        await storage.updateAccount(account.email, {
+          ...account,
+          googleId: googleUser.id,
+        });
+      }
+
+      accountId = account.id;
+    } catch {
+      // Create new account if registration is enabled
+      if (c.env.ENABLE_ACCOUNT_REGISTRATION !== "true") {
+        return loginErrorRedirect("registration_disabled");
+      }
+
+      accountId = await storage.addAccount({
+        email: googleUser.email,
+        name: googleUser.name,
+        googleId: googleUser.id,
+        createdTime: Date.now(),
+        linkedProviders: ["Google"],
+      });
+    }
+
+    // Create access key for session
+    const accessKeyName = generateKey();
+    await storage.addAccessKey(accountId, {
+      name: accessKeyName,
+      friendlyName: "Google OAuth Session",
+      createdBy: c.req.header("User-Agent") ?? "Unknown",
+      createdTime: Date.now(),
+      expires: Date.now() + 60 * 24 * 60 * 60 * 1000, // 60 days
+      isSession: true,
+    });
+    // Create JWT token
+    const token = await sign(
+      {
+        sub: accountId,
+        email: googleUser.email,
+      },
+      c.env.JWT_SECRET,
+    );
+
+    // Set session cookie
+    setCookie(c, "session", token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "Lax",
+      path: "/",
+      domain: c.env.COOKIE_DOMAIN || undefined,
+      maxAge: 60 * 60 * 24, // 1 day
+    });
 
     // 웹: 세션 쿠키로 대시보드 리다이렉트 / CLI: 기존 JSON 토큰 유지
     if (client === "web") {

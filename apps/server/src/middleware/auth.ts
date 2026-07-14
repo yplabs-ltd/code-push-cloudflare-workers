@@ -168,6 +168,76 @@ export async function isGitHubOrgMember(
   return membership.state === "active";
 }
 
+// Google OAuth helpers
+export interface GoogleUser {
+  id: string;
+  email: string;
+  name: string;
+}
+
+export async function getGoogleAccessToken(
+  code: string,
+  env: Env["Bindings"],
+): Promise<string> {
+  const response = await fetch("https://oauth2.googleapis.com/token", {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "authorization_code",
+      code,
+      client_id: env.GOOGLE_CLIENT_ID ?? "",
+      client_secret: env.GOOGLE_CLIENT_SECRET ?? "",
+      redirect_uri: `${env.SERVER_URL}/auth/google/callback`,
+    }),
+  });
+
+  const data = (await response.json()) as {
+    access_token?: string;
+    error?: string;
+    error_description?: string;
+  };
+  if (!data.access_token) {
+    throw new Error(
+      data.error_description || "Failed to get Google access token",
+    );
+  }
+
+  return data.access_token;
+}
+
+// ID token 파싱 대신 userinfo 엔드포인트 사용 — Workers엔 Buffer가 없고,
+// 토큰이 Google에서 TLS로 직접 온 것이라 서명 검증이 불필요하다.
+export async function getGoogleUser(accessToken: string): Promise<GoogleUser> {
+  const response = await fetch(
+    "https://openidconnect.googleapis.com/v1/userinfo",
+    {
+      headers: { authorization: `Bearer ${accessToken}` },
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error("Failed to get Google user data");
+  }
+
+  const data = await response.json<{
+    sub: string;
+    email?: string;
+    email_verified?: boolean;
+    name?: string;
+  }>();
+
+  // 도메인 게이트가 이메일 기반이므로 미검증 이메일은 거부
+  if (!data.email || data.email_verified === false) {
+    throw new Error("No verified email in Google userinfo");
+  }
+
+  return {
+    id: data.sub,
+    email: data.email,
+    name: data.name || data.email.split("@")[0],
+  };
+}
+
 export async function getGitHubUser(accessToken: string): Promise<GitHubUser> {
   const [userResponse, emailsResponse] = await Promise.all([
     fetch("https://api.github.com/user", {

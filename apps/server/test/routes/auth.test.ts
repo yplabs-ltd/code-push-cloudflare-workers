@@ -144,4 +144,104 @@ describe("Auth Routes", () => {
       expect(response.headers.get("Set-Cookie")).toBeNull();
     });
   });
+
+  describe("GET /auth/google/login", () => {
+    it("should redirect to Google OAuth", async () => {
+      const response = await SELF.fetch(
+        "https://example.com/auth/google/login",
+        { redirect: "manual" },
+      );
+
+      expect(response.status).toBe(302);
+      expect(response.headers.get("Location")).toMatch(
+        /^https:\/\/accounts\.google\.com\/o\/oauth2\/v2\/auth/,
+      );
+    });
+  });
+
+  describe("GET /auth/google/callback - 도메인 게이트", () => {
+    const webState = encodeURIComponent(
+      JSON.stringify({ client: "web", redirectTo: "http://localhost:5173/" }),
+    );
+
+    // Google OAuth 왕복(토큰 교환 → userinfo)을 목킹한다. 이메일만 케이스별로 바꿔
+    // 도메인 게이트(GOOGLE_ALLOWED_DOMAIN=test.dev, vitest.config.ts) 동작을 검증한다.
+    const mockGoogleFlow = (email: string) => {
+      fetchMock
+        .get("https://oauth2.googleapis.com")
+        .intercept({ path: "/token", method: "POST" })
+        .reply(200, { access_token: "ya29_test" });
+      fetchMock
+        .get("https://openidconnect.googleapis.com")
+        .intercept({ path: "/v1/userinfo", method: "GET" })
+        .reply(200, {
+          sub: "108123456789",
+          email,
+          email_verified: true,
+          name: "Tester",
+        });
+    };
+
+    afterEach(() => {
+      fetchMock.assertNoPendingInterceptors();
+    });
+
+    it("허용 도메인 이메일이면 로그인 통과 후 웹 오리진으로 리다이렉트", async () => {
+      mockGoogleFlow("tester@test.dev");
+
+      const response = await SELF.fetch(
+        `https://example.com/auth/google/callback?code=testcode&state=${webState}`,
+        { redirect: "manual" },
+      );
+
+      expect(response.status).toBe(302);
+      expect(response.headers.get("Location")).toBe("http://localhost:5173/");
+      expect(response.headers.get("Set-Cookie")).toMatch(/^session=/);
+    });
+
+    it("허용 외 도메인이면 google_domain_not_allowed로 거부(세션 미발급)", async () => {
+      mockGoogleFlow("tester@gmail.com");
+
+      const response = await SELF.fetch(
+        `https://example.com/auth/google/callback?code=testcode&state=${webState}`,
+        { redirect: "manual" },
+      );
+
+      expect(response.status).toBe(302);
+      expect(response.headers.get("Location")).toBe(
+        "http://localhost:5173/login?error=google_domain_not_allowed",
+      );
+      expect(response.headers.get("Set-Cookie")).toBeNull();
+    });
+
+    it("기존 계정과 같은 이메일이면 새 계정을 만들지 않고 연결한다", async () => {
+      // 허용 도메인 이메일로 기존(GitHub 기반) 계정 생성
+      const db = (await import("../utils/db")).getTestDb();
+      const schema = await import("../../src/db/schema");
+      await db.insert(schema.account).values({
+        id: "existing-account-id",
+        email: "tester@test.dev",
+        name: "Existing",
+        githubId: "4242",
+        createdTime: Date.now(),
+      });
+
+      mockGoogleFlow("tester@test.dev");
+
+      const response = await SELF.fetch(
+        `https://example.com/auth/google/callback?code=testcode&state=${webState}`,
+        { redirect: "manual" },
+      );
+
+      expect(response.status).toBe(302);
+      expect(response.headers.get("Set-Cookie")).toMatch(/^session=/);
+
+      // 계정이 늘지 않고 기존 계정에 googleId가 연결됨
+      const accounts = await db.select().from(schema.account);
+      expect(accounts).toHaveLength(1);
+      expect(accounts[0].id).toBe("existing-account-id");
+      expect(accounts[0].googleId).toBe("108123456789");
+      expect(accounts[0].githubId).toBe("4242");
+    });
+  });
 });
