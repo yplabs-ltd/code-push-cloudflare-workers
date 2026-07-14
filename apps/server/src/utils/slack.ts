@@ -1,29 +1,14 @@
 import type { Env } from "../types/env";
 
-type ReleaseActionType =
-  | "Uploaded"
-  | "Enabled"
-  | "Disabled"
-  | "MandatoryOn"
-  | "MandatoryOff";
+type ReleaseActionType = "Uploaded" | "Disabled" | "Mandatory";
 
 const SLACK_WEBHOOK_BASE = "https://hooks.slack.com/services";
 
-const ACTION_HEADER: Record<ReleaseActionType, string> = {
-  Uploaded: "새 릴리즈 업로드",
-  Enabled: "Disabled false",
-  Disabled: "Disabled true",
-  MandatoryOn: "Mandatory true",
-  MandatoryOff: "Mandatory false",
-};
-
-// 기호는 on/off가 아니라 카테고리 구분(Disabled=🧊, Mandatory=🔥). on/off는 헤더 텍스트가 표현.
+// 이모지·헤더는 액션 종류만 구분한다. on/off는 헤더 텍스트가 isDisabled/isMandatory 값으로 표현.
 const ACTION_EMOJI: Record<ReleaseActionType, string> = {
   Uploaded: "🚀",
-  Enabled: "🧊",
   Disabled: "🧊",
-  MandatoryOn: "🔥",
-  MandatoryOff: "🔥",
+  Mandatory: "🔥",
 };
 
 type ReleaseNotificationType = {
@@ -52,7 +37,13 @@ export const sendReleaseNotification = async (
     const platform = info.appName.toLowerCase().includes("android")
       ? "Android"
       : "iOS";
-    const header = `${ACTION_EMOJI[info.action]} ${platform} · ${ACTION_HEADER[info.action]}`;
+    const headerLabel =
+      info.action === "Uploaded"
+        ? "새 릴리즈 업로드"
+        : info.action === "Disabled"
+          ? `Disabled ${info.isDisabled ?? false}`
+          : `Mandatory ${info.isMandatory ?? false}`;
+    const header = `${ACTION_EMOJI[info.action]} ${platform} · ${headerLabel}`;
 
     // 라벨 + 앱 버전을 굵게, 설명은 있을 때만 다음 줄에.
     const summary = `*${info.label || "-"}*  ·  App ${info.appVersion}`;

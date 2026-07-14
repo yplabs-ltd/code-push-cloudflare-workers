@@ -1467,7 +1467,7 @@ router.openapi(routes.deployments.release.update, async (c) => {
         description: updatedRelease.description,
         isMandatory: updatedRelease.isMandatory,
         isDisabled: updatedRelease.isDisabled,
-        action: updatedRelease.isDisabled ? "Disabled" : "Enabled",
+        action: "Disabled",
         releasedBy: account.name || account.email,
       }),
     );
@@ -1531,7 +1531,7 @@ router.openapi(routes.deployments.release.updateDisabled, async (c) => {
         description: updatedRelease.description,
         isMandatory: updatedRelease.isMandatory,
         isDisabled: updatedRelease.isDisabled,
-        action: isDisabled ? "Disabled" : "Enabled",
+        action: "Disabled",
         releasedBy: account.name || account.email,
       }),
     );
@@ -1595,7 +1595,7 @@ router.openapi(routes.deployments.release.updateMandatory, async (c) => {
         description: updatedRelease.description,
         isMandatory: updatedRelease.isMandatory,
         isDisabled: updatedRelease.isDisabled,
-        action: isMandatory ? "MandatoryOn" : "MandatoryOff",
+        action: "Mandatory",
         releasedBy: account.name || account.email,
       }),
     );
