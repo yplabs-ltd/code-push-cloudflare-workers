@@ -20,6 +20,9 @@ CORS_ORIGINS = "http://localhost:5173"
 ENABLE_PACKAGE_DIFFING = "true"
 GITHUB_CLIENT_ID="Ov23liuoVBhHRJ02UweV"
 GITHUB_ORG="yplabs-ltd"
+# Google Cloud Console에서 로컬용 OAuth 클라이언트 생성 후 채울 것 (redirect URI: http://localhost:8787/auth/google/callback)
+GOOGLE_CLIENT_ID="898879441077-3u83tsjeg5fis4614vc6t8juip4283gn.apps.googleusercontent.com"
+GOOGLE_ALLOWED_DOMAIN="yplabs.kr"
 
 
 [env.production]
@@ -38,6 +41,9 @@ COOKIE_DOMAIN = "yplabs.workers.dev"
 ENABLE_PACKAGE_DIFFING = "true"
 GITHUB_CLIENT_ID="Ov23liyNc4o1iJYk03YU"
 GITHUB_ORG="yplabs-ltd"
+# Google Cloud Console에서 프로덕션용 OAuth 클라이언트 생성 후 채울 것. GOOGLE_CLIENT_SECRET은 wrangler secret put으로 등록.
+GOOGLE_CLIENT_ID="898879441077-3u83tsjeg5fis4614vc6t8juip4283gn.apps.googleusercontent.com"
+GOOGLE_ALLOWED_DOMAIN="yplabs.kr"
 R2_BUCKET_NAME="code-push-storage"
 ACCOUNT_ID="3ed9862a49fe75464126e11a462fd26e"
 AWS_REGION = "ap-northeast-2"

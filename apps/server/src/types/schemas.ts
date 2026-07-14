@@ -118,6 +118,7 @@ export const AccountSchema = z.object({
   name: z.string(),
   linkedProviders: z.array(z.string()),
   gitHubId: z.string().optional(),
+  googleId: z.string().optional(),
   createdTime: z.number(),
 });
 export type Account = z.infer<typeof AccountSchema>;

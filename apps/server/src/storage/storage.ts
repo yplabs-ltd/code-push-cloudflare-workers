@@ -92,11 +92,22 @@ export interface StorageProvider {
 
   updatePackage(pkg: Package, deploymentId: string): Promise<Package>;
 
+  updatePackageMetadata(
+    deploymentId: string,
+    label: string,
+    updates: { isDisabled?: boolean; isMandatory?: boolean },
+  ): Promise<void>;
+
   getPackageHistory(
     accountId: string,
     appId: string,
     deploymentId: string,
   ): Promise<Package[]>;
+  getPackageHistoryPage(
+    deploymentId: string,
+    page: number,
+    pageSize: number,
+  ): Promise<{ history: Package[]; totalCount: number }>;
   getPackageHistoryFromDeploymentKey(deploymentKey: string): Promise<Package[]>;
   updatePackageHistory(
     accountId: string,

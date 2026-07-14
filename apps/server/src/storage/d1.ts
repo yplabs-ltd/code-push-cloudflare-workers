@@ -1,4 +1,4 @@
-import { and, eq, isNull } from "drizzle-orm";
+import { and, count, desc, eq, isNull, sql } from "drizzle-orm";
 import { type DrizzleD1Database, drizzle } from "drizzle-orm/d1";
 import type { Context } from "hono";
 import * as schema from "../db/schema";
@@ -91,6 +91,7 @@ export class D1StorageProvider implements StorageProvider {
       email: account.email.toLowerCase(),
       name: account.name,
       githubId: account.gitHubId,
+      googleId: account.googleId,
       createdTime: account.createdTime,
     });
 
@@ -109,14 +110,7 @@ export class D1StorageProvider implements StorageProvider {
       throw createStorageError(ErrorCode.NotFound, "Account not found");
     }
 
-    return {
-      id: account.id,
-      email: account.email,
-      name: account.name,
-      gitHubId: account.githubId ?? undefined,
-      createdTime: account.createdTime,
-      linkedProviders: account.githubId ? ["GitHub"] : [],
-    };
+    return this.mapAccountFromDB(account);
   }
 
   async getAccounts(): Promise<Account[]> {
@@ -124,14 +118,24 @@ export class D1StorageProvider implements StorageProvider {
       where: isNull(schema.account.deletedAt),
     });
 
-    return accounts.map((account) => ({
+    return accounts.map((account) => this.mapAccountFromDB(account));
+  }
+
+  private mapAccountFromDB(
+    account: typeof schema.account.$inferSelect,
+  ): Account {
+    return {
       id: account.id,
       email: account.email,
       name: account.name,
       gitHubId: account.githubId ?? undefined,
+      googleId: account.googleId ?? undefined,
       createdTime: account.createdTime,
-      linkedProviders: account.githubId ? ["GitHub"] : [],
-    }));
+      linkedProviders: [
+        ...(account.githubId ? ["GitHub"] : []),
+        ...(account.googleId ? ["Google"] : []),
+      ],
+    };
   }
 
   async getAccountByEmail(email: string): Promise<Account> {
@@ -146,14 +150,7 @@ export class D1StorageProvider implements StorageProvider {
       throw createStorageError(ErrorCode.NotFound, "Account not found");
     }
 
-    return {
-      id: account.id,
-      email: account.email,
-      name: account.name,
-      gitHubId: account.githubId ?? undefined,
-      createdTime: account.createdTime,
-      linkedProviders: account.githubId ? ["GitHub"] : [],
-    };
+    return this.mapAccountFromDB(account);
   }
 
   async updateAccount(email: string, updates: Partial<Account>): Promise<void> {
@@ -172,6 +169,7 @@ export class D1StorageProvider implements StorageProvider {
       .update(schema.account)
       .set({
         githubId: updates.gitHubId,
+        googleId: updates.googleId,
         name: updates.name,
       })
       .where(eq(schema.account.id, account.id));
@@ -880,6 +878,27 @@ export class D1StorageProvider implements StorageProvider {
     return pkg;
   }
 
+  // disabled/mandatory 토글 전용 부분 UPDATE. updatePackage(여러 필드 통째 SET)와 달리
+  // 대상 컬럼만 갱신한다 — 히스토리 캐시가 isolate별 메모리라 stale 캐시 기반으로 전체 필드를
+  // 쓰면 다른 isolate에서 방금 바꾼 필드를 되돌릴 수 있어(lost update), 토글은 이 경로를 쓴다.
+  async updatePackageMetadata(
+    deploymentId: string,
+    label: string,
+    updates: { isDisabled?: boolean; isMandatory?: boolean },
+  ): Promise<void> {
+    await this.db
+      .update(schema.packages)
+      .set(updates)
+      .where(
+        and(
+          eq(schema.packages.deploymentId, deploymentId),
+          eq(schema.packages.label, label),
+          isNull(schema.packages.deletedAt),
+        ),
+      );
+    await this.cache.del(this.cacheKeys.package(deploymentId));
+  }
+
   async getPackageHistory(
     accountId: string,
     appId: string,
@@ -913,6 +932,46 @@ export class D1StorageProvider implements StorageProvider {
     // Cache the result for 5 minutes
     await this.cache.set(cacheKey, JSON.stringify(result), 300);
     return result;
+  }
+
+  // 관리용 history 엔드포인트 전용. OTA(updateCheck)·롤백·중복검사가 쓰는
+  // getPackageHistory(전체·오름차순·diff·presigned·캐시)와 별개 경로다.
+  // 웹·CLI가 blobUrl/diffPackageMap을 쓰지 않으므로 서명·diff 조회를 생략하고,
+  // 캐시하지 않는다(캐시하면 commitPackage/updatePackage 등 4곳 무효화에 전부 걸어야 함).
+  async getPackageHistoryPage(
+    deploymentId: string,
+    page: number,
+    pageSize: number,
+  ): Promise<{ history: Package[]; totalCount: number }> {
+    const where = and(
+      eq(schema.packages.deploymentId, deploymentId),
+      isNull(schema.packages.deletedAt),
+    );
+
+    const [countResult] = await this.db
+      .select({ totalCount: count() })
+      .from(schema.packages)
+      .where(where);
+
+    // uploadTime 동률 대비 보조 정렬키. label("v12")은 문자열 비교 시 "v10" < "v2"라
+    // 숫자로 캐스팅해 배포 순서와 일치시킨다.
+    const packages = await this.db.query.packages.findMany({
+      where,
+      orderBy: [
+        desc(schema.packages.uploadTime),
+        sql`CAST(substr(${schema.packages.label}, 2) AS INTEGER) DESC`,
+      ],
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+    });
+
+    const history = packages.map((p) => ({
+      ...this.mapPackageFromDB(p),
+      blobUrl: "",
+      manifestBlobUrl: "",
+    }));
+
+    return { history, totalCount: countResult?.totalCount ?? 0 };
   }
 
   async getPackageHistoryFromDeploymentKey(

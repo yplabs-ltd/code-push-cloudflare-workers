@@ -29,6 +29,13 @@
       "when": 1737298919485,
       "tag": "0003_striped_tomas",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "6",
+      "when": 1784008415419,
+      "tag": "0004_add_google_id",
+      "breakpoints": true
     }
   ]
 }

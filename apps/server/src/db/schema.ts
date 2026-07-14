@@ -13,6 +13,7 @@ export const account = sqliteTable("account", {
   email: text("email").notNull().unique(),
   name: text("name").notNull(),
   githubId: text("github_id"),
+  googleId: text("google_id"),
   createdTime: integer("created_time").notNull(),
   deletedAt: integer("deleted_at"),
 });

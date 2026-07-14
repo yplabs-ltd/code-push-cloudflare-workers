@@ -1,0 +1,1 @@
+ALTER TABLE `account` ADD `google_id` text;

@@ -12,6 +12,10 @@ export interface Env {
     CORS_ORIGINS: string;
     // 세션 쿠키를 서브도메인 간 공유하기 위한 상위 도메인(예: yplabs.workers.dev). 로컬은 미설정.
     COOKIE_DOMAIN?: string;
+    GOOGLE_CLIENT_ID?: string;
+    GOOGLE_CLIENT_SECRET?: string;
+    // Google 로그인 허용 이메일 도메인(콤마 구분, 예: "yplabs.kr"). 미설정 시 Google 로그인 전부 거부.
+    GOOGLE_ALLOWED_DOMAIN?: string;
     ACCOUNT_ID: string;
     R2_BUCKET_NAME: string;
     R2_ACCESS_KEY_ID: string;

@@ -298,6 +298,44 @@ export interface AppsAppNameDeploymentsDeploymentNameMetricsGet200ResponseMetric
 /**
  * 
  * @export
+ * @interface AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest
+ */
+export interface AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest
+     */
+    'label'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest
+     */
+    'isDisabled': boolean;
+}
+/**
+ * 
+ * @export
+ * @interface AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest
+ */
+export interface AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest
+     */
+    'label'?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest
+     */
+    'isMandatory': boolean;
+}
+/**
+ * 
+ * @export
  * @interface AppsAppNameDeploymentsDeploymentNameReleasePatchRequest
  */
 export interface AppsAppNameDeploymentsDeploymentNameReleasePatchRequest {
@@ -1910,6 +1948,88 @@ export const DefaultApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
+         * Update release disabled state
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest} [appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameReleaseDisabledPatch: async (appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest?: AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameReleaseDisabledPatch', 'appName', appName)
+            // verify required parameter 'deploymentName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameReleaseDisabledPatch', 'deploymentName', deploymentName)
+            const localVarPath = `/apps/{appName}/deployments/{deploymentName}/release/disabled`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Update release mandatory state
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest} [appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatch: async (appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest?: AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'appName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatch', 'appName', appName)
+            // verify required parameter 'deploymentName' is not null or undefined
+            assertParamExists('appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatch', 'deploymentName', deploymentName)
+            const localVarPath = `/apps/{appName}/deployments/{deploymentName}/release/mandatory`
+                .replace(`{${"appName"}}`, encodeURIComponent(String(appName)))
+                .replace(`{${"deploymentName"}}`, encodeURIComponent(String(deploymentName)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          * Update release
          * @param {string} appName 
          * @param {string} deploymentName 
@@ -2910,6 +3030,34 @@ export const DefaultApiFp = function(configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
+         * Update release disabled state
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest} [appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDeploymentsDeploymentNameReleaseDisabledPatch(appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest?: AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsDeploymentNameReleaseDisabledPatch(appName, deploymentName, appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsDeploymentNameReleaseDisabledPatch']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * Update release mandatory state
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest} [appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatch(appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest?: AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatch(appName, deploymentName, appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['DefaultApi.appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatch']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
          * Update release
          * @param {string} appName 
          * @param {string} deploymentName 
@@ -3344,6 +3492,28 @@ export const DefaultApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.appsAppNameDeploymentsDeploymentNamePatch(appName, deploymentName, appsAppNamePatchRequest, options).then((request) => request(axios, basePath));
         },
         /**
+         * Update release disabled state
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest} [appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameReleaseDisabledPatch(appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest?: AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.appsAppNameDeploymentsDeploymentNameReleaseDisabledPatch(appName, deploymentName, appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Update release mandatory state
+         * @param {string} appName 
+         * @param {string} deploymentName 
+         * @param {AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest} [appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatch(appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest?: AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatch(appName, deploymentName, appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          * Update release
          * @param {string} appName 
          * @param {string} deploymentName 
@@ -3715,6 +3885,28 @@ export interface DefaultApiInterface {
      * @memberof DefaultApiInterface
      */
     appsAppNameDeploymentsDeploymentNamePatch(appName: string, deploymentName: string, appsAppNamePatchRequest?: AppsAppNamePatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<AppsAppNameDeploymentsPost201Response>;
+
+    /**
+     * Update release disabled state
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest} [appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDeploymentsDeploymentNameReleaseDisabledPatch(appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest?: AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<void>;
+
+    /**
+     * Update release mandatory state
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest} [appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApiInterface
+     */
+    appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatch(appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest?: AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest, options?: RawAxiosRequestConfig): AxiosPromise<void>;
 
     /**
      * Update release
@@ -4121,6 +4313,32 @@ export class DefaultApi extends BaseAPI implements DefaultApiInterface {
      */
     public appsAppNameDeploymentsDeploymentNamePatch(appName: string, deploymentName: string, appsAppNamePatchRequest?: AppsAppNamePatchRequest, options?: RawAxiosRequestConfig) {
         return DefaultApiFp(this.configuration).appsAppNameDeploymentsDeploymentNamePatch(appName, deploymentName, appsAppNamePatchRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update release disabled state
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest} [appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDeploymentsDeploymentNameReleaseDisabledPatch(appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest?: AppsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsDeploymentNameReleaseDisabledPatch(appName, deploymentName, appsAppNameDeploymentsDeploymentNameReleaseDisabledPatchRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Update release mandatory state
+     * @param {string} appName 
+     * @param {string} deploymentName 
+     * @param {AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest} [appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest] 
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof DefaultApi
+     */
+    public appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatch(appName: string, deploymentName: string, appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest?: AppsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest, options?: RawAxiosRequestConfig) {
+        return DefaultApiFp(this.configuration).appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatch(appName, deploymentName, appsAppNameDeploymentsDeploymentNameReleaseMandatoryPatchRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
