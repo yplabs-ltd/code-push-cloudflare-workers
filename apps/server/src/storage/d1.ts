@@ -1,4 +1,4 @@
-import { and, eq, isNull } from "drizzle-orm";
+import { and, count, desc, eq, isNull, sql } from "drizzle-orm";
 import { type DrizzleD1Database, drizzle } from "drizzle-orm/d1";
 import type { Context } from "hono";
 import * as schema from "../db/schema";
@@ -913,6 +913,46 @@ export class D1StorageProvider implements StorageProvider {
     // Cache the result for 5 minutes
     await this.cache.set(cacheKey, JSON.stringify(result), 300);
     return result;
+  }
+
+  // 관리용 history 엔드포인트 전용. OTA(updateCheck)·롤백·중복검사가 쓰는
+  // getPackageHistory(전체·오름차순·diff·presigned·캐시)와 별개 경로다.
+  // 웹·CLI가 blobUrl/diffPackageMap을 쓰지 않으므로 서명·diff 조회를 생략하고,
+  // 캐시하지 않는다(캐시하면 commitPackage/updatePackage 등 4곳 무효화에 전부 걸어야 함).
+  async getPackageHistoryPage(
+    deploymentId: string,
+    page: number,
+    pageSize: number,
+  ): Promise<{ history: Package[]; totalCount: number }> {
+    const where = and(
+      eq(schema.packages.deploymentId, deploymentId),
+      isNull(schema.packages.deletedAt),
+    );
+
+    const [countResult] = await this.db
+      .select({ totalCount: count() })
+      .from(schema.packages)
+      .where(where);
+
+    // uploadTime 동률 대비 보조 정렬키. label("v12")은 문자열 비교 시 "v10" < "v2"라
+    // 숫자로 캐스팅해 배포 순서와 일치시킨다.
+    const packages = await this.db.query.packages.findMany({
+      where,
+      orderBy: [
+        desc(schema.packages.uploadTime),
+        sql`CAST(substr(${schema.packages.label}, 2) AS INTEGER) DESC`,
+      ],
+      limit: pageSize,
+      offset: (page - 1) * pageSize,
+    });
+
+    const history = packages.map((p) => ({
+      ...this.mapPackageFromDB(p),
+      blobUrl: "",
+      manifestBlobUrl: "",
+    }));
+
+    return { history, totalCount: countResult?.totalCount ?? 0 };
   }
 
   async getPackageHistoryFromDeploymentKey(

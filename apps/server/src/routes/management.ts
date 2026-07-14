@@ -1771,20 +1771,13 @@ router.openapi(routes.deployments.history, async (c) => {
     });
   }
 
-  // getPackageHistory는 uploadTime 오름차순 전체 배열을 반환한다(OTA·롤백·중복검사 등이
-  // 공유하는 계약이므로 그대로 둔다). 페이지네이션은 이 핸들러에서만 최신순으로 뒤집어
-  // 슬라이스한다. 파라미터가 없으면 page=1/pageSize=20 → 최신 페이지가 기본.
-  const fullHistory = await storage.getPackageHistory(
-    accountId,
-    app.id,
+  // DB 레벨 LIMIT/OFFSET 페이지네이션(최신순). 파라미터가 없으면 page=1/pageSize=20이
+  // 기본이라 쿼리 없이 호출하는 CLI(code-push-standalone)도 기존과 동일하게 최신 20개를 받는다.
+  const { history, totalCount } = await storage.getPackageHistoryPage(
     deployment.id,
+    page,
+    pageSize,
   );
-  const totalCount = fullHistory.length;
-  const start = (page - 1) * pageSize;
-  const history = fullHistory
-    .slice()
-    .reverse()
-    .slice(start, start + pageSize);
 
   return c.json({ history, totalCount, page, pageSize });
 });
