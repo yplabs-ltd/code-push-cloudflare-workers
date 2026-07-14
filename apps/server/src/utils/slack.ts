@@ -18,7 +18,6 @@ const ACTION_EMOJI: Record<ReleaseActionType, string> = {
 
 type ReleaseNotificationType = {
   appName: string;
-  deploymentName: string;
   label?: string;
   appVersion: string;
   description?: string;
@@ -49,11 +48,10 @@ export const sendReleaseNotification = async (
     const summary = `*${info.label || "-"}*  ·  App ${info.appVersion}`;
     const body = info.description ? `${summary}\n${info.description}` : summary;
 
-    // 부가 정보는 작은 context 줄로 (Deployment · Mandatory · Disabled · 작성자)
+    // 부가 정보는 작은 context 줄로 (Mandatory · Disabled · 작성자)
     const context = [
-      `📦 ${info.deploymentName}`,
-      `Mandatory ${info.isMandatory ? "✅" : "❌"}`,
-      `Disabled ${info.isDisabled ? "✅" : "❌"}`,
+      `Mandatory ${info.isMandatory ? "✓" : "✗"}`,
+      `Disabled ${info.isDisabled ? "✓" : "✗"}`,
       `👤 ${info.releasedBy || "-"}`,
     ].join("   ·   ");
 
