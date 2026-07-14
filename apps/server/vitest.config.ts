@@ -24,6 +24,8 @@ export default defineWorkersProject(async () => {
             d1Databases: ["DB"],
             bindings: {
               TEST_MIGRATIONS: migrations,
+              // .dev.vars의 실제 webhook이 로드되면 테스트가 실채널로 Slack을 쏜다. 반드시 빈 값 고정.
+              CODE_PUSH_NOTI_SLACK: "",
               GITHUB_CLIENT_ID: "xxx",
               GITHUB_CLIENT_SECRET: "xxx",
               GITHUB_ORG: "test-org",

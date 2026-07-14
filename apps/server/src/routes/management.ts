@@ -534,6 +534,58 @@ const routes = {
           },
         },
       }),
+      updateDisabled: createRoute({
+        method: "patch",
+        path: "/apps/:appName/deployments/:deploymentName/release/disabled",
+        description: "Update release disabled state",
+        request: {
+          params: z.object({
+            appName: z.string(),
+            deploymentName: z.string(),
+          }),
+          body: {
+            content: {
+              "application/json": {
+                schema: z.object({
+                  label: z.string().optional(),
+                  isDisabled: z.boolean(),
+                }),
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: "Release disabled state updated successfully",
+          },
+        },
+      }),
+      updateMandatory: createRoute({
+        method: "patch",
+        path: "/apps/:appName/deployments/:deploymentName/release/mandatory",
+        description: "Update release mandatory state",
+        request: {
+          params: z.object({
+            appName: z.string(),
+            deploymentName: z.string(),
+          }),
+          body: {
+            content: {
+              "application/json": {
+                schema: z.object({
+                  label: z.string().optional(),
+                  isMandatory: z.boolean(),
+                }),
+              },
+            },
+          },
+        },
+        responses: {
+          200: {
+            description: "Release mandatory state updated successfully",
+          },
+        },
+      }),
     },
     history: createRoute({
       method: "get",
@@ -1245,109 +1297,133 @@ router.openapi(routes.deployments.release.create, async (c) => {
     });
   }
 
-  // Check if there's an unfinished rollout
-  if (
-    deployment.package?.rollout &&
-    deployment.package.rollout < 100 &&
-    !deployment.package.isDisabled
-  ) {
-    throw new HTTPException(409, {
-      message:
-        "Please update the previous release to 100% rollout before releasing a new package",
-    });
-  }
+  const releasePackage = async () => {
+    // Check if there's an unfinished rollout
+    if (
+      deployment.package?.rollout &&
+      deployment.package.rollout < 100 &&
+      !deployment.package.isDisabled
+    ) {
+      throw new HTTPException(409, {
+        message:
+          "Please update the previous release to 100% rollout before releasing a new package",
+      });
+    }
 
-  const packageData = await packageFile.arrayBuffer();
-  const differ = await createPackageDiffer(
-    storage,
-    app.id,
-    deployment.id,
-    packageData,
-  );
-  const manifestResult = await differ.generateManifest();
-  const packageHash = await manifestResult.computeHash();
-
-  // Check if this is a duplicate of the current release
-  const history = await storage.getPackageHistory(
-    accountId,
-    app.id,
-    deployment.id,
-  );
-  const lastPackage = history[history.length - 1];
-  if (lastPackage && lastPackage.packageHash === packageHash) {
-    throw new HTTPException(409, {
-      message:
-        "The uploaded package was not released because it is identical to the contents of the specified deployment's current release",
-    });
-  }
-
-  // Store package blob
-  const blobId = generateKey();
-  await storage.addBlob(blobId, packageData, packageData.byteLength);
-  const blobUrl = await storage.getBlobUrl(blobId);
-
-  // Store manifest if available
-  let manifestUrl = "";
-  if (manifestResult) {
-    const manifestBlobId = generateKey();
-    const manifestJson = manifestResult.serialize();
-    const manifestBuffer = new TextEncoder().encode(manifestJson);
-    await storage.addBlob(
-      manifestBlobId,
-      manifestBuffer,
-      manifestBuffer.length,
+    const packageData = await packageFile.arrayBuffer();
+    const differ = await createPackageDiffer(
+      storage,
+      app.id,
+      deployment.id,
+      packageData,
     );
-    manifestUrl = await storage.getBlobUrl(manifestBlobId);
-  }
+    const manifestResult = await differ.generateManifest();
+    const packageHash = await manifestResult.computeHash();
 
-  const newPackage: Omit<Package, "label"> = {
-    appVersion: packageInfo.appVersion,
-    description: packageInfo.description,
-    isDisabled: packageInfo.isDisabled || false,
-    isMandatory: packageInfo.isMandatory || false,
-    rollout: packageInfo.rollout,
-    packageHash,
-    size: packageData.byteLength,
-    blobUrl,
-    manifestBlobUrl: manifestUrl,
-    uploadTime: Date.now(),
-    releaseMethod: "Upload",
+    // Check if this is a duplicate of the current release
+    const history = await storage.getPackageHistory(
+      accountId,
+      app.id,
+      deployment.id,
+    );
+    const lastPackage = history[history.length - 1];
+    if (lastPackage && lastPackage.packageHash === packageHash) {
+      throw new HTTPException(409, {
+        message:
+          "The uploaded package was not released because it is identical to the contents of the specified deployment's current release",
+      });
+    }
+
+    // Store package blob
+    const blobId = generateKey();
+    await storage.addBlob(blobId, packageData, packageData.byteLength);
+    const blobUrl = await storage.getBlobUrl(blobId);
+
+    // Store manifest if available
+    let manifestUrl = "";
+    if (manifestResult) {
+      const manifestBlobId = generateKey();
+      const manifestJson = manifestResult.serialize();
+      const manifestBuffer = new TextEncoder().encode(manifestJson);
+      await storage.addBlob(
+        manifestBlobId,
+        manifestBuffer,
+        manifestBuffer.length,
+      );
+      manifestUrl = await storage.getBlobUrl(manifestBlobId);
+    }
+
+    const newPackage: Omit<Package, "label"> = {
+      appVersion: packageInfo.appVersion,
+      description: packageInfo.description,
+      isDisabled: packageInfo.isDisabled || false,
+      isMandatory: packageInfo.isMandatory || false,
+      rollout: packageInfo.rollout,
+      packageHash,
+      size: packageData.byteLength,
+      blobUrl,
+      manifestBlobUrl: manifestUrl,
+      uploadTime: Date.now(),
+      releaseMethod: "Upload",
+    };
+
+    const releasedPackage = await storage.commitPackage(
+      accountId,
+      app.id,
+      deployment.id,
+      newPackage,
+    );
+
+    // Generate diffs in background
+    if (manifestResult) {
+      await differ.generateDiffs(history);
+    }
+
+    c.header(
+      "Location",
+      urlEncode`/apps/${appName}/deployments/${deploymentName}`,
+    );
+
+    const account = await storage.getAccount(accountId);
+    if (c.executionCtx) {
+      c.executionCtx.waitUntil(
+        sendReleaseNotification(c.env, {
+          appName: app.name,
+          label: releasedPackage.label,
+          appVersion: releasedPackage.appVersion,
+          description: releasedPackage.description,
+          isMandatory: releasedPackage.isMandatory,
+          isDisabled: releasedPackage.isDisabled,
+          action: "Uploaded",
+          releasedBy: account.name || account.email,
+        }),
+      );
+    }
+
+    return c.json({ package: releasedPackage }, 201);
   };
 
-  const releasedPackage = await storage.commitPackage(
-    accountId,
-    app.id,
-    deployment.id,
-    newPackage,
-  );
-
-  // Generate diffs in background
-  if (manifestResult) {
-    await differ.generateDiffs(history);
+  // 인증·권한을 통과한 실제 업로드 시도의 실패(롤아웃 미완/중복 번들/R2·D1 오류)를 Slack에 알린다.
+  try {
+    return await releasePackage();
+  } catch (error) {
+    if (c.executionCtx) {
+      const account = await storage.getAccount(accountId).catch(() => null);
+      c.executionCtx.waitUntil(
+        sendReleaseNotification(c.env, {
+          appName: app.name,
+          appVersion: packageInfo.appVersion,
+          description: packageInfo.description,
+          isMandatory: packageInfo.isMandatory,
+          isDisabled: packageInfo.isDisabled,
+          action: "UploadFailed",
+          releasedBy: account ? account.name || account.email : undefined,
+          errorMessage: error instanceof Error ? error.message : String(error),
+        }),
+      );
+    }
+    throw error;
   }
-
-  c.header(
-    "Location",
-    urlEncode`/apps/${appName}/deployments/${deploymentName}`,
-  );
-
-  const account = await storage.getAccount(accountId);
-  if (c.executionCtx) {
-    c.executionCtx.waitUntil(
-      sendReleaseNotification(c.env, {
-        appName: app.name,
-        label: releasedPackage.label,
-        appVersion: releasedPackage.appVersion,
-        description: releasedPackage.description,
-        isMandatory: releasedPackage.isMandatory,
-        isDisabled: releasedPackage.isDisabled,
-        action: "Uploaded",
-        releasedBy: account.name || account.email,
-      }),
-    );
-  }
-
-  return c.json({ package: releasedPackage }, 201);
 });
 
 router.openapi(routes.deployments.release.update, async (c) => {
@@ -1415,7 +1491,135 @@ router.openapi(routes.deployments.release.update, async (c) => {
         description: updatedRelease.description,
         isMandatory: updatedRelease.isMandatory,
         isDisabled: updatedRelease.isDisabled,
-        action: updatedRelease.isDisabled ? "Disabled" : "Enabled",
+        action: "Disabled",
+        releasedBy: account.name || account.email,
+      }),
+    );
+  }
+
+  return c.json({ release: updatedRelease });
+});
+
+router.openapi(routes.deployments.release.updateDisabled, async (c) => {
+  const storage = getStorageProvider(c);
+  const accountId = c.var.auth.accountId;
+  const { appName, deploymentName } = c.req.valid("param");
+  const { label, isDisabled } = c.req.valid("json");
+
+  const app = await storage.getApp(accountId, { appName });
+  if (!app) {
+    throw new HTTPException(404, {
+      message: `App "${appName}" not found`,
+    });
+  }
+
+  throwIfInvalidPermissions(app, "Collaborator");
+
+  const deployments = await storage.getDeployments(accountId, app.id);
+  const deployment = deployments.find((d) => d.name === deploymentName);
+
+  if (!deployment) {
+    throw new HTTPException(404, {
+      message: `Deployment "${deploymentName}" not found`,
+    });
+  }
+
+  const packageHistory = await storage.getPackageHistory(
+    accountId,
+    app.id,
+    deployment.id,
+  );
+
+  const release = label
+    ? packageHistory.find((p) => p.label === label)
+    : packageHistory[packageHistory.length - 1];
+
+  if (!release?.label) {
+    throw new HTTPException(404, {
+      message: "Release package not found",
+    });
+  }
+
+  const updatedRelease = { ...release, isDisabled };
+  await storage.updatePackageMetadata(deployment.id, release.label, {
+    isDisabled,
+  });
+
+  if (c.executionCtx) {
+    const account = await storage.getAccount(accountId);
+    c.executionCtx.waitUntil(
+      sendReleaseNotification(c.env, {
+        appName: app.name,
+        label: updatedRelease.label,
+        appVersion: updatedRelease.appVersion,
+        description: updatedRelease.description,
+        isMandatory: updatedRelease.isMandatory,
+        isDisabled: updatedRelease.isDisabled,
+        action: "Disabled",
+        releasedBy: account.name || account.email,
+      }),
+    );
+  }
+
+  return c.json({ release: updatedRelease });
+});
+
+router.openapi(routes.deployments.release.updateMandatory, async (c) => {
+  const storage = getStorageProvider(c);
+  const accountId = c.var.auth.accountId;
+  const { appName, deploymentName } = c.req.valid("param");
+  const { label, isMandatory } = c.req.valid("json");
+
+  const app = await storage.getApp(accountId, { appName });
+  if (!app) {
+    throw new HTTPException(404, {
+      message: `App "${appName}" not found`,
+    });
+  }
+
+  throwIfInvalidPermissions(app, "Collaborator");
+
+  const deployments = await storage.getDeployments(accountId, app.id);
+  const deployment = deployments.find((d) => d.name === deploymentName);
+
+  if (!deployment) {
+    throw new HTTPException(404, {
+      message: `Deployment "${deploymentName}" not found`,
+    });
+  }
+
+  const packageHistory = await storage.getPackageHistory(
+    accountId,
+    app.id,
+    deployment.id,
+  );
+
+  const release = label
+    ? packageHistory.find((p) => p.label === label)
+    : packageHistory[packageHistory.length - 1];
+
+  if (!release?.label) {
+    throw new HTTPException(404, {
+      message: "Release package not found",
+    });
+  }
+
+  const updatedRelease = { ...release, isMandatory };
+  await storage.updatePackageMetadata(deployment.id, release.label, {
+    isMandatory,
+  });
+
+  if (c.executionCtx) {
+    const account = await storage.getAccount(accountId);
+    c.executionCtx.waitUntil(
+      sendReleaseNotification(c.env, {
+        appName: app.name,
+        label: updatedRelease.label,
+        appVersion: updatedRelease.appVersion,
+        description: updatedRelease.description,
+        isMandatory: updatedRelease.isMandatory,
+        isDisabled: updatedRelease.isDisabled,
+        action: "Mandatory",
         releasedBy: account.name || account.email,
       }),
     );
