@@ -17,14 +17,13 @@ const ACTION_HEADER: Record<ReleaseActionType, string> = {
   MandatoryOff: "Mandatory false",
 };
 
-// 헤더 블록에서 이모지는 크게 렌더링되므로 토글류는 플레인 문자를 쓴다.
-// 기호는 on/off가 아니라 카테고리 구분(Disabled=✕, Mandatory=★). on/off는 헤더 텍스트가 표현.
+// 기호는 on/off가 아니라 카테고리 구분(Disabled=🧊, Mandatory=🔥). on/off는 헤더 텍스트가 표현.
 const ACTION_EMOJI: Record<ReleaseActionType, string> = {
   Uploaded: "🚀",
-  Enabled: "✕",
-  Disabled: "✕",
-  MandatoryOn: "★",
-  MandatoryOff: "★",
+  Enabled: "🧊",
+  Disabled: "🧊",
+  MandatoryOn: "🔥",
+  MandatoryOff: "🔥",
 };
 
 type ReleaseNotificationType = {
