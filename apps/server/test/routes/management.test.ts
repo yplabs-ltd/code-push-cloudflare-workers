@@ -1797,5 +1797,151 @@ describe("Management Routes", () => {
       expect(data.release.appVersion).toBe("1.0.0");
     });
   });
+
+  describe("PATCH /apps/:appName/deployments/:deploymentName/release/{disabled,mandatory}", () => {
+    let app: typeof schema.app.$inferInsert;
+    let deployment: typeof schema.deployment.$inferInsert;
+
+    beforeEach(async () => {
+      app = createTestApp();
+      await db.insert(schema.app).values(app);
+      await db.insert(schema.collaborator).values({
+        appId: app.id,
+        accountId: auth.getCurrentAccountId(),
+        permission: "Owner",
+      });
+      deployment = createTestDeployment(app.id);
+      await db.insert(schema.deployment).values(deployment);
+      // v1: disabled 상태, v2: mandatory 상태(최신) — 부분 UPDATE가 다른 필드를 건드리지 않는지 검증용
+      const package1 = createTestPackage(deployment.id, {
+        label: "v1",
+        appVersion: "1.0.0",
+        isDisabled: true,
+        uploadTime: Date.now() - 1000,
+      });
+      const package2 = createTestPackage(deployment.id, {
+        label: "v2",
+        appVersion: "1.0.1",
+        isMandatory: true,
+        uploadTime: Date.now(),
+      });
+      await db.insert(schema.packages).values(package1);
+      await db.insert(schema.packages).values(package2);
+      await Promise.all([
+        createTestBlob(package1.blobPath, "blob1"),
+        createTestBlob(package1.manifestBlobPath as string, "blob2"),
+        createTestBlob(package2.blobPath, "blob3"),
+        createTestBlob(package2.manifestBlobPath as string, "blob4"),
+      ]);
+    });
+
+    const fetchToggle = (
+      kind: "disabled" | "mandatory",
+      body: object,
+      headers: HeadersInit = {},
+    ) =>
+      SELF.fetch(
+        `https://example.com/apps/${app.name}/deployments/${deployment.name}/release/${kind}`,
+        { method: "PATCH", headers, body: JSON.stringify(body) },
+      );
+
+    const getRow = async (label: string) => {
+      const [row] = await db
+        .select()
+        .from(schema.packages)
+        .where(
+          and(
+            eq(schema.packages.deploymentId, deployment.id as string),
+            eq(schema.packages.label, label),
+          ),
+        );
+      return row;
+    };
+
+    it("disables a release by label without touching isMandatory", async () => {
+      const headers = await auth.getAuthHeaders();
+      const response = await fetchToggle(
+        "disabled",
+        { label: "v2", isDisabled: true },
+        headers,
+      );
+
+      expect(response.status).toBe(200);
+      const data: any = await response.json();
+      expect(data.release.label).toBe("v2");
+      expect(data.release.isDisabled).toBe(true);
+
+      const row = await getRow("v2");
+      expect(row.isDisabled).toBe(true);
+      expect(row.isMandatory).toBe(true); // 부분 UPDATE — mandatory 불변
+    });
+
+    it("enables a disabled release", async () => {
+      const headers = await auth.getAuthHeaders();
+      const response = await fetchToggle(
+        "disabled",
+        { label: "v1", isDisabled: false },
+        headers,
+      );
+
+      expect(response.status).toBe(200);
+      const row = await getRow("v1");
+      expect(row.isDisabled).toBe(false);
+    });
+
+    it("sets mandatory by label without touching isDisabled", async () => {
+      const headers = await auth.getAuthHeaders();
+      const response = await fetchToggle(
+        "mandatory",
+        { label: "v1", isMandatory: true },
+        headers,
+      );
+
+      expect(response.status).toBe(200);
+      const data: any = await response.json();
+      expect(data.release.label).toBe("v1");
+      expect(data.release.isMandatory).toBe(true);
+
+      const row = await getRow("v1");
+      expect(row.isMandatory).toBe(true);
+      expect(row.isDisabled).toBe(true); // 부분 UPDATE — disabled 불변
+    });
+
+    it("targets the latest release when label is omitted", async () => {
+      const headers = await auth.getAuthHeaders();
+      const response = await fetchToggle(
+        "mandatory",
+        { isMandatory: false },
+        headers,
+      );
+
+      expect(response.status).toBe(200);
+      const data: any = await response.json();
+      expect(data.release.label).toBe("v2");
+
+      const v2 = await getRow("v2");
+      expect(v2.isMandatory).toBe(false);
+      const v1 = await getRow("v1");
+      expect(v1.isMandatory).toBe(false); // 다른 행 불변
+    });
+
+    it("returns 404 for unknown label", async () => {
+      const headers = await auth.getAuthHeaders();
+      const response = await fetchToggle(
+        "disabled",
+        { label: "v99", isDisabled: true },
+        headers,
+      );
+      expect(response.status).toBe(404);
+    });
+
+    it("returns 401 when not authenticated", async () => {
+      const response = await fetchToggle("mandatory", {
+        label: "v1",
+        isMandatory: true,
+      });
+      expect(response.status).toBe(401);
+    });
+  });
 });
 
