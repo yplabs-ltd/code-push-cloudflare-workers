@@ -1336,7 +1336,6 @@ router.openapi(routes.deployments.release.create, async (c) => {
     c.executionCtx.waitUntil(
       sendReleaseNotification(c.env, {
         appName: app.name,
-        deploymentName,
         label: releasedPackage.label,
         appVersion: releasedPackage.appVersion,
         description: releasedPackage.description,
@@ -1411,7 +1410,6 @@ router.openapi(routes.deployments.release.update, async (c) => {
     c.executionCtx.waitUntil(
       sendReleaseNotification(c.env, {
         appName: app.name,
-        deploymentName,
         label: updatedRelease.label,
         appVersion: updatedRelease.appVersion,
         description: updatedRelease.description,
