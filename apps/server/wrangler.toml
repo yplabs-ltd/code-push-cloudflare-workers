@@ -46,5 +46,3 @@ GOOGLE_CLIENT_ID="898879441077-3u83tsjeg5fis4614vc6t8juip4283gn.apps.googleuserc
 GOOGLE_ALLOWED_DOMAIN="yplabs.kr"
 R2_BUCKET_NAME="code-push-storage"
 ACCOUNT_ID="3ed9862a49fe75464126e11a462fd26e"
-AWS_REGION = "ap-northeast-2"
-AWS_S3_BUCKET_NAME = "code-push-prod"
