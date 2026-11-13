@@ -15,7 +15,7 @@ export const logging = (): MiddlewareHandler => {
     const requestLog: LogEntry = {
       timestamp: new Date().toISOString(),
       method: c.req.method,
-      url: c.req.url,
+      url: c.req.path,
     };
 
     console.log(
