@@ -51,6 +51,7 @@ AWS_S3_BUCKET_NAME = "code-push-prod"
 
 [env.production.observability]
 enabled = true
+redact_query_string = true
 
 [env.production.observability.logs]
 enabled = true
