@@ -2,7 +2,7 @@
   "name": "code-push-cloudflare-workers",
   "scripts": {
     "dev": "wrangler dev --env local",
-    "publish": "wrangler publish --env production",
+    "publish": "wrangler deploy --env production",
     "generate": "drizzle-kit generate",
     "secrets:list:production": "wrangler secret list --env production",
     "list:local": "wrangler d1 migrations list DB --local",
@@ -36,6 +36,6 @@
     "@types/semver": "^7.5.8",
     "miniflare": "^3.20241230.2",
     "vitest": "^2.1.8",
-    "wrangler": "^3.103.1"
+    "wrangler": "^4.150.0"
   }
 }

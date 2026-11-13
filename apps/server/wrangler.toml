@@ -48,3 +48,16 @@ R2_BUCKET_NAME="code-push-storage"
 ACCOUNT_ID="3ed9862a49fe75464126e11a462fd26e"
 AWS_REGION = "ap-northeast-2"
 AWS_S3_BUCKET_NAME = "code-push-prod"
+
+[env.production.observability]
+enabled = true
+
+[env.production.observability.logs]
+enabled = true
+destinations = ["newrelic-logs"]
+
+[env.production.observability.traces]
+enabled = true
+destinations = ["newrelic-traces"]
+head_sampling_rate = 0.1
+persist = false
