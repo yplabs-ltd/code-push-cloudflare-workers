@@ -121,7 +121,7 @@ While [the official CodePush Standalone CLI](https://github.com/microsoft/code-p
 5.  **Deploy the Backend:**
     ```bash
     cd apps/server
-    pnpm wrangler publish
+    pnpm wrangler deploy --env production
     ```
 6.  **Run the Admin UI:**
     ```bash
