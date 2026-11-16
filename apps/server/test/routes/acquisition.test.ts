@@ -8,7 +8,12 @@ import {
   type Deployment,
   UpdateCheckResponseSchema,
 } from "../../src/types/schemas";
+import { rolloutStrategy } from "../../src/utils/rollout";
 import { generateKey } from "../../src/utils/security";
+import {
+  CDN_CACHE_CONTROL_HEADER,
+  UPDATE_CHECK_CACHE_CONTROL,
+} from "../../src/utils/update-check-cache";
 import { type TestAuth, createTestAuth } from "../utils/auth";
 import { cleanupDatabase, getTestDb } from "../utils/db";
 import {
@@ -679,6 +684,172 @@ describe("Acquisition Routes", () => {
         const data = UpdateCheckResponseSchema.parse(json);
         expect(data.updateInfo.isAvailable).toBe(true);
       });
+    });
+  });
+
+  // 테스트 런타임에는 ctx.exports가 없어 게이트웨이가 앱을 바로 부른다.
+  // 그래서 라우트가 붙인 저장 헤더가 응답에 그대로 보인다.
+  describe("update_check 저장 헤더", () => {
+    const LEGACY_PATH = "https://example.com/v0.1/public/codepush/update_check";
+    const cacheHeader = (response: Response) =>
+      response.headers.get(CDN_CACHE_CONTROL_HEADER);
+
+    const setRollout = (rollout: number) =>
+      db
+        .update(schema.packages)
+        .set({ rollout })
+        .where(eq(schema.packages.id, packages[2].id));
+
+    it("새 경로의 정상 응답에 저장 헤더를 붙인다", async () => {
+      const response = await SELF.fetch(
+        `https://example.com/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0&clientUniqueId=device-a`,
+      );
+      expect(response.status).toBe(200);
+      expect(cacheHeader(response)).toBe(UPDATE_CHECK_CACHE_CONTROL);
+      expect(response.headers.has("Cache-Control")).toBe(false);
+    });
+
+    it("옛 경로의 정상 응답에 저장 헤더를 붙인다", async () => {
+      const response = await SELF.fetch(
+        `${LEGACY_PATH}?deployment_key=${deployment.key}&app_version=1.0.0&client_unique_id=device-a`,
+      );
+      expect(response.status).toBe(200);
+      const data = (await response.json()) as {
+        update_info: { is_available: boolean; label: string };
+      };
+      expect(data.update_info.is_available).toBe(true);
+      expect(data.update_info.label).toBe("v3");
+      expect(cacheHeader(response)).toBe(UPDATE_CHECK_CACHE_CONTROL);
+    });
+
+    // packageHash가 매번 새로 만들어져, 받는 기기와 못 받는 기기를 하나씩 골라 둘 다 본다.
+    const devicesOnBothSidesOfRollout = (rollout: number) => {
+      const candidates = Array.from({ length: 50 }, (_, i) => `device-${i}`);
+      const hash = packages[2].packageHash;
+      return [
+        {
+          device: candidates.find((d) => rolloutStrategy(d, rollout, hash)),
+          isAvailable: true,
+        },
+        {
+          device: candidates.find((d) => !rolloutStrategy(d, rollout, hash)),
+          isAvailable: false,
+        },
+      ];
+    };
+
+    it("rollout 중인 패키지는 받는 기기와 못 받는 기기 응답 모두에 붙이지 않는다", async () => {
+      await setRollout(50);
+
+      for (const { device, isAvailable } of devicesOnBothSidesOfRollout(50)) {
+        const response = await SELF.fetch(
+          `https://example.com/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0&clientUniqueId=${device}`,
+        );
+        expect(response.status).toBe(200);
+        const data = UpdateCheckResponseSchema.parse(await response.json());
+        expect(data.updateInfo.isAvailable).toBe(isAvailable);
+        expect(cacheHeader(response)).toBeNull();
+      }
+    });
+
+    it("옛 경로의 rollout 응답도 받는 기기와 못 받는 기기 모두에 붙이지 않는다", async () => {
+      await setRollout(50);
+
+      for (const { device, isAvailable } of devicesOnBothSidesOfRollout(50)) {
+        const response = await SELF.fetch(
+          `${LEGACY_PATH}?deployment_key=${deployment.key}&app_version=1.0.0&client_unique_id=${device}`,
+        );
+        expect(response.status).toBe(200);
+        const data = (await response.json()) as {
+          update_info: { is_available: boolean };
+        };
+        expect(data.update_info.is_available).toBe(isAvailable);
+        expect(cacheHeader(response)).toBeNull();
+      }
+    });
+
+    it("rollout 0에도 붙이지 않는다", async () => {
+      await setRollout(0);
+
+      const response = await SELF.fetch(
+        `https://example.com/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0&clientUniqueId=device-a`,
+      );
+      expect(response.status).toBe(200);
+      expect(cacheHeader(response)).toBeNull();
+    });
+
+    it("rollout 중인데 기기 ID가 없는 응답에도 붙이지 않는다", async () => {
+      await setRollout(50);
+
+      const response = await SELF.fetch(
+        `https://example.com/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0`,
+      );
+      expect(response.status).toBe(200);
+      expect(cacheHeader(response)).toBeNull();
+    });
+
+    it("rollout 중이어도 이미 그 번들인 기기의 응답에는 붙인다", async () => {
+      await setRollout(50);
+
+      const response = await SELF.fetch(
+        `https://example.com/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0&packageHash=${packages[2].packageHash}&clientUniqueId=device-a`,
+      );
+      expect(response.status).toBe(200);
+      const data = UpdateCheckResponseSchema.parse(await response.json());
+      expect(data.updateInfo.isAvailable).toBe(false);
+      expect(cacheHeader(response)).toBe(UPDATE_CHECK_CACHE_CONTROL);
+    });
+
+    it("옛 경로가 없는 배포 키를 200으로 바꾼 응답에는 붙이지 않는다", async () => {
+      const response = await SELF.fetch(
+        `${LEGACY_PATH}?deployment_key=not-exists&app_version=1.0.0`,
+      );
+      expect(response.status).toBe(200);
+      const data = (await response.json()) as {
+        update_info: { is_available: boolean };
+      };
+      expect(data.update_info.is_available).toBe(false);
+      expect(cacheHeader(response)).toBeNull();
+    });
+
+    it("404와 400에는 붙이지 않는다", async () => {
+      const notFound = await SELF.fetch(
+        "https://example.com/updateCheck?deploymentKey=not-exists&appVersion=1.0.0",
+      );
+      expect(notFound.status).toBe(404);
+      expect(cacheHeader(notFound)).toBeNull();
+
+      const badRequest = await SELF.fetch("https://example.com/updateCheck");
+      expect(badRequest.status).toBe(400);
+      expect(cacheHeader(badRequest)).toBeNull();
+    });
+
+    it("D1 에러로 500이 나면 두 경로 모두 붙이지 않는다", async () => {
+      await env.DB.exec("ALTER TABLE deployment RENAME TO deployment_renamed");
+      try {
+        const responses = await Promise.all([
+          SELF.fetch(
+            `https://example.com/updateCheck?deploymentKey=${deployment.key}&appVersion=1.0.0`,
+          ),
+          SELF.fetch(
+            `${LEGACY_PATH}?deployment_key=${deployment.key}&app_version=1.0.0`,
+          ),
+        ]);
+        for (const response of responses) {
+          expect(response.status).toBe(500);
+          expect(cacheHeader(response)).toBeNull();
+        }
+      } finally {
+        await env.DB.exec(
+          "ALTER TABLE deployment_renamed RENAME TO deployment",
+        );
+      }
+    });
+
+    it("update_check가 아닌 응답에는 붙이지 않는다", async () => {
+      const response = await SELF.fetch("https://example.com/health");
+      expect(response.status).toBe(200);
+      expect(cacheHeader(response)).toBeNull();
     });
   });
 });
