@@ -57,6 +57,8 @@ const updateCheckV1Handler = async (c: Context<Env>) => {
     return legacyResponse;
   } catch (error) {
     if (isStorageError(error)) {
+      // 에러를 200으로 바꾼 응답이라, 캐시하면 직전 정상 응답을 덮어쓴다.
+      c.set("updateCheckNoStore", true);
       return {
         update_info: {
           is_available: false,

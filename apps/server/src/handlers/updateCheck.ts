@@ -158,6 +158,9 @@ const updateCheckHandler = async (
     typeof latestSatisfyingEnabledPackage.rollout === "number" &&
     latestSatisfyingEnabledPackage.rollout < 100
   ) {
+    // 결과가 기기 ID에 따라 달라져, 기기 ID를 뺀 키로 캐시하면 안 된다.
+    c.set("updateCheckNoStore", true);
+
     if (!query.clientUniqueId) {
       return {
         updateInfo: {

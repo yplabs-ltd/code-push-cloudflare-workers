@@ -1,3 +1,4 @@
+import { WorkerEntrypoint } from "cloudflare:workers";
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { Hono } from "hono";
 import { prettyJSON } from "hono/pretty-json";
@@ -11,6 +12,11 @@ import { authRouter } from "./routes/auth";
 import { managementRouter } from "./routes/management";
 import { errorHandler, handle404 } from "./storage/error";
 import type { Env } from "./types/env";
+import {
+  buildUpdateCheckCacheKey,
+  isUpdateCheckRequest,
+  withDefaultNoStore,
+} from "./utils/update-check-cache";
 
 // Create Hono app
 const app = new OpenAPIHono<Env>();
@@ -41,4 +47,44 @@ app.doc("/docs", {
   },
 });
 
-export default app;
+// Workers Cache가 앞에 붙는 진입점. update_check GET만 들어온다.
+export class Backend extends WorkerEntrypoint<Env["Bindings"]> {
+  async fetch(request: Request): Promise<Response> {
+    const response = await app.fetch(request, this.env, this.ctx);
+    return withDefaultNoStore(response);
+  }
+}
+
+type GatewayContext = ExecutionContext & {
+  exports?: { Backend?: Fetcher };
+};
+
+export default {
+  async fetch(
+    request: Request,
+    env: Env["Bindings"],
+    ctx: GatewayContext,
+  ): Promise<Response> {
+    const url = new URL(request.url);
+    if (!isUpdateCheckRequest(request.method, url.pathname)) {
+      return app.fetch(request, env, ctx);
+    }
+
+    const backend = ctx.exports?.Backend;
+    if (!backend) {
+      console.warn("ctx.exports.Backend 없음: update_check를 캐시 없이 처리");
+      return app.fetch(request, env, ctx);
+    }
+
+    const response = await backend.fetch(request, {
+      cf: { cacheKey: buildUpdateCheckCacheKey(url) },
+    });
+    console.log({
+      message: "update_check cache",
+      cacheStatus: response.headers.get("cf-cache-status") ?? "NONE",
+      path: url.pathname,
+      status: response.status,
+    });
+    return response;
+  },
+};
