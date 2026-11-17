@@ -1,4 +1,5 @@
 import { OpenAPIHono, createRoute } from "@hono/zod-openapi";
+import type { Context } from "hono";
 import { handlers } from "../handlers";
 import type { Env } from "../types/env";
 import {
@@ -15,6 +16,10 @@ import {
 } from "../types/schemas";
 import { convertObjectToSnakeCase } from "../utils/convention";
 import { MetricsManager } from "../utils/metrics";
+import {
+  CDN_CACHE_CONTROL_HEADER,
+  UPDATE_CHECK_CACHE_CONTROL,
+} from "../utils/update-check-cache";
 
 const router = new OpenAPIHono<Env>();
 
@@ -149,13 +154,22 @@ const routes = {
   }),
 };
 
+// 핸들러가 정상 반환한 뒤에만 부른다. 먼저 붙이면 errorHandler의 500에도 실린다.
+const allowUpdateCheckCache = (c: Context<Env>) => {
+  if (!c.get("updateCheckNoStore")) {
+    c.header(CDN_CACHE_CONTROL_HEADER, UPDATE_CHECK_CACHE_CONTROL);
+  }
+};
+
 router.openapi(routes.updateCheck, async (c) => {
   const result = await handlers.updateCheckHandler(c);
+  allowUpdateCheckCache(c);
   return c.json(result);
 });
 
 router.openapi(routes.updateCheckV1, async (c) => {
   const result = await handlers.updateCheckV1Handler(c);
+  allowUpdateCheckCache(c);
   return c.json(result);
 });
 router.openapi(routes.deploymentReport, async (c) => {

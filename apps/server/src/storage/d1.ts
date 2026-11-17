@@ -873,7 +873,7 @@ export class D1StorageProvider implements StorageProvider {
       })
       .where(eq(schema.packages.packageHash, pkg.packageHash));
     // isDisabled 등 상태 변경 후 히스토리 캐시를 무효화한다. 그렇지 않으면 getPackageHistory가
-    // 최대 5분간 stale 값을 반환해 enable/disable 반영이 지연되고 OTA 업데이트 결정도 어긋난다.
+    // 최대 3분간 stale 값을 반환해 enable/disable 반영이 지연되고 OTA 업데이트 결정도 어긋난다.
     await this.cache.del(this.cacheKeys.package(deploymentId));
     return pkg;
   }
@@ -929,8 +929,8 @@ export class D1StorageProvider implements StorageProvider {
       })),
     );
 
-    // Cache the result for 5 minutes
-    await this.cache.set(cacheKey, JSON.stringify(result), 300);
+    // Cache the result for 3 minutes
+    await this.cache.set(cacheKey, JSON.stringify(result), 180);
     return result;
   }
 
