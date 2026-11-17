@@ -6,6 +6,12 @@ compatibility_flags = ["nodejs_compat"]
 [observability.logs]
 enabled = true
 
+[exports.Backend]
+type = "worker"
+
+[exports.Backend.cache]
+enabled = true
+
 [env.local]
 d1_databases = [
   { binding = "DB", database_name = "codepush-server-local", database_id = "n/a", migrations_dir = "drizzle/migrations" },
@@ -27,6 +33,7 @@ GOOGLE_ALLOWED_DOMAIN="yplabs.kr"
 
 [env.production]
 name = "code-push-server-preview"
+compatibility_flags = ["nodejs_compat", "enable_ctx_exports"]
 d1_databases = [
   { binding = "DB", database_name = "codepush-server-prod", database_id = "aee5850e-b85e-47c6-a0fb-782591e47e5d", migrations_dir = "drizzle/migrations" },
 ]
